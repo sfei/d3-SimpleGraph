@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>D3 Simple Chart Test</title>
+    <meta charset="UTF-8">
+    <script src="d3.min.js"></script>
+    <script src="SimpleGraph.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial;
+        font-size: 14px;
+      }
+      .btn {
+        display: inline-block;
+        margin: 2px 4px;
+        background: #c5c7c9;
+        background-image: -webkit-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: -moz-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: -ms-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: -o-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: linear-gradient(to bottom, #c5c7c9, #8a8e91);
+        -webkit-border-radius: 4;
+        -moz-border-radius: 4;
+        border-radius: 4px;
+        color: #ffffff;
+        padding: 6px 10px;
+      }
+      .btn:hover {
+        background: #787b7d;
+        background-image: -webkit-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: -moz-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: -ms-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: -o-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: linear-gradient(to bottom, #787b7d, #3a3f42);
+        text-decoration: none;
+        cursor: pointer;
+      }
+      #help-dialog-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgba(80, 80, 80, 0.4);
+      }
+      #help-dialog {
+        position: relative;
+        top: 20%;
+        margin: auto;
+        width: 600px;
+        min-height: 200px;
+        background: #77b8e0;
+        background-image: -webkit-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: -moz-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: -ms-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: -o-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: linear-gradient(to bottom, #77b8e0, #5083ba);
+        -webkit-border-radius: 8;
+        -moz-border-radius: 8;
+        border-radius: 8px;
+        -webkit-box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
+        -moz-box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
+        box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
+        padding: 10px;
+        color: #fff;
+        text-align: left;
+      }
+      #help-dialog-title {
+        width: 100%;
+        display: block;
+        margin: auto;
+        font-size: 26px;
+        font-weight: bolder;
+        text-align: center;
+        color: #fff;
+        text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
+      }
+      #help-dialog-content {
+        padding: 0 10px;
+      }
+      code {
+        display: block;
+        margin: auto;
+        background-clip: padding-box;
+        background-color: #f9f9f9;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        -moz-background-clip: padding;
+        -webkit-background-clip: padding-box;
+        border: 1px solid #ccc;
+        padding: 5px;
+        font: 12px "Courier New",monospace;
+        color: #52595d;
+        overflow-x: scroll;
+      }
+      pre { font-size: 12px; }
+      .param {
+        padding-left: 40px;
+        text-indent: -25px;
+        margin: 0;
+        font: 12px "Courier New",monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+    // example data for use in tutorial
+    var scores = [
+      { name: "Made-Up River", wetlandclass: "riverine", age: 10, score: 63 },
+      { name: "Made-Up River", wetlandclass: "riverine", age: 20, score: 72 },
+      { name: "Fake Lagoon", wetlandclass: "estuarine", age: 2, score: 45 },
+      { name: "Fake Lagoon", wetlandclass: "estuarine", age: 14, score: 62 },
+      { name: "Fake Lagoon", wetlandclass: "estuarine", age: 28, score: 60 },
+      { name: "Mirage", wetlandclass: "illusionary", age: 35, score: 79 },
+      { name: "YMCA", wetlandclass: "public pool", age: 26, score: 28 }
+    ];
+    </script>
+    <div id="simple-chart" style="width:100%;height:600px;text-align:center;vertical-align:center;border:1px solid black;overflow:hidden;">
+      <div style="position:absolute;top:15px;left:15px;color:rgba(0,0,0,0.2);font-weight:bold;font-size:20px;text-align:left;">
+        #simple-chart
+      </div>
+    </div>
+    <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
+      <p style="max-width:810px;margin:4px auto;">Click each button below for a quick tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console for your browser. For best results you should probably go in the order shown.</p>
+      <span 
+          class="btn" 
+          helptitle="Creating an Empty Graph" 
+          helptext="Creating the graph provides a ton of possible parameters. However, all of them are optional, so supply as many or as little as you'd like.<br /><br />
+            <b>SimpleGraph(options):</b>
+            <p class='param'>@param {Object} [options] - Object literal of options (all optional).</p>
+            <p class='param'>@param {string} [options.container='body'] - The DOM element query/selector to the element to append the graph to.</p>
+            <p class='param'>@param {number} [options.width=600] - Width value.</p>
+            <p class='param'>@param {number} [options.height=600] - Height value).</p>
+            <p class='param'>@param {Object} [options.margins={top:20,right:20,bottom:40,left:40}] - Margins for graph within overarching SVG (e.g. with all default values, the width of the actual graph will be 540px in a 600px wide SVG element).</p>
+            <p class='param'>@param {d3.scale} [options.colorScale=d3.scale.category10()] - Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale.</p>
+            <p class='param'>@param {Object} [options.axis] - Optional dictionary of styles axes. There are further nested parameters which are not truncated for length considerations, but available in the full documentation.</p>" 
+          sampleCode="var graph = new SimpleGraph({
+  container: '#simple-chart',
+  width: 850,
+  height: 600,
+  axis: {
+    style: {
+      'stroke-width': 1.0           // make axes a little thicker than default
+    },
+    x: {
+      min: 0,
+      max: 40,
+      label: 'Site Age'
+    },
+    y: {
+      min: 25,
+      max: 100,
+      label: 'Score',
+      tickValues: [25, 50, 75, 100] // specify exact locations for tick marks
+    }
+  }
+});" 
+          onclick="openHelp(this)">
+        Create Graph
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding a Line as a Function"
+          helptext="One way to add lines is supply a callback function such that function(x) = y, then let the graph object handle drawing it. To smooth the line, we will compute less points on for the line, but use a smoothing function.<br /><br />
+            <b>addLineDataAsFunction(name, lineFunction, resolution, style, interpolation):</b>
+            <p class='param'>@param {string} name - Series name</p>
+            <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
+            <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
+            <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>"
+          sampleCode="// our wacky line function (saved to global scope for use later)
+var wackyLineFunction = function(x) {
+    return (15*Math.sin(0.2*x) + 0.02*x*x + 40);
+};
+graph.addLineDataAsFunction(
+    'Wacky Line',         // name of this data series
+     wackyLineFunction,   // callback line function
+    {'stroke-width':3.0}, // change the stroke-width to something thicker
+    20,                   // compute line at 20 intervals
+    'basis'               // b-spline smoothing function built in D3
+);
+graph.drawLines();" 
+          onclick="openHelp(this)">
+        Adding a Line
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding Points Data"
+          helptext="Adding points takes in an array of objects. Thus you can specify which keys denote what, as well as additional keys to store, if necessary.<br /><br />
+            In this case we use a dataset predefined in this example page (var scores). It has data for age, wetland types, and various scores. We will graph scores by age and also store the wetland class for later use.<br /><br />
+            <b>addPointsData(data, dataPointName, xValueName, yValueName, additionalDataKeys):</b>
+            <p class='param'>@param {Object[]} data - The plot data as an array of objects. Use the dataPointName, xValueName, and yValueName parameters to tell the function how to parse the data.</p>
+            <p class='param'>@param {string} dataPointName - The key name in each data object to retrieve the data point or data series name and label. Optional. If not supplied, or it cannot find the given key in the data object, defaults to the index position in array of points.</p>
+            <p class='param'>@param {string} xValueName - The key name in each data object to retrieve the x-value.</p>
+            <p class='param'>@param {string} yValueName - The key name in each data object to retrieve the y-value.</p>
+            <p class='param'>@param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.</p>"
+          sampleCode="graph.addPointsData(
+  scores,          // example data supplied with this page
+  'name',          // the key name for the data series
+  'age',           // the key name for the x-value
+  'score',         // the key name for the y-value
+  ['wetlandclass'] // additional keys to store with the D3 data
+);
+graph.drawPoints();"
+          onclick="openHelp(this)">
+        Adding Points
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Connecting Points Data"
+          helptext="To connect points of the same data series by straight lines, simply call the function below. If there are 2 or more data points on the same x-value, the mean y-value is used.<br /><br />
+            <b>addLinesDataFromPoints(style, interpolation):</b>
+            <p class='param'>@param {Object} [style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>"
+          sampleCode="graph.addLinesDataFromPoints({
+    'stroke-width': 2.0,       // bit thicker line
+    'stroke-dasharray': '4, 4' // dashed line, for fun
+});
+graph.drawLines();
+// let's also redraw points to ensure they stay on top of lines
+graph.drawPoints();"
+          onclick="openHelp(this)">
+        Connecting Points
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding Tooltips to Points"
+          helptext="To add a tooltip, simply supply a callback function. In this example we simply use the data of the selected element provided to the function.<br /><br />
+            <b>graph.addTooltipToPoints(tooltipFunction, options):</b>
+            <p class='param'>@callback tooltipTextFunction(d,p,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. Keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+            <p class='param' style='margin-left:20px;'>@param {number[]} p - The x,y relative mouse position on the parent SVG.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
+            <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
+            <p class='param'>@param {Object} [options] - Optional parameters.</p>
+            <p class='param'>@param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
+            <p class='param'>@param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's CSS style (optional).</p>"
+          sampleCode="graph.addTooltipToPoints(function(d) {
+  return (
+    '&amp;lt;b&amp;gt;' + d.series + ': ' + d.y + '&amp;lt;/b&amp;gt;&amp;lt;br /&amp;gt;' +
+    d.wetlandclass + '&amp;lt;br /&amp;gt;' +
+    'Est. Wetland Age: ' + d.x.toFixed(1) + ' yrs'
+  );
+});"
+          onclick="openHelp(this)">
+        Tooltips
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding Tooltips to Lines"
+          helptext="To add a tooltip, simply supply a callback function. In this example we will use the mouse-position and oure previously created line function to determine the value of the line at the cursor. Additionally, we have to make sure to handle the lines connecting the points a little differently.<br /><br />
+            Note that parameter 'd' only stores raw coordinates for the entire line now, we have to use the other parameters to get the full line data. Unlike points, lines do not store more than the necessary data to draw them. However a 'series' attribute is stored with the SVG element, which we can use.<br /><br />
+            <b>graph.addTooltipToLines(tooltipFunction, options):</b>
+            <p class='param'>@callback tooltipTextFunction(d,p,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. Keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+            <p class='param' style='margin-left:20px;'>@param {number[]} p - The x,y relative mouse position on the parent SVG.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
+            <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
+            <p class='param'>@param {Object} [options] - Optional parameters.</p>
+            <p class='param'>@param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
+            <p class='param'>@param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's CSS style (optional).</p>"
+          sampleCode="graph.addTooltipToLines(function(d, p, s, i) {
+    if(s[i].getAttribute('series') !== 'Wacky Line') {
+        return '&amp;lt;b&amp;gt;' + s[i].getAttribute('series') + '&amp;lt;/b&amp;gt;';
+    }
+    // convert p (the absolution mouse position) to x-position on graph
+    var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
+    // use that to find the y-value of the line at that point
+    var y = wackyLineFunction(x).toFixed(1);
+    return 'Score of ' + y + ' at ' + x + ' years.';
+});"
+          onclick="openHelp(this)">
+        Tooltips II
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding a Grid and Legend"
+          helptext="To draw a legend, all you have to do is specify the position. The class with automatically create the legend for all datapoints. We will also include some additional styling parameters.<br /><br />
+            Note that due to the order called, the grid would be drawn over the items in the chart. You can re-invoke drawLines() and drawPoints() to redraw the items over the grid, however the tooltip functionality will have to be reapplied, and they would also draw over the legend if they overlapped. In a similar vein, it may be pertinent to redraw the axes (drawAxes()) after adding the other elements. Potentially then, drawing the grid might want to be the first thing you draw before anything else.<br /><br />
+            <b>graph.drawGrid(style):</b>
+            <p class='param'>@param {Object} [style={opacity:0.4,stroke:'#555','stroke-width':0.3}]</p>
+            <br /><br />
+            <b>graph.drawLegend(position, bgstyle):</b>
+            <p class='param'>@param {number[]} position - x,y coordinate position from top-left corner of SVG</p>
+            <p class='param'>@param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</p>"
+          sampleCode="graph.drawGrid();
+graph.drawLegend(
+  [50,20],        // place legend near top-left of graph
+  {
+    fill:'#fff',  // fill in legend
+    padding:10,   // add padding for legend items
+    stroke:'#000' // add border to legend
+  }
+);"
+          onclick="openHelp(this)">
+        Grid/Legend
+      </span>
+      <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
+        <p style="font-weight:bold;margin-bottom:4px;">
+          Data used for points are as follows:
+        </p>
+        <pre><code id='show-data'></code></pre>
+        <p style="margin-top:30px;">
+          <b>Additional Functionality not in Tutorial:</b><br />
+          -Drawing areas.<br />
+          -Adding lines from an array of coordinates.<br />
+          -Styling tooltips.<br />
+          -Custom color scales.<br />
+          -Custom style for a data series (works for lines/areas).<br />
+        </p>
+        <p style="margin-top:20px;">
+          <b>Known Issues:</b><br />
+          -Axes aren't quite fully black.<br />
+          -Redrawing axes if a grid has been added is buggy.<br />
+          -Points/lines that are outside the y-domain of the graph still get drawn.<br />
+        </p>
+        <p style="margin-top:20px;">
+          <b>Future Updates(?):</b><br />
+          -Custom style for points.<br />
+          -Alternative shapes for points (currently only diamonds).<br />
+          -More style options for axes, particularly label position.<br />
+          -Potentially carrying over tooltip functionality on redrawing elements.<br />
+          -Highlight animations/styles.<br />
+          -Hover functionality with legend.<br />
+        </p>
+      </div>
+    </div>
+    <div id="help-dialog-container">
+        <div id="help-dialog">
+          <span id="help-dialog-title"></span>
+          <p id="help-dialog-content"></p>
+          <pre><code style="width:95%;"></code></pre>
+      <div style="height:20px;margin:12px 5px;text-align:right;">
+        <span class="btn" onclick="copyToClipboard();">Copy Code Snippet to Clipboard</span>
+      </div>
+        </div>
+    </div>
+    <script>
+    // hide dialog
+    $("#help-dialog-container").hide();
+    // dialog click to close
+    $("#help-dialog-container").click(function(evt) {
+        if(evt.target !== this) { return; }
+        $("#help-dialog-container").hide();
+    });
+    // dynamically stringify scores to show on page
+    var indent = "    ";
+    var scoresHtml = "var scores = [<br />";
+    for(var i = 0; i < scores.length; i++) {
+      scoresHtml += indent + "{ ";
+      var j = 0;
+      for(var k in scores[i]) {
+        scoresHtml += k + ": ";
+        if(typeof scores[i][k] === "string") {
+          scoresHtml += "\"" + scores[i][k] + "\"";
+        } else {
+          scoresHtml += scores[i][k];
+        }
+        scoresHtml += (j < 3 ? ", " : "");
+        j++;
+      }
+     scoresHtml += " }" + (i+1 < scores.length ? "," : "") + "<br />"
+    }
+    scoresHtml += "];";
+    $("#show-data").html(scoresHtml);
+    // dialog functionality
+    function openHelp(elem) {
+        $("#help-dialog-title").html(elem.getAttribute("helptitle"));
+        $("#help-dialog-content").html(elem.getAttribute("helptext"));
+        $("#help-dialog code").html(elem.getAttribute("sampleCode"));
+        $("#help-dialog-container").show();
+        $("#help-dialog").css("top", (0.5*($(window).height() - $("#help-dialog").height()) - 20) + "px");
+    }
+    // copy code snippet to clipboard functionality
+    function copyToClipboard() {
+      var copyDiv = $("#help-dialog code");
+      if(document.body.createTextRange) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(copyDiv[0]);
+        range.select();
+      } else if(window.getSelection) {
+        var selection = window.getSelection();        
+        var range = document.createRange();
+        range.selectNodeContents(copyDiv[0]);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      try { document.execCommand('copy'); } catch(e) { }
+    }
+    </script>
+  </body>
+</html>
