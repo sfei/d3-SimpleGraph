@@ -36,7 +36,7 @@
  * 		wide SVG element).
  * @param {d3.scale} [options.colorScale=d3.scale.category10()] - Optional color scale to use with data. If 
  * 		data series will have non-numeric identifiers, it should be a categorical or ordinal scale.
- * @param {boolean} [allowDrawBeyondGraph=true] - Allow drawing beyond graph. If true, all data will be drawn 
+ * @param {boolean} [allowDrawBeyondGraph=false] - Allow drawing beyond graph. If true, all data will be drawn 
  * 		as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut
  * 		off where they extend past the x/y-axis ranges.
  * @param {Object} [options.axis] - Optional dictionary of styles axes.
@@ -801,18 +801,18 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 				if(inRangeY) {
 					if(i > 0 && coords.length === 0) {
 						// was truncated, check for previous intercept for more exact starting point
-						var interceptX = this.findIntercept(lineFunction, x-increment, x);
-						if(interceptX || interceptX === 0) {
-							coords.push([interceptX, lineFunction(interceptX)]);
+						var intercept = this.findIntercept(lineFunction, x-increment, x);
+						if(intercept) {
+							coords = [intercept, c];
 						}
 					}
 					coords.push(c);
 				} else {
 					// try to find nearest y-intercept for more exact ending point
 					if(coords.length > 0) {
-						var interceptX = this.findIntercept(lineFunction, x-increment, x);
-						if(interceptX || interceptX === 0) {
-							coords.push([interceptX, lineFunction(interceptX)]);
+						var intercept = this.findIntercept(lineFunction, x-increment, x);
+						if(intercept) {
+							coords.push(intercept);
 						}
 						addLine(this.lines, coords);
 					}
@@ -936,9 +936,9 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation) {
 /**
  * Add an area data series using two lines to calculate the top and bottom bounds.
  * @param {string} name - series name
- * @callback lineFunctionBottom - callback function for top border of area such that function(x) returns y0.
+ * @callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.
  * @callback lineFunctionTop - callback function for top border of area such that function(x) returns y1.
- * @param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
+ * @param {Object} [style={fill:'#ccc'}] - Object literal of key-value pairs that will be applied as 
  * 		the resulting SVG element's CSS style.
  * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 
  *		pixels of width if not provided and if provided enforces minimum of 2).
@@ -947,18 +947,18 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation) {
  * 		still be truncated to the min-max of the graph if it extends past.
  */
 SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, style, resolution, interpolation, xRange) {
-	if(!lineFunctionTop || typeof lineFunctionTop !== "function" || typeof lineFunctionTop(0) !== "number") {
+	if(!lineFunctionTop || typeof lineFunctionTop !== "function") {
 		return;
 	}
-	if(!lineFunctionBottom || typeof lineFunctionBottom !== "function" || typeof lineFunctionBottom(0) !== "number") {
+	if(!lineFunctionBottom || typeof lineFunctionBottom !== "function") {
 		return;
 	}
 	// default styles
 	if(!style) {
 		style = {};
 	}
-	if(!style.strokeWidth || typeof style.strokeWidth !== "number") {
-		style.strokeWidth = 1.5;
+	if(!style.fill) {
+		style.fill = "#ccc";
 	}
 	if(!interpolation) {
 		interpolation = "linear";
@@ -1002,6 +1002,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		var increment = range / (resolution-1);
 		var x = xRange[0];
 		for(var i = 0; i < resolution; i++) {
+			// use tolerance rather than exact comparison due to some bitwise discrepancies in interpolated values
 			if(x > this.minMax.x[1] && x - this.minMax.x[1] < 0.00001) {
 				x = this.minMax.x[1];
 			}
@@ -1017,7 +1018,6 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 					if(btmInRangeY) {
 						coords.push(c);
 					} else {
-						console.log(coords);
 						addAreas(this.areas, coords);
 						coords = [];
 					}
@@ -1039,7 +1039,6 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 			x += increment;
 		}
 		// always attempt to add after loop
-		console.log(coords);
 		addAreas(this.areas, coords);
 	}
 };
@@ -1103,6 +1102,18 @@ SimpleGraph.prototype.getLineFunctionsBySeries = function(seriesName) {
 	return funcList;
 };
 
+SimpleGraph.prototype.getAreaFunctionsBySeries = function(seriesName) {
+	var funcList = [];
+	if(this.areas) {
+		for(var i = 0; i < this.areas.length; i++) {
+			if(this.areas[i].series === seriesName && this.areas[i].functions) {
+				funcList.push(this.areas[i].functions);
+			}
+		}
+	}
+	return funcList;
+};
+
 /**
  * Mostly private function used to find intercept given a slope and two x-values.
  */
@@ -1121,10 +1132,11 @@ SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 	var x = x1 + search; // start halfway
 	var i = 0;           // increment for fail-safe stop condition
 	var increasing = f(x) > y1;
+	// note lot of small tolerances in comparisons due to slight errors in bitwise to decimal arthimetic
 	while(i < 100) {
 		var y = f(x);
 		if(x >= this.minMax.x[0] && x <= this.minMax.x[1] && Math.abs(y - breakValue) < 0.000001) {
-			return x;
+			return [x, breakValue];
 		}
 		increasing = (x > lastx) == (y > lasty);
 		lastx = x;
@@ -1141,7 +1153,7 @@ SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 			x += (increasing) ? search : -search;
 		}
 		wasIncreasing = increasing;
-		if(x < x1 || x > x2) {
+		if(x < x1-0.00001 || x > x2+0.00001) {
 			return null;
 		}
 		i++;
@@ -1304,9 +1316,8 @@ SimpleGraph.prototype.drawAreas = function() {
 			var addArea = this.svgGraphic.selectAll(".temporary-area")
 				.data([area.coords])
 			  .enter().append("path")
-				.attr("name", area.series)
+				.attr("series", area.series)
 				.attr("class", "plotted-area")
-				.style("fill", '#ccc')
 				.attr("d",
 					d3.svg.area()
 						.x(function(coords) { return xScale(coords[0]); })

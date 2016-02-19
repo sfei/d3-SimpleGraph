@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SimpleGraph Areas Tutorial</title>
+    <meta charset="UTF-8">
+    <script src="d3.min.js"></script>
+    <script src="simple-graph.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <style>
+      body {
+        font-family: Arial;
+        font-size: 14px;
+      }
+      .btn {
+        display: inline-block;
+        margin: 2px 4px;
+        background: #c5c7c9;
+        background-image: -webkit-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: -moz-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: -ms-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: -o-linear-gradient(top, #c5c7c9, #8a8e91);
+        background-image: linear-gradient(to bottom, #c5c7c9, #8a8e91);
+        -webkit-border-radius: 4;
+        -moz-border-radius: 4;
+        border-radius: 4px;
+        color: #ffffff;
+        padding: 6px 10px;
+      }
+      .btn:hover {
+        background: #787b7d;
+        background-image: -webkit-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: -moz-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: -ms-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: -o-linear-gradient(top, #787b7d, #3a3f42);
+        background-image: linear-gradient(to bottom, #787b7d, #3a3f42);
+        text-decoration: none;
+        cursor: pointer;
+      }
+      #help-dialog-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgba(80, 80, 80, 0.4);
+      }
+      #help-dialog {
+        position: relative;
+        top: 20%;
+        margin: auto;
+        width: 600px;
+        min-height: 200px;
+        background: #77b8e0;
+        background-image: -webkit-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: -moz-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: -ms-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: -o-linear-gradient(top, #77b8e0, #5083ba);
+        background-image: linear-gradient(to bottom, #77b8e0, #5083ba);
+        -webkit-border-radius: 8;
+        -moz-border-radius: 8;
+        border-radius: 8px;
+        -webkit-box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
+        -moz-box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
+        box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
+        padding: 10px;
+        color: #fff;
+        text-align: left;
+      }
+      #help-dialog-title {
+        width: 100%;
+        display: block;
+        margin: auto;
+        font-size: 26px;
+        font-weight: bolder;
+        text-align: center;
+        color: #fff;
+        text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
+      }
+      #help-dialog-content {
+        padding: 0 10px;
+      }
+      code {
+        display: block;
+        margin: auto;
+        background-clip: padding-box;
+        background-color: #f9f9f9;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        -moz-background-clip: padding;
+        -webkit-background-clip: padding-box;
+        border: 1px solid #ccc;
+        padding: 5px;
+        font: 12px "Courier New",monospace;
+        color: #52595d;
+        overflow-x: scroll;
+      }
+      pre { font-size: 12px; }
+      .param {
+        padding-left: 40px;
+        text-indent: -25px;
+        margin: 0;
+        font: 12px "Courier New",monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="simple-chart" style="width:100%;height:600px;text-align:center;vertical-align:center;border:1px solid black;overflow:hidden;">
+      <div style="position:absolute;top:15px;left:15px;color:rgba(0,0,0,0.2);font-weight:bold;font-size:20px;text-align:left;">
+        #simple-chart
+      </div>
+    </div>
+    <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
+      <p style="max-width:810px;margin:4px auto;">Click each button below for a quick tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console for your browser. For best results you should probably go in the order shown.</p>
+      <span 
+          class="btn" 
+          helptitle="Creating a Graph and Placing Axis Labels" 
+          helptext="Let's start by creating a graph, similar as before. We'll not specify any axis options, so you can see what the default looks like.<br /><br />
+            However, let's supply a custom color scale and play with some options for our axis labels, and draw the grid before drawing anything on the graph.<br /><br />
+            <b>drawAxes(labelPosition):</b>
+            <p class='param'>@param {string} [labelPosition='inside right'] - Keyswords for the label positions on each axis. Keywords include 'inside' or 'outside' combined with 'left', 'center', or 'right'. Note that if you position labels outside, you may need to supply more margins to avoid overlapping tick labels (currently can only be done via recreating graph).</p>" 
+          sampleCode="var colors = d3.scale.ordinal()
+    .range(['#393b79' , '#9edae5', '#bd9e39', '#d6616b']);
+var graph = new SimpleGraph({
+    container: '#simple-chart',
+    width: 850,
+    height: 580,
+    margins: { left: 50 }, // we'll want to expand our left-margin somewhat
+    colorScale: colors
+});
+graph.drawGrid();
+graph.drawAxes('center outside');" 
+          onclick="openHelp(this)">
+        Create Graph and Axis Labels
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding an Area"
+          helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
+            You'll notice that the area will overlap over the axes, so it's necessary to redraw the axis (let's also play with a different label placement).
+            <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
+            <p class='param'>@param {string} name - Series name</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
+            <p class='param'>@param {Object} [style={fill:'#ccc'}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
+            <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
+            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>"
+          sampleCode="var bottomBoundary = function(x) {
+    return -0.01*x*x + 1.6*x;
+};
+var topBoundary = function(x) {
+    return -0.0003*Math.pow(x-40,2)+0.2*x+80;
+};
+graph.addAreaBetweenTwoLines(
+    'Area',
+    bottomBoundary, // callback line function for bottom boundary
+    topBoundary     // callback line function for top boundary
+);
+graph.drawAreas();
+graph.drawAxes('left inside');" 
+          onclick="openHelp(this)">
+        Adding an Area
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding a Range Limited Line"
+          helptext="Let's add a line, as a function, same as before, but this time, we'll limit it's range.<br /><br />
+            Note two things in the result, one is that the line starts at 10 and ends at 90 (as specified), but also that when the line dips outside of the graph domain (where y values are below zero), it is not drawn. This can be called with the SimpleGraph.allowDrawBeyondGraph option, if desired.<br /><br />
+            <b>addLineDataAsFunction(name, lineFunction, resolution, style, interpolation, xRange):</b>
+            <p class='param'>@param {string} name - Series name</p>
+            <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
+            <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
+            <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
+            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>"
+          sampleCode="var limitedLineFunction = function(x) {
+    return (25*Math.sin(0.2*x) + 20);
+};
+graph.addLineDataAsFunction(
+    'Limited Line',
+     limitedLineFunction,
+    {'stroke-width':3.0},
+    50,                   // compute line at 50 intervals
+    'step-before',        // stepped drawing, just to demonstrate another type of interpolation
+    [10, 90]              // draw line only between 10 < x < 90
+);
+graph.drawLines();" 
+          onclick="openHelp(this)">
+        Adding a Line
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding Tooltips to Lines and Areas"
+          helptext="Now let's add tooltips to both our lines and areas. The call to add tooltips to areas looks identical to the function used for points and lines.<br /><br />
+            We will however use another method of retrieving the line function instead of calling from our globals. As well, let's add some custom styling to the tooltip.<br /><br />
+            <b>graph.addTooltipToAreas(tooltipFunction, options):</b>
+            <p class='param'>@callback tooltipTextFunction(d,p,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. Keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+            <p class='param' style='margin-left:20px;'>@param {number[]} p - The x,y relative mouse position on the parent SVG.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
+            <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
+            <p class='param'>@param {Object} [options] - Optional parameters.</p>
+            <p class='param'>@param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
+            <p class='param'>@param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's CSS style (optional).</p>"
+          sampleCode="var tooltipOptions = {
+    style: {
+        border: '1px solid #02D', 
+        'background-color': '#333', 
+        color: '#fff'
+    }
+};
+var lineTooltipFunction = function(d, p, s, i) {
+    var seriesName = s[i].getAttribute('series');
+    var lineFunctionArray = graph.getLineFunctionsBySeries(seriesName);
+    if(lineFunctionArray.length > 0) {
+        var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
+        var y = lineFunctionArray[0](x).toFixed(1);
+        return x + ', ' + y;
+    }
+};
+var areaTooltipFunction = function(d, p, s, i) {
+    var seriesName = s[i].getAttribute('series');
+    var lineFunctionArray = graph.getAreaFunctionsBySeries(seriesName);
+    if(lineFunctionArray.length > 0) {
+        var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
+        var y0 = lineFunctionArray[0][0](x).toFixed(1);
+        var y1 = lineFunctionArray[0][1](x).toFixed(1);
+        return 'At ' + x + ':&amp;lt;br /&amp;gt;y0 = ' + y0 + '&amp;lt;br /&amp;gt;y1 = ' + y1;
+    }
+};
+graph.addTooltipToLines(lineTooltipFunction, tooltipOptions);
+graph.addTooltipToAreas(areaTooltipFunction, tooltipOptions);"
+          onclick="openHelp(this)">
+        Tooltips
+      </span>
+    </div>
+    <div id="help-dialog-container">
+        <div id="help-dialog">
+          <span id="help-dialog-title"></span>
+          <p id="help-dialog-content"></p>
+          <pre><code style="width:95%;"></code></pre>
+      <div style="height:20px;margin:12px 5px;text-align:right;">
+        <span class="btn" onclick="copyToClipboard();">Copy Code Snippet to Clipboard</span>
+      </div>
+        </div>
+    </div>
+    <script>
+    // hide dialog
+    $("#help-dialog-container").hide();
+    // dialog click to close
+    $("#help-dialog-container").click(function(evt) {
+        if(evt.target !== this) { return; }
+        $("#help-dialog-container").hide();
+    });
+    // dialog functionality
+    function openHelp(elem) {
+        $("#help-dialog-title").html(elem.getAttribute("helptitle"));
+        $("#help-dialog-content").html(elem.getAttribute("helptext"));
+        $("#help-dialog code").html(elem.getAttribute("sampleCode"));
+        $("#help-dialog-container").show();
+        $("#help-dialog").css("top", (0.5*($(window).height() - $("#help-dialog").height()) - 20) + "px");
+    }
+    // copy code snippet to clipboard functionality
+    function copyToClipboard() {
+      var copyDiv = $("#help-dialog code");
+      if(document.body.createTextRange) {
+        var range = document.body.createTextRange();
+        range.moveToElementText(copyDiv[0]);
+        range.select();
+      } else if(window.getSelection) {
+        var selection = window.getSelection();        
+        var range = document.createRange();
+        range.selectNodeContents(copyDiv[0]);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      try { document.execCommand('copy'); } catch(e) { }
+    }
+    </script>
+  </body>
+</html>
