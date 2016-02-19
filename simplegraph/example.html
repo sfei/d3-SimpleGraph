@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>D3 SimpleChart Introduction</title>
+    <title>D3 SimpleGraph Introduction</title>
     <meta charset="UTF-8">
     <script src="d3.min.js"></script>
     <script src="simple-graph.js"></script>
@@ -124,7 +124,7 @@
       </div>
     </div>
     <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
-      <p style="max-width:810px;margin:4px auto;">Click each button below for a quick tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console for your browser. For best results you should probably go in the order shown.</p>
+      <p style="max-width:810px;margin:4px auto;">Click each button below for a tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console (usually opened up with F12). For best results you should go in the order shown.</p>
       <span 
           class="btn" 
           helptitle="Creating an Empty Graph" 
@@ -233,7 +233,7 @@ graph.drawPoints();"
           helptext="To add a tooltip, simply supply a callback function. In this example we simply use the data of the selected element provided to the function.<br /><br />
             <b>graph.addTooltipToPoints(tooltipFunction, options):</b>
             <p class='param'>@callback tooltipTextFunction(d,p,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
-            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. Keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
             <p class='param' style='margin-left:20px;'>@param {number[]} p - The x,y relative mouse position on the parent SVG.</p>
             <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
             <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
@@ -257,7 +257,7 @@ graph.drawPoints();"
             Note that parameter 'd' only stores raw coordinates for the entire line now, we have to use the other parameters to get the full line data. Unlike points, lines do not store more than the necessary data to draw them. However a 'series' attribute is stored with the SVG element, which we can use.<br /><br />
             <b>graph.addTooltipToLines(tooltipFunction, options):</b>
             <p class='param'>@callback tooltipTextFunction(d,p,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
-            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. Keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. For lines, only an array of coordinates can be stored.</p>
             <p class='param' style='margin-left:20px;'>@param {number[]} p - The x,y relative mouse position on the parent SVG.</p>
             <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
             <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
@@ -305,15 +305,6 @@ graph.drawLegend(
           Data used for points are as follows:
         </p>
         <pre><code id='show-data'></code></pre>
-        <p style="margin-top:30px;">
-          <b>Additional Functionality not in Tutorial:</b><br />
-          -Drawing areas.<br />
-          -Adding lines from an array of coordinates.<br />
-          -Styling tooltips.<br />
-          -Custom color scales.<br />
-          -Custom style for a data series (works for lines/areas).<br />
-          -Handling whether or not to draw data beyond the graph's visible range.<br />
-        </p>
         <p style="margin-top:20px;">
           <b>Known Issues:</b><br />
           -Axes aren't quite fully black.<br />
@@ -322,11 +313,13 @@ graph.drawLegend(
           <b>Future Updates(?):</b><br />
           -Custom style for points.<br />
           -Alternative shapes for points (currently only diamonds).<br />
-          -More style options for axes, particularly label position.<br />
           -Potentially carrying over tooltip functionality on redrawing elements.<br />
           -Highlight animations/styles.<br />
           -Hover functionality with legend.<br />
         </p>
+        <p style="margin-top:20px;">
+          &gt; <a href="example2.html">For the next tutorial with some additional functionalities run down, click here.</a>
+        <p>
       </div>
     </div>
     <div id="help-dialog-container">

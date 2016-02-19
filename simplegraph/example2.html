@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SimpleGraph Areas Tutorial</title>
+    <title>SimpleGraph Additional Functionality</title>
     <meta charset="UTF-8">
     <script src="d3.min.js"></script>
     <script src="simple-graph.js"></script>
@@ -112,16 +112,16 @@
       </div>
     </div>
     <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
-      <p style="max-width:810px;margin:4px auto;">Click each button below for a quick tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console for your browser. For best results you should probably go in the order shown.</p>
+      <p style="max-width:810px;margin:4px auto;">Click each button below for a tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console (usually opened up with F12). For best results you should go in the order shown.</p>
       <span 
           class="btn" 
-          helptitle="Creating a Graph and Placing Axis Labels" 
+          helptitle="Custom Color Scale and Placing Axis Labels" 
           helptext="Let's start by creating a graph, similar as before. We'll not specify any axis options, so you can see what the default looks like.<br /><br />
             However, let's supply a custom color scale and play with some options for our axis labels, and draw the grid before drawing anything on the graph.<br /><br />
             <b>drawAxes(labelPosition):</b>
             <p class='param'>@param {string} [labelPosition='inside right'] - Keyswords for the label positions on each axis. Keywords include 'inside' or 'outside' combined with 'left', 'center', or 'right'. Note that if you position labels outside, you may need to supply more margins to avoid overlapping tick labels (currently can only be done via recreating graph).</p>" 
           sampleCode="var colors = d3.scale.ordinal()
-    .range(['#393b79' , '#9edae5', '#bd9e39', '#d6616b']);
+    .range(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
 var graph = new SimpleGraph({
     container: '#simple-chart',
     width: 850,
@@ -132,18 +132,18 @@ var graph = new SimpleGraph({
 graph.drawGrid();
 graph.drawAxes('center outside');" 
           onclick="openHelp(this)">
-        Create Graph and Axis Labels
+        Custom Color and Axis Labels
       </span>
       <span 
           class="btn" 
           helptitle="Adding an Area"
           helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
-            You'll notice that the area will overlap over the axes, so it's necessary to redraw the axis (let's also play with a different label placement).
+            You'll notice that the area will overlap over the axes, so it's necessary to redraw the axis (let's also play with a different label placement).<br /><br />
             <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
             <p class='param'>@param {string} name - Series name</p>
             <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
             <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
-            <p class='param'>@param {Object} [style={fill:'#ccc'}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
             <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
             <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
             <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>"
@@ -156,7 +156,8 @@ var topBoundary = function(x) {
 graph.addAreaBetweenTwoLines(
     'Area',
     bottomBoundary, // callback line function for bottom boundary
-    topBoundary     // callback line function for top boundary
+    topBoundary,    // callback line function for top boundary
+    {opacity: 0.6}  // let's make it transparent
 );
 graph.drawAreas();
 graph.drawAxes('left inside');" 
@@ -188,22 +189,13 @@ graph.addLineDataAsFunction(
 );
 graph.drawLines();" 
           onclick="openHelp(this)">
-        Adding a Line
+        Limiting Line Range
       </span>
       <span 
           class="btn" 
-          helptitle="Adding Tooltips to Lines and Areas"
+          helptitle="Customizing Tooltips"
           helptext="Now let's add tooltips to both our lines and areas. The call to add tooltips to areas looks identical to the function used for points and lines.<br /><br />
-            We will however use another method of retrieving the line function instead of calling from our globals. As well, let's add some custom styling to the tooltip.<br /><br />
-            <b>graph.addTooltipToAreas(tooltipFunction, options):</b>
-            <p class='param'>@callback tooltipTextFunction(d,p,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
-            <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. Keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
-            <p class='param' style='margin-left:20px;'>@param {number[]} p - The x,y relative mouse position on the parent SVG.</p>
-            <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
-            <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
-            <p class='param'>@param {Object} [options] - Optional parameters.</p>
-            <p class='param'>@param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
-            <p class='param'>@param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's CSS style (optional).</p>"
+            We will however use another method of retrieving the line function instead of calling from our globals. As well, let's add some custom styling to the tooltip."
           sampleCode="var tooltipOptions = {
     style: {
         border: '1px solid #02D', 
@@ -233,9 +225,14 @@ var areaTooltipFunction = function(d, p, s, i) {
 graph.addTooltipToLines(lineTooltipFunction, tooltipOptions);
 graph.addTooltipToAreas(areaTooltipFunction, tooltipOptions);"
           onclick="openHelp(this)">
-        Tooltips
+        Custom Tooltips
       </span>
     </div>
+    <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
+        <p>
+          &gt; <a href="example.html">For the previous tutorial with a run down of the major functionalities, click here.</a>
+        <p>
+      </div>
     <div id="help-dialog-container">
         <div id="help-dialog">
           <span id="help-dialog-title"></span>

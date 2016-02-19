@@ -23,7 +23,6 @@
  * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ************************************************************************************************************/
 
- 
 /**
  * Create a SimpleGraph instance and draw an empty graph.
  * @param {Object} [options] - Object literal of options (all optional).
@@ -957,9 +956,6 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 	if(!style) {
 		style = {};
 	}
-	if(!style.fill) {
-		style.fill = "#ccc";
-	}
 	if(!interpolation) {
 		interpolation = "linear";
 	}
@@ -1002,7 +998,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		var increment = range / (resolution-1);
 		var x = xRange[0];
 		for(var i = 0; i < resolution; i++) {
-			// use tolerance rather than exact comparison due to some bitwise discrepancies in interpolated values
+			// correct max by tolerance due to some bitwise-to-decimal discrepancies
 			if(x > this.minMax.x[1] && x - this.minMax.x[1] < 0.00001) {
 				x = this.minMax.x[1];
 			}
@@ -1041,6 +1037,38 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		// always attempt to add after loop
 		addAreas(this.areas, coords);
 	}
+};
+
+/**
+ * Add an area data series a given set of coordinates.
+ * @param {string} name - series name
+ * @param {number[][]} areaCoordinates - array of area coordinate triplets [x, y0, y1]
+ * @param {Object} [style={fill:'#ccc'}] - Object literal of key-value pairs that will be applied as 
+ * 		the resulting SVG element's CSS style.
+ * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 
+ *		pixels of width if not provided and if provided enforces minimum of 2).
+ * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ */
+SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, resolution, interpolation) {
+	if(!areaCoordinates || !$.isArray(areaCoordinates) || areaCoordinates.length < 2) {
+		return;
+	}
+	// default styles
+	if(!style) {
+		style = {};
+	}
+	if(!interpolation) {
+		interpolation = "linear";
+	}
+	if(!this.areas) {
+		this.areas = [];
+	}
+	this.areas.push({
+		series: name, 
+		coords: areaCoordinates, 
+		style: style, 
+		interpolate: interpolation
+	});
 };
 
 
@@ -1116,6 +1144,9 @@ SimpleGraph.prototype.getAreaFunctionsBySeries = function(seriesName) {
 
 /**
  * Mostly private function used to find intercept given a slope and two x-values.
+ * @callback f - Function to evaluate with format f(x)=y
+ * @param x1 - Lower bound of x range to check.
+ * @param x2 - Higher bound of x range to check.
  */
 SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 	var y1 = f(x1), y2 = f(x2);
@@ -1127,36 +1158,41 @@ SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 	} else {
 		return null;
 	}
-	var lasty = y1, lastx = x1;
-	var search = 0.5*Math.abs(x2 - x1);
-	var x = x1 + search; // start halfway
-	var i = 0;           // increment for fail-safe stop condition
-	var increasing = f(x) > y1;
-	// note lot of small tolerances in comparisons due to slight errors in bitwise to decimal arthimetic
-	while(i < 100) {
-		var y = f(x);
-		if(x >= this.minMax.x[0] && x <= this.minMax.x[1] && Math.abs(y - breakValue) < 0.000001) {
+	var x = x1 + 0.5*(x2 - x1);          // start halfway
+	var search = 0.25*Math.abs(x2 - x1); // search distance
+	var lasty = y1, lastx = x1;          // store last x,y values
+	var y, diff, goHigher;               // vars scoped only in interation but to avoid redeclaring var
+	var lastDiff, lastGoHigher;          // some other memory items
+	x1 -= 0.00001;						 // add tolerances to min/max bounds as binary arithmetic can cause 
+	x2 += 0.00001;                       // minor discrepancies when converted to decimal values
+	var i = 0;                           // increment for fail-safe stop condition
+	while(i++ < 100) {
+		y = f(x);
+		diff = Math.abs(y - breakValue);
+		if(x >= this.minMax.x[0] && x <= this.minMax.x[1] && diff < 0.000001) {
 			return [x, breakValue];
 		}
-		increasing = (x > lastx) == (y > lasty);
-		lastx = x;
-		lasty = y;
-		if(y > breakValue) {
-			if(lasty < breakValue) {
-				search *= 0.5;
-			}
-			x += (increasing) ? -search : search;
+		if(i > 0 && lastDiff < diff) {
+			// last search point was closer
+			x = lastx;
+			y = lasty;
+			search *= 0.5;
 		} else {
-			if(lasty < breakValue) {
+			// new search point is closer (determine whether to try higher/lower x by comparing whether the y 
+			// is over the break value against whether the line is upsloped).
+			goHigher = (y > breakValue) !== ((x > lastx) == (y > lasty));
+			if(goHigher !== lastGoHigher) {
 				search *= 0.5;
 			}
-			x += (increasing) ? search : -search;
+			lastx = x;
+			lasty = y;
+			lastGoHigher = goHigher;
+			lastDiff = diff;
 		}
-		wasIncreasing = increasing;
-		if(x < x1-0.00001 || x > x2+0.00001) {
+		x += (lastGoHigher) ? search : -search;
+		if(x < x1 || x > x2) {
 			return null;
 		}
-		i++;
 	}
 	return null;
 };
@@ -1218,6 +1254,7 @@ SimpleGraph.prototype.drawLines = function() {
 	var color = this.color;
 	var xScale = this.xScale;
 	var yScale = this.yScale;
+	var svgGraphic = this.svgGraphic;
 	// add the scatterplot interpolated lines all at once (no need to check allowDrawBeyondGraph as it is 
 	// handled during creation of those lines).
 	if(this.pointLines && this.pointLines.length > 0) {
@@ -1236,8 +1273,8 @@ SimpleGraph.prototype.drawLines = function() {
 			.style("fill", 'none')
 			.attr("d",
 				d3.svg.line()
-					.x(function(coords) { return xScale(coords[0]); })
-					.y(function(coords) { return yScale(coords[1]); })
+					.x(function(c) { return xScale(c[0]); })
+					.y(function(c) { return yScale(c[1]); })
 					.interpolate(drawLines.interpolate)
 			);
 		for(var style in drawLines[0].style) {
@@ -1245,30 +1282,28 @@ SimpleGraph.prototype.drawLines = function() {
 		}
 	}
 	// local function for adding lines to graph as it may be used multiple times per loop
-	var svgGraphic = this.svgGraphic;
-	var color = this.color;
-	function addLine(coords, series, style, interpolate) {
-		if(coords.length < 2) {
+	function addLine(lineData) {
+		if(lineData.coords.length < 2) {
 			return;
 		}
 		var addLine = svgGraphic.selectAll(".temporary-line")
-			.data([coords])
+			.data([lineData.coords])
 		  .enter().append("path")
-			.attr("series", function(l, i) { return series; })
+			.attr("series", lineData.series)
 			.attr("class", "plotted-line")
 			.style("fill", 'none')
 			.attr("d",
 				d3.svg.line()
 					.x(function(c) { return xScale(c[0]); })
 					.y(function(c) { return yScale(c[1]); })
-					.interpolate(interpolate)
+					.interpolate(lineData.interpolate)
 			);
 		// add color if not specified
-		if(!('stroke' in style)) {
-			style.stroke = color(series);
+		if(!('stroke' in lineData.style)) {
+			lineData.style.stroke = color(lineData.series);
 		}
-		for(var skey in style) {
-			addLine.style(skey, style[skey]);
+		for(var skey in lineData.style) {
+			addLine.style(skey, lineData.style[skey]);
 		}
 	}
 	// add individually added lines one at a time (allows more custom styles)
@@ -1277,11 +1312,11 @@ SimpleGraph.prototype.drawLines = function() {
 		for(var i = 0; i < lines.length; i++) {
 			if(this.allowDrawBeyondGraph) {
 				// if allowed to extend, just add the whole line at once
-				addLine(lines[i].coords, lines[i].series, lines[i].style, lines[i].interpolate);
+				addLine(lines[i]);
 			} else {
 				// if not, go through coordinates and break as necessary (this is somewhat redundant for 
-				// lines added as a function as they check when adding the data itself, but needed if we want
-				// to keep the full data of lines added as coordinates).
+				// lines added as a function as they check when adding the data itself, but needed if we 
+				// want to keep the full data of lines added as coordinates).
 				var coords = [];
 				for(var j = 0; j < lines[i].coords.length; j++) {
 					var c = lines[i].coords[j];
@@ -1291,11 +1326,21 @@ SimpleGraph.prototype.drawLines = function() {
 					) {
 						coords.push(c);
 					} else {
-						addLine(coords, lines[i].series, lines[i].style, lines[i].interpolate);
+						addLine({
+							coords: coords, 
+							series: lines[i].series, 
+							style: lines[i].style, 
+							interpolate: lines[i].interpolate
+						});
 						coords = [];
 					}
 				}
-				addLine(coords, lines[i].series, lines[i].style, lines[i].interpolate);
+				addLine({
+					coords: coords, 
+					series: lines[i].series, 
+					style: lines[i].style, 
+					interpolate: lines[i].interpolate
+				});
 			}
 		}
 	}
@@ -1320,11 +1365,15 @@ SimpleGraph.prototype.drawAreas = function() {
 				.attr("class", "plotted-area")
 				.attr("d",
 					d3.svg.area()
-						.x(function(coords) { return xScale(coords[0]); })
-						.y0(function(coords) { return yScale(coords[1]); })
-						.y1(function(coords) { return yScale(coords[2]); })
+						.x(function(c) { return xScale(c[0]); })
+						.y0(function(c) { return yScale(c[1]); })
+						.y1(function(c) { return yScale(c[2]); })
 						.interpolate(area.interpolate)
 				);
+			// add color if not specified
+			if(!('fill' in area.style)) {
+				area.style.fill = color(area.series);
+			}
 			for(var style in area.style) {
 				addArea.style(style, area.style[style]);
 			}
@@ -1486,20 +1535,21 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 	};
 };
 
-
 /**
  * Handles the text appearing in the tooltip. Several parameters are provided to pull relevant data from.
  * @callback tooltipTextFunction
- * @param {Object} d - The data object bound to the hovered SVG element. Keys included are 'series', 'x', 'y', 
- * 		and any additional data keys specified.
+ * @param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 
+ * 		'x', 'y', and any additional data keys specified. For lines and areas, only the raw coordinates are 
+ *		stored.
  * @param {number[]} p - The x,y relative mouse position on the parent SVG.
  * @param {Object[]} s - Array of the SVG elements in the layer selected(or null).
  * @param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.
  */
 
+
  
- // Because Internet Explorer... All credit due to Mathias Bynens <https://mathiasbynens.be/>
- if(!String.prototype.startsWith) {
+// Because Internet Explorer... All credit due to Mathias Bynens <https://mathiasbynens.be/>
+if(!String.prototype.startsWith) {
 	(function() {
 		'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
 		var defineProperty = (function() {
@@ -1553,4 +1603,3 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 		}
 	}());
 }
- 
