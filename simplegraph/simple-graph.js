@@ -27,7 +27,7 @@
 /**
  * Create a SimpleGraph instance and draw an empty graph.
  * @param {Object} [options] - Object literal of options (all optional).
- * @param {string} [options.container='body'] - The DOM element query/selector to the element to append the graph too 
+ * @param {string} [options.container='body'] - The DOM element query/selector to the element to append the 
  *		graph to.
  * @param {number} [options.width=600] - Width value.
  * @param {number} [options.height=600] - Height value).
@@ -36,6 +36,9 @@
  * 		wide SVG element).
  * @param {d3.scale} [options.colorScale=d3.scale.category10()] - Optional color scale to use with data. If 
  * 		data series will have non-numeric identifiers, it should be a categorical or ordinal scale.
+ * @param {boolean} [allowDrawBeyondGraph=true] - Allow drawing beyond graph. If true, all data will be drawn 
+ * 		as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut
+ * 		off where they extend past the x/y-axis ranges.
  * @param {Object} [options.axis] - Optional dictionary of styles axes.
  * @param {Object} [option.axis.style={fill:"none",'stroke-width':0.5,stroke:'black'}] - Shared styles for 
  * 		both axes stored as key-value pairs where each key is the name of an appropriate style.
@@ -58,6 +61,10 @@ var SimpleGraph = function(options) {
 	if(!options.axis.x) { options.axis.x = {}; }
 	if(!options.axis.y) { options.axis.y = {}; }
 	if(!options.axis.styles) { options.axis.styles = {}; }
+	
+	// Option to allow drawing outside graph range.
+	this.allowDrawBeyondGraph = options.allowDrawBeyondGraph;
+	
 	// right now the min/max for the axes are fairly fixed, should be customizable later
 	this.minMax = {
 		x: [
@@ -206,9 +213,69 @@ SimpleGraph.prototype.destroy = function() {
 // Common Drawing Functions
 //************************************************************************************************************
 /**
- * Draw axes on graph. Currently not a whole lot of customizability here.
+ * (Re)draw axes on graph.
+ * @param {string} [labelPosition="inside right"] - Keyswords for the label positions on each axis. Keywords 
+ * 		include 'inside' or 'outside' combined with 'left', 'center', or 'right'. Note that if you position 
+ * 		labels outside, you may need to supply more margins to avoid overlapping tick labels (currently can 
+ * 		only be done via recreating graph).
  */
-SimpleGraph.prototype.drawAxes = function() {
+SimpleGraph.prototype.drawAxes = function(labelPosition) {
+	// default position on right-inside
+	var xLabelPos = {
+		a: 'end', 
+		x: this.width,
+		y: -6
+	};
+	var yLabelPos = {
+		a: 'end', 
+		x: 0,
+		y: 6
+	};
+	// override default if options supplied
+	if(labelPosition) {
+		var lpKeys = labelPosition.toLowerCase().split(/[ ,]+/);
+		var parallel = "right", perpendicular = "inside";
+		for(var i = 0; i < lpKeys.length; i++) {
+			if(lpKeys[i] === "outside") {
+				xLabelPos.y = this.margins.bottom;
+				yLabelPos.y = -this.margins.left;
+				perpendicular = "outside";
+			} else if(lpKeys[i] === "inside") {
+				xLabelPos.y = -6;
+				yLabelPos.y = 6;
+				perpendicular = "inside";
+			}
+			if(lpKeys[i] === "left") {
+				xLabelPos.a = 'start';
+				xLabelPos.x = this.margins.left;
+				yLabelPos.a = 'start';
+				yLabelPos.x = -this.height + this.margins.bottom;
+				parallel = "left";
+			} else if(lpKeys[i] === "center") {
+				xLabelPos.a = 'center';
+				xLabelPos.x = this.margins.left + 0.5*(this.width-this.margins.right);
+				yLabelPos.a = 'center';
+				yLabelPos.x = this.margins.bottom-0.5*(this.height+this.margins.top);
+				parallel = "right";
+			} else if(lpKeys[i] === "right") {
+				xLabelPos.a = 'end';
+				xLabelPos.x = this.width;
+				yLabelPos.a = 'end';
+				yLabelPos.x = 0;
+				parallel = "right";
+			}
+		}
+		// left, being near axis crossing, needs some extra padding
+		if(parallel === "left") {
+			if(perpendicular === "outside") {
+				xLabelPos.x += 0;
+			} else if(perpendicular === "inside") {
+				xLabelPos.x += 20;
+				yLabelPos.x += 20;
+			}
+		}
+	}
+	
 	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .axis-label").remove();
 	this.svgGraphic.append("g")
 		.attr("class", "scatterplot-xaxis")
@@ -216,8 +283,8 @@ SimpleGraph.prototype.drawAxes = function() {
 		.call(this.xAxis)
 	  .append("text")
 		.attr("class", "axis-label")
-		.attr("x", this.width)
-		.attr("y", -6)
+		.attr("x", xLabelPos.x)
+		.attr("y", xLabelPos.y)
 		.style("text-anchor", "end")
 		.style("font-weight", "bolder")
 		.text(this.xAxisLabel);
@@ -227,7 +294,8 @@ SimpleGraph.prototype.drawAxes = function() {
 	  .append("text")
 		.attr("class", "axis-label")
 		.attr("transform", "rotate(-90)")
-		.attr("y", 6)
+		.attr("x", yLabelPos.x)
+		.attr("y", yLabelPos.y)
 		.attr("dy", ".71em")
 		.style("text-anchor", "end")
 		.style("font-weight", "bolder")
@@ -248,16 +316,24 @@ SimpleGraph.prototype.drawAxes = function() {
  */
 SimpleGraph.prototype.drawGrid = function(style) {
 	this.svgGraphic.selectAll(".scatterplot-grid").remove();
+	// default styles
 	var opacity = (style && style.opacity) ? parseFloat(style.opacity) : 0.4;
 	var stroke = (style && style.stroke) ? style.stroke : "#555";
 	var strokeWidth = (style && style['stroke-width']) ? parseFloat(style['stroke-width']) : 0.3;
+	// clone axes, otherwise when redrawing axes/grid again it gets confused
+	var xAxisCopy = d3.svg.axis()
+		.scale(this.xScale)
+		.orient("bottom");
+	var yAxisCopy = d3.svg.axis()
+		.scale(this.yScale)
+		.orient("left");
 	this.svgGraphic.append("g")
 		.attr("class", "scatterplot-grid")
 		.attr("transform", "translate(0," + this.height + ")")
 		.style("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(this.xAxis
+		.call(xAxisCopy
 			.tickSize(-this.height, 0, 0)
 			.tickFormat("")
 		);
@@ -266,7 +342,7 @@ SimpleGraph.prototype.drawGrid = function(style) {
 		.attr("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(this.yAxis
+		.call(yAxisCopy
 			.tickSize(-this.width, 0, 0)
 			.tickFormat("")
 		);
@@ -660,36 +736,6 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 	if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
 		return;
 	}
-	if(!this.lines) {
-		this.lines = [];
-	}
-	if(!xRange) {
-		xRange = [this.minMax.x[0], this.minMax.x[1]];
-	} else {
-		if(xRange[0] < this.minMax.x[0]) {
-			xRange[0] = this.minMax.x[0];
-		}
-		if(xRange[1] > this.minMax.x[1]) {
-			xRange[1] = this.minMax.x[1];
-		}
-	}
-	var coords = [];
-	if(xRange[1] > xRange[0]) {
-		var range = xRange[1] - xRange[0];
-		var ratio = range / (this.minMax.x[1] - this.minMax.x[0]);
-		if(!resolution || typeof resolution !== "number") {
-			resolution = Math.floor(ratio*(this.width - this.margin.left - this.margin.right) / 20);
-		}
-		if(resolution < 2) {
-			resolution = 2;
-		}
-		var increment = range / (resolution-1);
-		var x = xRange[0];
-		for(var i = 0; i < resolution; i++) {
-			coords.push([x, lineFunction(x)]);
-			x += increment;
-		}
-	}
 	// default styles
 	if(!style) {
 		style = {};
@@ -703,13 +749,81 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 	if(!interpolation) {
 		interpolation = "linear";
 	}
-	this.lines.push({
-		series: name, 
-		lineFunction: lineFunction, 
-		coords: coords, 
-		style: style, 
-		interpolate: interpolation
-	});
+	if(!xRange) {
+		xRange = [this.minMax.x[0], this.minMax.x[1]];
+	} else {
+		if(xRange[0] < this.minMax.x[0]) {
+			xRange[0] = this.minMax.x[0];
+		}
+		if(xRange[1] > this.minMax.x[1]) {
+			xRange[1] = this.minMax.x[1];
+		}
+	}
+	if(!this.lines) {
+		this.lines = [];
+	}
+	// local function to add line data as if it gets clipped, we may be adding multiple
+	function addLine(linesArray, coords) {
+		if(coords.length > 2) {
+			linesArray.push({
+				series: name, 
+				lineFunction: lineFunction, 
+				coords: coords, 
+				style: style, 
+				interpolate: interpolation
+			});
+		}
+	}
+	
+	var coords = [];
+	if(xRange[1] > xRange[0]) {
+		var range = xRange[1] - xRange[0];
+		var ratio = range / (this.minMax.x[1] - this.minMax.x[0]);
+		if(!resolution || typeof resolution !== "number") {
+			resolution = Math.floor(ratio*(this.width - this.margins.left - this.margins.right) / 20);
+		}
+		if(resolution < 2) {
+			resolution = 2;
+		}
+		var increment = range / (resolution-1);
+		var x = xRange[0];
+		for(var i = 0; i < resolution; i++) {
+			if(x > this.minMax.x[1] && x - this.minMax.x[1] < 0.00001) {
+				x = this.minMax.x[1];
+			}
+			var c = [x, lineFunction(x)];
+			if(this.allowDrawBeyondGraph) {
+				// if it can extend beyond graph, always add
+				coords.push(c);
+			} else {
+				// if not, have to check y-value stays within range
+				var inRangeY = c[1] >= this.minMax.y[0] && c[1] <= this.minMax.y[1];
+				if(inRangeY) {
+					if(i > 0 && coords.length === 0) {
+						// was truncated, check for previous intercept for more exact starting point
+						var interceptX = this.findIntercept(lineFunction, x-increment, x);
+						if(interceptX || interceptX === 0) {
+							coords.push([interceptX, lineFunction(interceptX)]);
+						}
+					}
+					coords.push(c);
+				} else {
+					// try to find nearest y-intercept for more exact ending point
+					if(coords.length > 0) {
+						var interceptX = this.findIntercept(lineFunction, x-increment, x);
+						if(interceptX || interceptX === 0) {
+							coords.push([interceptX, lineFunction(interceptX)]);
+						}
+						addLine(this.lines, coords);
+					}
+					coords = [];
+				}
+			}
+			x += increment;
+		}
+	}
+	// always attempt to add line after loop
+	addLine(this.lines, coords);
 };
 
 /**
@@ -738,59 +852,85 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation) {
 	if(!interpolation) {
 		interpolation = "linear";
 	}
-	this.pointLines = [];
-	// first we gotta comb through the data and organize it nicely
+	// this multiple series of loops isn't pretty but necessary for flexible preprocessing
+	// first organize points by data series
+	var pointsBySeries = {};
 	for(var i = 0; i < this.points.length; i++) {
-		// group values of the same data point name together (to create this.pointLines)
-		if(this.points[i].series) {
-			// first find if line already exists
-			var lineIndex = -1;
-			for(var l = 0; l < this.pointLines.length; l++) {
-				if(this.points[i].series === this.pointLines[l].series) {
-					lineIndex = l;
-					break;
-				}
-			}
-			// if doesn't exist, create
-			if(lineIndex < 0) {
-				this.pointLines.push({
-					series: this.points[i].series, 
-					coords: [[this.points[i].x, this.points[i].y, 1]] // array of [x, y, and count]
-				});
-			// if it does exist, we need to check if there are overlapped x-values
-			} else {
-				var line = this.pointLines[lineIndex];
-				var exists = false;
-				for(var j = 0; j < line.coords.length; j++) {
-					var c = line.coords[j];
-					if(c[0] === this.points[i].x) {
-						// if it exists, add to count and use average y-value
-						c[2] += 1;
-						c[1] = (c[1]*(c[2]-1) + this.points[i].y)/c[2];
-						exists = true;
-						break;
-					}
-				}
-				if(!exists) {
-					// if it doesn't exist, push a new point
-					line.coords.push(
-						[this.points[i].x, this.points[i].y, 1]
-					);
-				}
-			}
+		var series = this.points[i].series;
+		if(series in pointsBySeries) {
+			pointsBySeries[series].points.push(this.points[i])
+		} else {
+			pointsBySeries[series] = {points: [this.points[i]]}
 		}
 	}
-	// make sure x-values are in ascending order
-	for(var i = 0; i < this.pointLines.length; i++) {
-		if(this.pointLines[i].coords.length >= 2) {
-			this.pointLines[i].coords.sort(function(a, b) {
-				return a[0] - b[0];
+	// will be our array of point-connecting-lines
+	this.pointLines = [];
+	// local function used to add points to an array of coordinates, but if overlap in x-values, keep 
+	// singular point at x with averaged y-value
+	function addPointCheckOverlap(arrayToPush, pointToAdd) {
+		var exists = false;
+		for(var j = 0; j < arrayToPush.length; j++) {
+			if(arrayToPush[j][0] === pointToAdd.x) {
+				// if it exists, add to count and use average y-value
+				arrayToPush[j][2] += 1;
+				arrayToPush[j][1] = (arrayToPush[j][1]*(arrayToPush[j][2]-1) + pointToAdd.y)/arrayToPush[j][2];
+				exists = true;
+				break;
+			} else if(arrayToPush[j] > pointToAdd.x) {
+				// since this is assumed in ascending order
+				break;
+			}
+		}
+		if(!exists) {
+			// if no match found, add with count=1
+			arrayToPush.push([pointToAdd.x, pointToAdd.y, 1]);
+		}
+	}
+	// local function to add to our array of point-connecting-lines (just here for better readability)
+	function addPointLineSeries(series, arrayCoords, arrayToPush) {
+		if(arrayCoords.length >= 2) {
+			arrayToPush.push({
+				series: series, 
+				coords: arrayCoords
 			});
 		}
 	}
-	// style and interpolation are shared, so only need to add to first in list
-	this.pointLines[0].interpolate = interpolation;
-	this.pointLines[0].style = style;
+	// start looping
+	for(var series in pointsBySeries) {
+		var checkPoints = pointsBySeries[series].points;
+		// less than 2 points, skip
+		if(checkPoints.length < 2) {
+			continue;
+		}
+		// first sort in ascending order
+		checkPoints.sort(function(a, b) {
+			return a.x - b.x;
+		});
+		var lineCoords = [];
+		for(var i = 0; i < checkPoints.length; i++) {
+			if(this.allowDrawBeyondGraph) {
+				addPointCheckOverlap(lineCoords, checkPoints[i]);
+			} else {
+				// if not allowed to draw beyond graph, have to proceed and cut off lines as needed
+				var inRangeX = checkPoints[i].x >= this.minMax.x[0] && checkPoints[i].x <= this.minMax.x[1];
+				var inRangeY = checkPoints[i].y >= this.minMax.y[0] && checkPoints[i].y <= this.minMax.y[1];
+				// if in range, add -- if not, end line, try to add, and start new
+				if(inRangeX && inRangeY) {
+					addPointCheckOverlap(lineCoords, checkPoints[i]);
+				} else {
+					addPointLineSeries(series, lineCoords, this.pointLines);
+					lineCoords = [];
+				}
+			}
+		}
+		// always try to add after loop
+		addPointLineSeries(series, lineCoords, this.pointLines);
+	}
+	if(this.pointLines.length > 0) {
+		// style and interpolation are shared, so only need to add to first in list
+		this.pointLines[0].interpolate = interpolation;
+		this.pointLines[0].style = style;
+	}
 };
 
 /**
@@ -813,8 +953,15 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 	if(!lineFunctionBottom || typeof lineFunctionBottom !== "function" || typeof lineFunctionBottom(0) !== "number") {
 		return;
 	}
-	if(!this.areas) {
-		this.areas = [];
+	// default styles
+	if(!style) {
+		style = {};
+	}
+	if(!style.strokeWidth || typeof style.strokeWidth !== "number") {
+		style.strokeWidth = 1.5;
+	}
+	if(!interpolation) {
+		interpolation = "linear";
 	}
 	if(!xRange) {
 		xRange = [this.minMax.x[0], this.minMax.x[1]];
@@ -826,13 +973,28 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 			xRange[1] = this.minMax.x[1];
 		}
 	}
+	if(!this.areas) {
+		this.areas = [];
+	}
+	// local function for adding to areas, as if cut off because extending beyond graph, may get repeated
+	function addAreas(areasArray, coords) {
+		if(coords.length > 2) {
+			areasArray.push({
+				series: name, 
+				functions: [lineFunctionBottom, lineFunctionTop], 
+				coords: coords, 
+				style: style, 
+				interpolate: interpolation
+			});
+		}
+	}
 	// create coordinates
 	var coords = [];
 	if(xRange[1] > xRange[0]) {
 		var range = xRange[1] - xRange[0];
 		var ratio = range / (this.minMax.x[1] - this.minMax.x[0]);
 		if(!resolution || typeof resolution !== "number") {
-			resolution = Math.floor(ratio*(this.width - this.margin.left - this.margin.right) / 20);
+			resolution = Math.floor(ratio*(this.width - this.margins.left - this.margins.right) / 20);
 		}
 		if(resolution < 2) {
 			resolution = 2;
@@ -840,28 +1002,46 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		var increment = range / (resolution-1);
 		var x = xRange[0];
 		for(var i = 0; i < resolution; i++) {
-			coords.push([x, lineFunctionBottom(x), lineFunctionTop(x)]);
+			if(x > this.minMax.x[1] && x - this.minMax.x[1] < 0.00001) {
+				x = this.minMax.x[1];
+			}
+			var c = [x, lineFunctionBottom(x), lineFunctionTop(x)];
+			if(this.allowDrawBeyondGraph) {
+				// simple, add all coordinates
+				coords.push(c);
+			} else {
+				// check coordinate range (only need to check Y)
+				var btmInRangeY = c[1] >= this.minMax.y[0] && c[1] <= this.minMax.y[1];
+				var topInRangeY = c[2] >= this.minMax.y[0] && c[2] <= this.minMax.y[1];
+				if(btmInRangeY == topInRangeY) {
+					if(btmInRangeY) {
+						coords.push(c);
+					} else {
+						console.log(coords);
+						addAreas(this.areas, coords);
+						coords = [];
+					}
+				} else {
+					if(btmInRangeY) {
+						c[2] = this.minMax.y[1];
+					} else {
+						c[1] = this.minMax.y[0];
+					}
+					if(c[2] > c[1]) {
+						coords.push(c);
+					} else {
+						console.log(coords);
+						addAreas(this.areas, coords);
+						coords = [];
+					}
+				}
+			}
 			x += increment;
 		}
+		// always attempt to add after loop
+		console.log(coords);
+		addAreas(this.areas, coords);
 	}
-	// default styles
-	if(!style) {
-		style = {};
-	}
-	if(!style.strokeWidth || typeof style.strokeWidth !== "number") {
-		style.strokeWidth = 1.5;
-	}
-	if(!interpolation) {
-		interpolation = "linear";
-	}
-	// push data
-	this.areas.push({
-		series: name, 
-		functions: [lineFunctionBottom, lineFunctionTop], 
-		coords: coords, 
-		style: style, 
-		interpolate: interpolation
-	});
 };
 
 
@@ -902,6 +1082,75 @@ SimpleGraph.prototype.clearAllData = function() {
 
 
 //************************************************************************************************************
+// Some Additional Data Functions
+//************************************************************************************************************
+/**
+ * Retrieve a line function by the series name. Useful as D3 only binds an array of coordinates to a line, and
+ * there is no way to link the line function (or any additional data).
+ * @param {string} seriesName - Name of the series for which you want to grab the line function.
+ * @returns {function[]} - An array of the functions associated with this series (there may be more than one 
+ *		if multiple lines share the same series name).
+ */
+SimpleGraph.prototype.getLineFunctionsBySeries = function(seriesName) {
+	var funcList = [];
+	if(this.lines) {
+		for(var i = 0; i < this.lines.length; i++) {
+			if(this.lines[i].series === seriesName && this.lines[i].lineFunction) {
+				funcList.push(this.lines[i].lineFunction);
+			}
+		}
+	}
+	return funcList;
+};
+
+/**
+ * Mostly private function used to find intercept given a slope and two x-values.
+ */
+SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
+	var y1 = f(x1), y2 = f(x2);
+	var breakValue, increasing;
+	if(y1 < this.minMax.y[0] != y2 < this.minMax.y[0]) {
+		breakValue = this.minMax.y[0];
+	} else if(y1 > this.minMax.y[1] != y2 > this.minMax.y[1]) {
+		breakValue = this.minMax.y[1];
+	} else {
+		return null;
+	}
+	var lasty = y1, lastx = x1;
+	var search = 0.5*Math.abs(x2 - x1);
+	var x = x1 + search; // start halfway
+	var i = 0;           // increment for fail-safe stop condition
+	var increasing = f(x) > y1;
+	while(i < 100) {
+		var y = f(x);
+		if(x >= this.minMax.x[0] && x <= this.minMax.x[1] && Math.abs(y - breakValue) < 0.000001) {
+			return x;
+		}
+		increasing = (x > lastx) == (y > lasty);
+		lastx = x;
+		lasty = y;
+		if(y > breakValue) {
+			if(lasty < breakValue) {
+				search *= 0.5;
+			}
+			x += (increasing) ? -search : search;
+		} else {
+			if(lasty < breakValue) {
+				search *= 0.5;
+			}
+			x += (increasing) ? search : -search;
+		}
+		wasIncreasing = increasing;
+		if(x < x1 || x > x2) {
+			return null;
+		}
+		i++;
+	}
+	return null;
+};
+
+
+//************************************************************************************************************
 // Draw Data Functions
 //************************************************************************************************************
 /**
@@ -921,10 +1170,22 @@ SimpleGraph.prototype.drawPoints = function(size) {
 	var color = this.color;
 	var xScale = this.xScale;
 	var yScale = this.yScale;
-	// cycle by shapes, first diamonds
-	
+	// if necessary, remove points that extend beyond graph
+	var drawPointsData;
+	if(this.allowDrawBeyondGraph) {
+		drawPointsData = this.points;
+	} else {
+		drawPointsData = [];
+		for(var i = 0; i < this.points.length; i++) {
+			var addPoint = this.points[i].x >= this.minMax.x[0];
+			addPoint = addPoint && this.points[i].x <= this.minMax.x[1];
+			addPoint = addPoint && this.points[i].y >= this.minMax.y[0];
+			addPoint = addPoint && this.points[i].y <= this.minMax.y[1];
+			if(addPoint) { drawPointsData.push(this.points[i]); }
+		}
+	}
 	var points = this.svgGraphic.selectAll(".scatterplot-point")
-		.data(this.points)
+		.data(drawPointsData)
 	  .enter().append("rect")
 		.attr("class", "scatterplot-point")
 		.attr("width", size)
@@ -945,7 +1206,8 @@ SimpleGraph.prototype.drawLines = function() {
 	var color = this.color;
 	var xScale = this.xScale;
 	var yScale = this.yScale;
-	// add the scatterplot interpolated lines all at once
+	// add the scatterplot interpolated lines all at once (no need to check allowDrawBeyondGraph as it is 
+	// handled during creation of those lines).
 	if(this.pointLines && this.pointLines.length > 0) {
 		var drawLines = this.pointLines;
 		// concatenate all line coordinates into array
@@ -970,28 +1232,58 @@ SimpleGraph.prototype.drawLines = function() {
 			addLines.style(style, drawLines[0].style[style]);
 		}
 	}
+	// local function for adding lines to graph as it may be used multiple times per loop
+	var svgGraphic = this.svgGraphic;
+	var color = this.color;
+	function addLine(coords, series, style, interpolate) {
+		if(coords.length < 2) {
+			return;
+		}
+		var addLine = svgGraphic.selectAll(".temporary-line")
+			.data([coords])
+		  .enter().append("path")
+			.attr("series", function(l, i) { return series; })
+			.attr("class", "plotted-line")
+			.style("fill", 'none')
+			.attr("d",
+				d3.svg.line()
+					.x(function(c) { return xScale(c[0]); })
+					.y(function(c) { return yScale(c[1]); })
+					.interpolate(interpolate)
+			);
+		// add color if not specified
+		if(!('stroke' in style)) {
+			style.stroke = color(series);
+		}
+		for(var skey in style) {
+			addLine.style(skey, style[skey]);
+		}
+	}
 	// add individually added lines one at a time (allows more custom styles)
 	if(this.lines) {
 		var lines = this.lines;
 		for(var i = 0; i < lines.length; i++) {
-			var addLine = this.svgGraphic.selectAll(".temporary-line")
-				.data([lines[i].coords])
-			  .enter().append("path")
-				.attr("series", function(l, i) { return lines[i].series; })
-				.attr("class", "plotted-line")
-				.style("fill", 'none')
-				.attr("d",
-					d3.svg.line()
-						.x(function(coords) { return xScale(coords[0]); })
-						.y(function(coords) { return yScale(coords[1]); })
-						.interpolate(lines[i].interpolate)
-				);
-			// add color if not specified
-			if(!('stroke' in lines[i].style)) {
-				lines[i].style.stroke = this.color(lines[i].series);
-			}
-			for(var style in lines[i].style) {
-				addLine.style(style, lines[i].style[style]);
+			if(this.allowDrawBeyondGraph) {
+				// if allowed to extend, just add the whole line at once
+				addLine(lines[i].coords, lines[i].series, lines[i].style, lines[i].interpolate);
+			} else {
+				// if not, go through coordinates and break as necessary (this is somewhat redundant for 
+				// lines added as a function as they check when adding the data itself, but needed if we want
+				// to keep the full data of lines added as coordinates).
+				var coords = [];
+				for(var j = 0; j < lines[i].coords.length; j++) {
+					var c = lines[i].coords[j];
+					if(
+							c[0] >= this.minMax.x[0] && c[0] <= this.minMax.x[1] && 
+							c[1] >= this.minMax.y[0] && c[1] <= this.minMax.y[1]
+					) {
+						coords.push(c);
+					} else {
+						addLine(coords, lines[i].series, lines[i].style, lines[i].interpolate);
+						coords = [];
+					}
+				}
+				addLine(coords, lines[i].series, lines[i].style, lines[i].interpolate);
 			}
 		}
 	}
@@ -1014,7 +1306,7 @@ SimpleGraph.prototype.drawAreas = function() {
 			  .enter().append("path")
 				.attr("name", area.series)
 				.attr("class", "plotted-area")
-				.style("fill", 'none')
+				.style("fill", '#ccc')
 				.attr("d",
 					d3.svg.area()
 						.x(function(coords) { return xScale(coords[0]); })
