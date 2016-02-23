@@ -359,18 +359,25 @@ SimpleGraph.prototype.removeGrid = function() {
  * @param {number[]} position - x,y coordinate position from top-left corner of SVG
  * @param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the 
  * 		exception of support for padding.
+ * @param {number} [itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new 
+ * 		column will be started to the right. If set to 0 or less, infinite (that is, all will be put in single 
+ * 		column). Note that if the next column exceeds the right margin of the graph, placement errors will 
+ * 		result.
+ * @param {number} [columnHeight=24] - The height per column. Default is set to best fit size of text and 
+ * 		icons in legend (the second which is currently uncustomizable) so use care if decreasing column 
+ * 		height.
  */
-SimpleGraph.prototype.drawLegend = function(position, bgstyle) {
+SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, columnHeight) {
 	this.svgGraphic.selectAll(".scatterplot-legend").remove();
 	
 	if(!position) {
 		position = { x: 0, y: 0 };
 	} else if(!position.x || !position.y) {
-		if(!position.x) {
-			position.x = (position[0] && typeof position[0] === "number") ? position[0] : this.width+5;
+		if(!position.x && position.x !== 0) {
+			position.x = (position[0] !== undefined && typeof position[0] === "number") ? position[0] : this.width+5;
 		}
-		if(!position.y) {
-			position.y = (position[1] && typeof position[1] === "number") ? position[1] : 0;
+		if(!position.y && position.y !== 0) {
+			position.y = (position[1] !== undefined && typeof position[1] === "number") ? position[1] : 0;
 		}
 	}
 	
@@ -411,10 +418,10 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle) {
 	bgstyle['padding-top'] = parseInt(bgstyle['padding-top']);
 	bgstyle['padding-bottom'] = parseInt(bgstyle['padding-bottom']);
 	
+	// create legend graphic and background
 	var legend = this.svgGraphic.append("g")
 		.attr("class", "scatterplot-legend")
 		.attr("transform", "translate(" + position.x + "," + position.y + ")");
-	
 	var legendBg = legend.append("rect")
 		.attr("class", "scatterplot-legend-bg")
 		.attr("x", 0)
@@ -425,91 +432,119 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle) {
 		}
 	}
 	
+	// column parameters
+	if(!itemsPerColumn) { itemsPerColumn = 0; }
+	if(!columnHeight) { columnHeight = 24; }
+	var columnNumber = 0;
+	var columnItemCount = 0;
+	// running position for next item
 	var yOffset = bgstyle['padding-top'];
+	var xOffset = bgstyle['padding-left'];
 	
-	// by unique point names
-	if(this.points) {
-		var pointSeries = [];
-		for(var i = 0; i < this.points.length; i++) {
-			var name = this.points[i].series;
-			if(pointSeries.indexOf(name) < 0) {
-				pointSeries.push(name);
-				if(!legend) { createLegend(); }
-				legend.append("rect")
-					.attr("x", 2+bgstyle['padding-left'])
-					.attr("y", yOffset+4)
-					.attr("width", 14)
-					.attr("height", 14)
-					.attr("transform", function(d) {
-						return "rotate(45," + (10+bgstyle['padding-left']) + "," + (10+yOffset) + ")"; }
-					)
-					.style("fill", this.getColorBySeriesName(name));
-				legend.append("text")
-					.attr("x", 23+bgstyle['padding-left'])
-					.attr("y", yOffset + 9)
-					.attr("dy", ".35em")
-					.style("text-anchor", "start")
-					.text(name);
-				yOffset += 24;
-			}
+	// local function checks for new column and adjusts position if so
+	function addAndCheckColumn() {
+		columnItemCount++;
+		if(itemsPerColumn > 0 && columnItemCount >= itemsPerColumn) {
+			columnNumber++;
+			columnItemCount = 0;
+			yOffset = bgstyle['padding-top'];
+			xOffset = legend.node().getBBox().width + 12;
+		} else {
+			yOffset += columnHeight;
 		}
 	}
 	
-	// now get unique line names
-	if(this.lines) {
-		var lineSeries = [];
-		for(var i = 0; i < this.lines.length; i++) {
-			var name = this.lines[i].series;
-			if(lineSeries.indexOf(name) < 0) {
-				lineSeries.push(name);
-				var lineOffset = yOffset + 10;
-				var path = legend.append("path")
-					.attr("y", yOffset)
-					.attr("d", 
-						"M" + bgstyle['padding-left'] + " " + lineOffset + " " + 
-						"L" + (18+bgstyle['padding-left']) + " " + lineOffset
-					);
-				for(var style in this.lines[i].style) {
-					path.style(style, this.lines[i].style[style]);
-				}
-				if(!('stroke' in this.lines[i].style)) {
-					path.style('stroke', this.color(this.lines[i].series));
-				}
-				legend.append("text")
-					.attr("x", 23+bgstyle['padding-left'])
-					.attr("y", yOffset + 9)
-					.attr("dy", ".35em")
-					.style("text-anchor", "start")
-					.text(name);
-				yOffset += 24;
-			}
+	// local functions for adding items to legend by data type (not needed yet but will make custom item order easier for future)
+	var self = this;
+	function addAreaItem(data) {
+		var symbol = legend.append("rect")
+			.attr("x", xOffset)
+			.attr("y", yOffset)
+			.attr("width", 18)
+			.attr("height", 18);
+		for(var style in data.style) {
+			symbol.style(style, data.style[style]);
 		}
+		legend.append("text")
+			.attr("x", 23+xOffset)
+			.attr("y", yOffset + 9)
+			.attr("dy", ".35em")
+			.style("text-anchor", "start")
+			.text(data.series);
+		addAndCheckColumn();
 	}
-	// now get unique area names
+	function addLineItem(data) {
+		var lineOffset = yOffset + 10;
+		var path = legend.append("path")
+			.attr("y", yOffset)
+			.attr("d", 
+				"M" + xOffset + " " + lineOffset + " " + 
+				"L" + (18+xOffset) + " " + lineOffset
+			);
+		for(var style in data.style) {
+			path.style(style, data.style[style]);
+		}
+		legend.append("text")
+			.attr("x", 23+xOffset)
+			.attr("y", yOffset + 9)
+			.attr("dy", ".35em")
+			.style("text-anchor", "start")
+			.text(data.series);
+		addAndCheckColumn();
+	}
+	function addPointItem(data) {
+		legend.append("rect")
+			.attr("x", xOffset+2)
+			.attr("y", yOffset+4)
+			.attr("width", 14)
+			.attr("height", 14)
+			.attr("transform", function(d) {
+				return "rotate(45," + (10+xOffset) + "," + (10+yOffset) + ")"; }
+			)
+			.style("fill", self.getColorBySeriesName(data.series));
+		legend.append("text")
+			.attr("x", xOffset+23)
+			.attr("y", yOffset + 9)
+			.attr("dy", ".35em")
+			.style("text-anchor", "start")
+			.text(data.series);
+		addAndCheckColumn();
+	}
+	
+	// start with areas data
 	if(this.areas) {
 		var areaSeries = [];
 		for(var i = 0; i < this.areas.length; i++) {
 			var name = this.areas[i].series;
 			if(areaSeries.indexOf(name) < 0) {
 				areaSeries.push(name);
-				var symbol = legend.append("rect")
-					.attr("x", bgstyle['padding-left'])
-					.attr("y", yOffset)
-					.attr("width", 18)
-					.attr("height", 18);
-				for(var style in this.areas[i].style) {
-					symbol.style(style, this.areas[i].style[style]);
-				}
-				legend.append("text")
-					.attr("x", 23+bgstyle['padding-left'])
-					.attr("y", yOffset + 9)
-					.attr("dy", ".35em")
-					.style("text-anchor", "start")
-					.text(name);
-				yOffset += 24;
+				addAreaItem(this.areas[i]);
 			}
 		}
 	}
+	// then lines
+	if(this.lines) {
+		var lineSeries = [];
+		for(var i = 0; i < this.lines.length; i++) {
+			var name = this.lines[i].series;
+			if(lineSeries.indexOf(name) < 0) {
+				lineSeries.push(name);
+				addLineItem(this.lines[i]);
+			}
+		}
+	}
+	// finally points
+	if(this.points) {
+		var pointSeries = [];
+		for(var i = 0; i < this.points.length; i++) {
+			var name = this.points[i].series;
+			if(pointSeries.indexOf(name) < 0) {
+				pointSeries.push(name);
+				addPointItem(this.points[i]);
+			}
+		}
+	}
+	
 	// finish up legend bg after completing elements inside
 	var legendBox = legend.node().getBBox();
 	legendBg
