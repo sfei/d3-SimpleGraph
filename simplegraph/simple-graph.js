@@ -142,10 +142,16 @@ var SimpleGraph = function(options) {
 		.scale(this.xScale)
 		.tickFormat(d3.format(options.axis.x.format))
 		.orient("bottom");
+	this.xGridAxis = d3.svg.axis()
+		.scale(this.xScale)
+		.tickFormat(d3.format(options.axis.x.format))
+		.orient("bottom");
 	if(options.axis.x.tickValues) {
 		this.xAxis.tickValues(options.axis.x.tickValues);
+		this.xGridAxis.tickValues(options.axis.x.tickValues);
 	} else if(options.axis.x.ticks) {
 		this.xAxis.ticks(options.axis.x.ticks);
+		this.xGridAxis.ticks(options.axis.x.ticks);
 	}
 
 	// y-axis
@@ -156,10 +162,16 @@ var SimpleGraph = function(options) {
 		.scale(this.yScale)
 		.tickFormat(d3.format(options.axis.y.format))
 		.orient("left");
+	this.yGridAxis = d3.svg.axis()
+		.scale(this.yScale)
+		.tickFormat(d3.format(options.axis.y.format))
+		.orient("left");
 	if(options.axis.y.tickValues) {
 		this.yAxis.tickValues(options.axis.y.tickValues);
+		this.yGridAxis.tickValues(options.axis.y.tickValues);
 	} else if(options.axis.y.ticks) {
 		this.yAxis.ticks(options.axis.y.ticks);
+		this.yGridAxis.ticks(options.axis.y.ticks);
 	}
 	
 	this.drawAxes();
@@ -205,6 +217,8 @@ SimpleGraph.prototype.destroy = function() {
 	this.yScale = null;
 	this.yAxis = null;
 	this.xAxis = null;
+	this.yGridAxis = null;
+	this.xGridAxis = null;
 };
 
 
@@ -219,6 +233,23 @@ SimpleGraph.prototype.destroy = function() {
  * 		only be done via recreating graph).
  */
 SimpleGraph.prototype.drawAxes = function(labelPosition) {
+	// draw axes first without labels
+	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .axis-label").remove();
+	var xAxisG = this.svgGraphic.append("g")
+		.attr("class", "scatterplot-xaxis")
+		.attr("transform", "translate(0," + this.height + ")")
+		.call(this.xAxis);
+	var yAxisG = this.svgGraphic.append("g")
+		.attr("class", "scatterplot-yaxis")
+		.call(this.yAxis);
+	// for some reason ticks are by default invisible
+	this.svgGraphic.selectAll(".tick line").style("stroke", "#000");
+	// add styles
+	var axes = this.svgGraphic.selectAll(".scatterplot-xaxis .domain, .scatterplot-yaxis .domain");
+	for(var style in this.axisStyles) {
+		axes.style(style, this.axisStyles[style]);
+	}
+	
 	// default position on right-inside
 	var xLabelPos = {
 		a: 'end', 
@@ -230,14 +261,27 @@ SimpleGraph.prototype.drawAxes = function(labelPosition) {
 		x: 0,
 		y: 6
 	};
-	// override default if options supplied
+	// determine label position
 	if(labelPosition) {
+		// get size of ticks to know margin to place labels away if outside
+		var tickMargin = { x: 0, y: 0 };
+		this.svgGraphic.selectAll(".scatterplot-xaxis .tick").each(function() {
+			if(this.getBBox().height > tickMargin.x) {
+				tickMargin.x = this.getBBox().height;
+			}
+		});
+		this.svgGraphic.selectAll(".scatterplot-yaxis .tick").each(function() {
+			if(this.getBBox().width > tickMargin.y) {
+				tickMargin.y = this.getBBox().width;
+			}
+		});
+		// split by keys
 		var lpKeys = labelPosition.toLowerCase().split(/[ ,]+/);
 		var parallel = "right", perpendicular = "inside";
 		for(var i = 0; i < lpKeys.length; i++) {
 			if(lpKeys[i] === "outside") {
-				xLabelPos.y = this.margins.bottom;
-				yLabelPos.y = -this.margins.left;
+				xLabelPos.y = tickMargin.x + 10;
+				yLabelPos.y = -tickMargin.y - 10;
 				perpendicular = "outside";
 			} else if(lpKeys[i] === "inside") {
 				xLabelPos.y = -6;
@@ -246,15 +290,15 @@ SimpleGraph.prototype.drawAxes = function(labelPosition) {
 			}
 			if(lpKeys[i] === "left") {
 				xLabelPos.a = 'start';
-				xLabelPos.x = this.margins.left;
+				xLabelPos.x = 0;
 				yLabelPos.a = 'start';
-				yLabelPos.x = -this.height + this.margins.bottom;
+				yLabelPos.x = -this.height;
 				parallel = "left";
 			} else if(lpKeys[i] === "center") {
-				xLabelPos.a = 'center';
-				xLabelPos.x = this.margins.left + 0.5*(this.width-this.margins.right);
-				yLabelPos.a = 'center';
-				yLabelPos.x = this.margins.bottom-0.5*(this.height+this.margins.top);
+				xLabelPos.a = 'middle';
+				xLabelPos.x = 0.5*this.width;
+				yLabelPos.a = 'middle';
+				yLabelPos.x = -0.5*this.height;
 				parallel = "right";
 			} else if(lpKeys[i] === "right") {
 				xLabelPos.a = 'end';
@@ -275,38 +319,23 @@ SimpleGraph.prototype.drawAxes = function(labelPosition) {
 		}
 	}
 	
-	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .axis-label").remove();
-	this.svgGraphic.append("g")
-		.attr("class", "scatterplot-xaxis")
-		.attr("transform", "translate(0," + this.height + ")")
-		.call(this.xAxis)
-	  .append("text")
+	// add labels
+	xAxisG.append("text")
 		.attr("class", "axis-label")
 		.attr("x", xLabelPos.x)
 		.attr("y", xLabelPos.y)
-		.style("text-anchor", "end")
+		.style("text-anchor", xLabelPos.a)
 		.style("font-weight", "bolder")
 		.text(this.xAxisLabel);
-	this.svgGraphic.append("g")
-		.attr("class", "scatterplot-yaxis")
-		.call(this.yAxis)
-	  .append("text")
+	yAxisG.append("text")
 		.attr("class", "axis-label")
 		.attr("transform", "rotate(-90)")
 		.attr("x", yLabelPos.x)
 		.attr("y", yLabelPos.y)
 		.attr("dy", ".71em")
-		.style("text-anchor", "end")
+		.style("text-anchor", yLabelPos.a)
 		.style("font-weight", "bolder")
 		.text(this.yAxisLabel);
-		
-	// for some reason ticks are by default invisible
-	this.svgGraphic.selectAll(".tick line").style("stroke", "#000");
-	
-	var axes = this.svgGraphic.selectAll(".scatterplot-xaxis .domain, .scatterplot-yaxis .domain");
-	for(var style in this.axisStyles) {
-		axes.style(style, this.axisStyles[style]);
-	}
 };
 
 /**
@@ -319,20 +348,14 @@ SimpleGraph.prototype.drawGrid = function(style) {
 	var opacity = (style && style.opacity) ? parseFloat(style.opacity) : 0.4;
 	var stroke = (style && style.stroke) ? style.stroke : "#555";
 	var strokeWidth = (style && style['stroke-width']) ? parseFloat(style['stroke-width']) : 0.3;
-	// clone axes, otherwise when redrawing axes/grid again it gets confused
-	var xAxisCopy = d3.svg.axis()
-		.scale(this.xScale)
-		.orient("bottom");
-	var yAxisCopy = d3.svg.axis()
-		.scale(this.yScale)
-		.orient("left");
+	
 	this.svgGraphic.append("g")
 		.attr("class", "scatterplot-grid")
 		.attr("transform", "translate(0," + this.height + ")")
 		.style("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(xAxisCopy
+		.call(this.xGridAxis
 			.tickSize(-this.height, 0, 0)
 			.tickFormat("")
 		);
@@ -341,7 +364,7 @@ SimpleGraph.prototype.drawGrid = function(style) {
 		.attr("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(yAxisCopy
+		.call(this.yGridAxis
 			.tickSize(-this.width, 0, 0)
 			.tickFormat("")
 		);
@@ -695,10 +718,10 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 
 /**
  * Add points data with an array of arrays.
- * @param {Array[]} data - The plot data as an array of [x,y] arrays.
  * @param {string} name - The name of the data data series.
+ * @param {Array[]} data - The plot data as an array of [x,y] arrays.
  */
-SimpleGraph.prototype.addPointsDataAsArray = function(data, name) {
+SimpleGraph.prototype.addPointsDataAsArray = function(name, data) {
 	if(!data || data.length === 0) {
 		return;
 	}
@@ -866,11 +889,17 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
  * @param {Object} [style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
  * 		the resulting SVG element's CSS style.
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {string} [handleOverlap='average'] - 
  */
-SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation) {
+SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, handleOverlap) {
 	if(!this.points || this.points.length === 0) {
 		this.pointLines = null;
 		return;
+	}
+	if(!handleOverlap) {
+		handleOverlap = 'average';
+	} else {
+		handleOverlap = handleOverlap.toLowerCase();
 	}
 	// default styles
 	if(!style) {
@@ -905,10 +934,32 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation) {
 		var exists = false;
 		for(var j = 0; j < arrayToPush.length; j++) {
 			if(arrayToPush[j][0] === pointToAdd.x) {
-				// if it exists, add to count and use average y-value
-				arrayToPush[j][2] += 1;
-				arrayToPush[j][1] = (arrayToPush[j][1]*(arrayToPush[j][2]-1) + pointToAdd.y)/arrayToPush[j][2];
 				exists = true;
+				// if it exists, add to count and..
+				if(handleOverlap === "median") {
+					if(!$.isArray(arrayToPush[j][2])) {
+						arrayToPush[j][2] = [];
+					}
+					arrayToPush[j][2].push(pointToAdd.y);
+					arrayToPush[j][2].sort();
+					var medianIndex = (arrayToPush[j][2].length > 1) ? Math.round(arrayToPush[j][2].length/2)-1 : 0;
+					arrayToPush[j][1] = arrayToPush[j][2][medianIndex];
+				} else {
+					arrayToPush[j][2] += 1;
+					if(handleOverlap === "average") {
+						arrayToPush[j][1] = (arrayToPush[j][1]*(arrayToPush[j][2]-1) + pointToAdd.y)/arrayToPush[j][2];
+					} else if(handleOverlap === "lowest") {
+						if(pointToAdd.y < arrayToPush[j][1]) {
+							arrayToPush[j][1] = pointToAdd.y;
+						}
+					} else if(handleOverlap === "highest") {
+						if(pointToAdd.y > arrayToPush[j][1]) {
+							arrayToPush[j][1] = pointToAdd.y;
+						}
+					} else {
+						throw "Unknown handle overlap operation: " + handleOverlap;
+					}
+				}
 				break;
 			} else if(arrayToPush[j] > pointToAdd.x) {
 				// since this is assumed in ascending order
@@ -1310,7 +1361,7 @@ SimpleGraph.prototype.drawLines = function() {
 				d3.svg.line()
 					.x(function(c) { return xScale(c[0]); })
 					.y(function(c) { return yScale(c[1]); })
-					.interpolate(drawLines.interpolate)
+					.interpolate(drawLines[0].interpolate)
 			);
 		for(var style in drawLines[0].style) {
 			addLines.style(style, drawLines[0].style[style]);
