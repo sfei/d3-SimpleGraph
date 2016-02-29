@@ -227,17 +227,25 @@ SimpleGraph.prototype.destroy = function() {
 //************************************************************************************************************
 /**
  * (Re)draw axes on graph.
- * @param {string} [labelPosition="inside right"] - Keyswords for the label positions on each axis. Keywords 
- * 		include 'inside' or 'outside' combined with 'left', 'center', or 'right'. Note that if you position 
- * 		labels outside, you may need to supply more margins to avoid overlapping tick labels (currently can 
- * 		only be done via recreating graph).
+ * @param {string} [labelPosition="inside right"] - Keywords for the label positions on each axis. Keywords 
+ * 		include 'inside' or 'outside' combined with 'left', 'center', or 'right'.
+ * @param {string} [xAxisPosition="bottom"]
  */
-SimpleGraph.prototype.drawAxes = function(labelPosition) {
+SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition) {
+	if(!xAxisPosition) { 
+		xAxisPosition = "bottom"; 
+	} else {
+		xAxisPosition = xAxisPosition.toLowerCase().trim();
+		if(xAxisPosition !== "top") { xAxisPosition = "bottom"; }
+	}
+	this.xAxis.orient(xAxisPosition);
+	var xAxisPosY = (xAxisPosition === "top") ? 0 : this.height;
+	
 	// draw axes first without labels
 	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .axis-label").remove();
 	var xAxisG = this.svgGraphic.append("g")
 		.attr("class", "scatterplot-xaxis")
-		.attr("transform", "translate(0," + this.height + ")")
+		.attr("transform", "translate(0," + xAxisPosY + ")")
 		.call(this.xAxis);
 	var yAxisG = this.svgGraphic.append("g")
 		.attr("class", "scatterplot-yaxis")
@@ -280,11 +288,11 @@ SimpleGraph.prototype.drawAxes = function(labelPosition) {
 		var parallel = "right", perpendicular = "inside";
 		for(var i = 0; i < lpKeys.length; i++) {
 			if(lpKeys[i] === "outside") {
-				xLabelPos.y = tickMargin.x + 10;
+				xLabelPos.y =(xAxisPosition === "top") ? -tickMargin.x : tickMargin.x + 10;
 				yLabelPos.y = -tickMargin.y - 10;
 				perpendicular = "outside";
 			} else if(lpKeys[i] === "inside") {
-				xLabelPos.y = -6;
+				xLabelPos.y = (xAxisPosition === "top") ? 14 : -6;
 				yLabelPos.y = 6;
 				perpendicular = "inside";
 			}
@@ -340,7 +348,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition) {
 
 /**
  * Add grid over graph.
- * @param {Object} [style={opacity:0.4,stroke:"#555","stroke-width":0.3}]
+ * @param {Object} [style={opacity:0.4,stroke:"#555",'stroke-width':0.3}]
  */
 SimpleGraph.prototype.drawGrid = function(style) {
 	this.svgGraphic.selectAll(".scatterplot-grid").remove();
@@ -386,11 +394,10 @@ SimpleGraph.prototype.removeGrid = function() {
  * 		column will be started to the right. If set to 0 or less, infinite (that is, all will be put in single 
  * 		column). Note that if the next column exceeds the right margin of the graph, placement errors will 
  * 		result.
- * @param {number} [columnHeight=24] - The height per column. Default is set to best fit size of text and 
- * 		icons in legend (the second which is currently uncustomizable) so use care if decreasing column 
- * 		height.
+ * @param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in 
+ * 		legend (the second which is currently uncustomizable) so use care if decreasing row height.
  */
-SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, columnHeight) {
+SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, rowHeight) {
 	this.svgGraphic.selectAll(".scatterplot-legend").remove();
 	
 	if(!position) {
@@ -457,7 +464,7 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, c
 	
 	// column parameters
 	if(!itemsPerColumn) { itemsPerColumn = 0; }
-	if(!columnHeight) { columnHeight = 24; }
+	if(!rowHeight) { rowHeight = 24; }
 	var columnNumber = 0;
 	var columnItemCount = 0;
 	// running position for next item
@@ -473,12 +480,67 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, c
 			yOffset = bgstyle['padding-top'];
 			xOffset = legend.node().getBBox().width + 12;
 		} else {
-			yOffset += columnHeight;
+			yOffset += rowHeight;
 		}
 	}
 	
 	// local functions for adding items to legend by data type (not needed yet but will make custom item order easier for future)
 	var self = this;
+	function addPointItem(data, lineData) {
+		if(lineData) {
+			var lineOffset = yOffset + 10;
+			var path = legend.append("path")
+				.attr("x", xOffset)
+				.attr("y", yOffset)
+				.attr("d", 
+					"M" + xOffset + " " + lineOffset + " " + 
+					"L" + (18+xOffset) + " " + lineOffset
+				);
+			for(var style in lineData.style) {
+				path.style(style, lineData.style[style]);
+			}
+			path.style("stroke", self.getColorBySeriesName(data.series));
+		}
+		var size = (typeof data.pointsize === "function") ? data.pointsize() : data.pointsize;
+		if(size > 14) { size = 14; }
+		var halfSize = size/2.0, halfSizeDiff = 7-halfSize;
+		var iconOffsetX = xOffset+2+halfSizeDiff, 
+			iconOffsetY = yOffset+3+halfSizeDiff;
+		legend.append("rect")
+			.attr("x", iconOffsetX)
+			.attr("y", iconOffsetY)
+			.attr("width", size)
+			.attr("height", size)
+			.attr("transform", "rotate(45," + (iconOffsetX+halfSize) + "," + (iconOffsetY+halfSize) + ")")
+			.style("fill", self.getColorBySeriesName(data.series));
+		legend.append("text")
+			.attr("x", xOffset+23)
+			.attr("y", yOffset+9)
+			.attr("dy", ".35em")
+			.style("text-anchor", "start")
+			.text(data.series);
+		addAndCheckColumn();
+	}
+	function addLineItem(data) {
+		var lineOffset = yOffset + 10;
+		var path = legend.append("path")
+			.attr("x", xOffset)
+			.attr("y", yOffset)
+			.attr("d", 
+				"M" + xOffset + " " + lineOffset + " " + 
+				"L" + (18+xOffset) + " " + lineOffset
+			);
+		for(var style in data.style) {
+			path.style(style, data.style[style]);
+		}
+		legend.append("text")
+			.attr("x", xOffset+23)
+			.attr("y", yOffset+9)
+			.attr("dy", ".35em")
+			.style("text-anchor", "start")
+			.text(data.series);
+		addAndCheckColumn();
+	}
 	function addAreaItem(data) {
 		var symbol = legend.append("rect")
 			.attr("x", xOffset)
@@ -489,45 +551,8 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, c
 			symbol.style(style, data.style[style]);
 		}
 		legend.append("text")
-			.attr("x", 23+xOffset)
-			.attr("y", yOffset + 9)
-			.attr("dy", ".35em")
-			.style("text-anchor", "start")
-			.text(data.series);
-		addAndCheckColumn();
-	}
-	function addLineItem(data) {
-		var lineOffset = yOffset + 10;
-		var path = legend.append("path")
-			.attr("y", yOffset)
-			.attr("d", 
-				"M" + xOffset + " " + lineOffset + " " + 
-				"L" + (18+xOffset) + " " + lineOffset
-			);
-		for(var style in data.style) {
-			path.style(style, data.style[style]);
-		}
-		legend.append("text")
-			.attr("x", 23+xOffset)
-			.attr("y", yOffset + 9)
-			.attr("dy", ".35em")
-			.style("text-anchor", "start")
-			.text(data.series);
-		addAndCheckColumn();
-	}
-	function addPointItem(data) {
-		legend.append("rect")
-			.attr("x", xOffset+2)
-			.attr("y", yOffset+4)
-			.attr("width", 14)
-			.attr("height", 14)
-			.attr("transform", function(d) {
-				return "rotate(45," + (10+xOffset) + "," + (10+yOffset) + ")"; }
-			)
-			.style("fill", self.getColorBySeriesName(data.series));
-		legend.append("text")
 			.attr("x", xOffset+23)
-			.attr("y", yOffset + 9)
+			.attr("y", yOffset+9)
 			.attr("dy", ".35em")
 			.style("text-anchor", "start")
 			.text(data.series);
@@ -563,7 +588,17 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, c
 			var name = this.points[i].series;
 			if(pointSeries.indexOf(name) < 0) {
 				pointSeries.push(name);
-				addPointItem(this.points[i]);
+				// find connected point line series, if it exists
+				var pointLine = null;
+				if(this.pointLines) {
+					for(var j = 0; j < this.pointLines.length; j++) {
+						if(this.pointLines[j].series === name) {
+							pointLine = this.pointLines[j];
+							break;
+						}
+					}
+				}
+				addPointItem(this.points[i], pointLine);
 			}
 		}
 	}
@@ -647,13 +682,17 @@ SimpleGraph.prototype.resetColorScale = function(colorScale) {
  * @param {string} name - The name of the data point or data series.
  * @param {string} xValue - The x-value.
  * @param {string} yValue - The y-value.
+ * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
+ * 		where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
+ * 		keys, if supplied).
  */
-SimpleGraph.prototype.addPointData = function(name, xValue, yValue) {
+SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size) {
 	if(!this.points) { this.points = []; }
 	var p = {
 		series: name, 
 		x: parseFloat(xValue), 
-		y: parseFloat(yValue)
+		y: parseFloat(yValue),
+		pointsize: size
 	};
 	if(isNaN(p.y)) {
 		p.y = 0;
@@ -671,12 +710,16 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue) {
  * @param {string} xValueName - The key name in each data object to retrieve the x-value.
  * @param {string} yValueName - The key name in each data object to retrieve the y-value.
  * @param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.
+ * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
+ * 		where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
+ * 		keys, if supplied).
  */
-SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys) {
+SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size) {
 	if(!data || data.length === 0) {
 		return;
 	}
 	if(!this.points) { this.points = []; }
+	if(!size || (typeof size !== "number" && typeof size != "function")) { size = 10; }
 	var pointIndex = -1;
 	// first we gotta comb through the data and organize it nicely
 	for(var i = 0; i < data.length; i++) {
@@ -692,7 +735,8 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 		this.points.push({
 			series: seriesName, 
 			x: parseFloat(xValue), // ensure numeric type
-			y: parseFloat(yValue)
+			y: parseFloat(yValue), 
+			pointsize: size
 		});
 		pointIndex++;
 		// additonal keys
@@ -720,11 +764,15 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
  * Add points data with an array of arrays.
  * @param {string} name - The name of the data data series.
  * @param {Array[]} data - The plot data as an array of [x,y] arrays.
+ * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
+ * 		where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
+ * 		keys, if supplied).
  */
-SimpleGraph.prototype.addPointsDataAsArray = function(name, data) {
+SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size) {
 	if(!data || data.length === 0) {
 		return;
 	}
+	if(!size || (typeof size !== "number" && typeof size != "function")) { size = 10; }
 	if(!this.points) { this.points = []; }
 	for(var i = 0; i < data.length; i++) {
 		if(data[i][0] === undefined || data[i][0] === null || data[i][1] === undefined || data[i][1] === null) {
@@ -733,7 +781,8 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data) {
 		var p = {
 			series: name, 
 			x: parseFloat(data[i][0]),
-			y: parseFloat(data[i][1])
+			y: parseFloat(data[i][1]),
+			pointsize: size
 		};
 		if(isNaN(p.y)) {
 			p.y = 0;
@@ -889,7 +938,8 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
  * @param {Object} [style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
  * 		the resulting SVG element's CSS style.
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
- * @param {string} [handleOverlap='average'] - 
+ * @param {string} [handleOverlap="average"] - If there are 2 or more points overlapped for a given x-value, 
+ * 		how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".
  */
 SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, handleOverlap) {
 	if(!this.points || this.points.length === 0) {
@@ -1023,7 +1073,7 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
  * @param {string} name - series name
  * @callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.
  * @callback lineFunctionTop - callback function for top border of area such that function(x) returns y1.
- * @param {Object} [style={fill:'#ccc'}] - Object literal of key-value pairs that will be applied as 
+ * @param {Object} [style={fill:"#ccc"}] - Object literal of key-value pairs that will be applied as 
  * 		the resulting SVG element's CSS style.
  * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 
  *		pixels of width if not provided and if provided enforces minimum of 2).
@@ -1129,8 +1179,8 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
  * Add an area data series a given set of coordinates.
  * @param {string} name - series name
  * @param {number[][]} areaCoordinates - array of area coordinate triplets [x, y0, y1]
- * @param {Object} [style={fill:'#ccc'}] - Object literal of key-value pairs that will be applied as 
- * 		the resulting SVG element's CSS style.
+ * @param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG 
+ * 		element's CSS style.
  * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 
  *		pixels of width if not provided and if provided enforces minimum of 2).
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
@@ -1290,16 +1340,12 @@ SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 /**
  * Draw points data onto the graph. If points already exist will remove and redraw. Points will have class 
  * ".scatterplot-point".
- * @param {number} [size=10] - size of points
  */
-SimpleGraph.prototype.drawPoints = function(size) {
+SimpleGraph.prototype.drawPoints = function() {
 	if(!this.points || this.points.length === 0) {
 		return;
 	}
 	this.removePoints();
-	if(!size || typeof size !== "number") {
-		size = 10;
-	}
 	// for 'this' references
 	var color = this.color;
 	var xScale = this.xScale;
@@ -1322,10 +1368,16 @@ SimpleGraph.prototype.drawPoints = function(size) {
 		.data(drawPointsData)
 	  .enter().append("rect")
 		.attr("class", "scatterplot-point")
-		.attr("width", size)
-		.attr("height", size)
-		.attr("x", function(d) { return xScale(d.x)-size/2.0; })
-		.attr("y", function(d) { return yScale(d.y)-size/2.0; })
+		.attr("width", function(d) { return (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize; })
+		.attr("height", function(d) { return (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize; })
+		.attr("x", function(d) {
+			var size = (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize;
+			return xScale(d.x)-size/2.0;
+		})
+		.attr("y", function(d) {
+			var size = (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize;
+			return yScale(d.y)-size/2.0;
+		})
 		.attr("transform", function(d) { return "rotate(45," + xScale(d.x) + "," + yScale(d.y) + ")"; })
 		.style("fill", function(d) { return color(d.series);});
 };

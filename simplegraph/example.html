@@ -144,7 +144,7 @@
   height: 600,
   axis: {
     style: {
-      'stroke-width': 1.0           // make axes a little thicker than default
+      'stroke-width': 1.0  // make axes a little thicker than default
     },
     x: {
       min: 0,
@@ -155,7 +155,7 @@
       min: 25,
       max: 100,
       label: 'Score',
-      tickValues: [25, 50, 75, 100] // specify exact locations for tick marks
+      tickValues: [25, 50, 75, 100]  // specify exact locations for tick marks
     }
   }
 });" 
@@ -198,13 +198,17 @@ graph.drawLines();"
             <p class='param'>@param {string} dataPointName - The key name in each data object to retrieve the data point or data series name and label. Optional. If not supplied, or it cannot find the given key in the data object, defaults to the index position in array of points.</p>
             <p class='param'>@param {string} xValueName - The key name in each data object to retrieve the x-value.</p>
             <p class='param'>@param {string} yValueName - The key name in each data object to retrieve the y-value.</p>
-            <p class='param'>@param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.</p>"
+            <p class='param'>@param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.</p>
+            <p class='param'>@param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied).</p>"
           sampleCode="graph.addPointsData(
-  scores,          // example data supplied with this page
-  'name',          // the key name for the data series
-  'age',           // the key name for the x-value
-  'score',         // the key name for the y-value
-  ['wetlandclass'] // additional keys to store with the D3 data
+  scores,           // example data supplied with this page
+  'name',           // the key name for the data series
+  'age',            // the key name for the x-value
+  'score',          // the key name for the y-value
+  ['wetlandclass'], // additional keys to store with the D3 data
+  function() {      // for fun, size scales with score (that is, y-value)
+      return 4 + this.y/15;
+  }
 );
 graph.drawPoints();"
           onclick="openHelp(this)">
@@ -289,7 +293,7 @@ graph.drawPoints();"
             <p class='param'>@param {number[]} position - x,y coordinate position from top-left corner of SVG</p>
             <p class='param'>@param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</p>
             <p class='param'>@param {number} [itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, infinite (that is, all will be put in single column). Note that if the next column exceeds the right margin of the graph, placement errors will result.</p>
-            <p class='param'>@param {number} [columnHeight=24] - The height per column. Default is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing column height.</p>"
+            <p class='param'>@param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</p>"
           sampleCode="graph.drawGrid();
 graph.drawLegend(
   [50,20],        // place legend near top-left of graph
