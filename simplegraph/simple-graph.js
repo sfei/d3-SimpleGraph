@@ -486,8 +486,8 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, r
 	
 	// local functions for adding items to legend by data type (not needed yet but will make custom item order easier for future)
 	var self = this;
-	function addPointItem(data, lineData) {
-		if(lineData) {
+	function addPointItem(data, drawPointLine) {
+		if(drawPointLine) {
 			var lineOffset = yOffset + 10;
 			var path = legend.append("path")
 				.attr("x", xOffset)
@@ -496,8 +496,9 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, r
 					"M" + xOffset + " " + lineOffset + " " + 
 					"L" + (18+xOffset) + " " + lineOffset
 				);
-			for(var style in lineData.style) {
-				path.style(style, lineData.style[style]);
+			// remember styles are only stored in first since they're shared
+			for(var style in self.pointLines[0].style) {
+				path.style(style, self.pointLines[0].style[style]);
 			}
 			path.style("stroke", self.getColorBySeriesName(data.series));
 		}
@@ -589,16 +590,17 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, r
 			if(pointSeries.indexOf(name) < 0) {
 				pointSeries.push(name);
 				// find connected point line series, if it exists
-				var pointLine = null;
+				var drawPointLine = false;
 				if(this.pointLines) {
-					for(var j = 0; j < this.pointLines.length; j++) {
+					var j = this.pointLines.length;
+					while(j--) {
 						if(this.pointLines[j].series === name) {
-							pointLine = this.pointLines[j];
+							drawPointLine = true;
 							break;
 						}
 					}
 				}
-				addPointItem(this.points[i], pointLine);
+				addPointItem(this.points[i], drawPointLine);
 			}
 		}
 	}
