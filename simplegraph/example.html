@@ -291,12 +291,14 @@ graph.drawPoints();"
             <br /><br />
             <b>graph.drawLegend(position, bgstyle):</b>
             <p class='param'>@param {number[]} position - x,y coordinate position from top-left corner of SVG</p>
+            <p class='param'>@param {string} [anchor='left'] - Optional anchor for the coordinate x-position (left, middle, or right).</p>
             <p class='param'>@param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</p>
             <p class='param'>@param {number} [itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, infinite (that is, all will be put in single column). Note that if the next column exceeds the right margin of the graph, placement errors will result.</p>
             <p class='param'>@param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</p>"
           sampleCode="graph.drawGrid();
 graph.drawLegend(
   [50,20],        // place legend near top-left of graph
+  'left', 
   {
     fill:'#fff',  // fill in legend
     padding:10,   // add padding for legend items

@@ -388,6 +388,7 @@ SimpleGraph.prototype.removeGrid = function() {
 /**
  * Draw the legend onto the graph. If legend already exists, will redraw it.
  * @param {number[]} position - x,y coordinate position from top-left corner of SVG
+ * @param {string} [anchor="left"] - Optional anchor for the coordinate x-position (left, middle, or right).
  * @param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the 
  * 		exception of support for padding.
  * @param {number} [itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new 
@@ -397,7 +398,7 @@ SimpleGraph.prototype.removeGrid = function() {
  * @param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in 
  * 		legend (the second which is currently uncustomizable) so use care if decreasing row height.
  */
-SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, rowHeight) {
+SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight) {
 	this.svgGraphic.selectAll(".scatterplot-legend").remove();
 	
 	if(!position) {
@@ -409,6 +410,9 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, r
 		if(!position.y && position.y !== 0) {
 			position.y = (position[1] !== undefined && typeof position[1] === "number") ? position[1] : 0;
 		}
+	}
+	if(!anchor) {
+		anchor = "left";
 	}
 	
 	// default styles for legend container (padding is set via explicit sides)
@@ -610,6 +614,15 @@ SimpleGraph.prototype.drawLegend = function(position, bgstyle, itemsPerColumn, r
 	legendBg
 		.attr("width", legendBox.width + bgstyle['padding-left'] + bgstyle['padding-right'])
 		.attr("height", legendBox.height + bgstyle['padding-top'] + bgstyle['padding-bottom']);
+		
+	// adjust legend position if necessary
+	anchor = anchor.trim().toLowerCase();
+	if(anchor === "middle") {
+		position.x -= 0.5*legendBox.width;
+	} else if(anchor === "right") {
+		position.x -= legendBox.width;
+	}
+	legend.attr("transform", "translate(" + position.x + "," + position.y + ")");
 };
 
 
