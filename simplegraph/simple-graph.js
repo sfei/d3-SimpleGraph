@@ -227,11 +227,18 @@ SimpleGraph.prototype.destroy = function() {
 //************************************************************************************************************
 /**
  * (Re)draw axes on graph.
- * @param {string} [labelPosition="inside right"] - Keywords for the label positions on each axis. Keywords 
- * 		include 'inside' or 'outside' combined with 'left', 'center', or 'right'.
- * @param {string} [xAxisPosition="bottom"]
+ * @param {string} [labelPosition="inside center"] - Keywords for the label positions on each axis. Keywords 
+ * 		include 'inside' or 'outside' for the position of both axis labels either inside or outside of the 
+ *		axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' 
+ *		to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement 
+ * 		of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 
+ * 		"center top" would first center both labels, then move the y-axis label to the top.
+ * @param {string} [xAxisPosition="bottom"] - Placement option of the x-axis, allowing you to draw the x-axis 
+ * 		line and labels on top or bottom.
+ * @param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to 
+ * 		overlap with the tick marks. However you may specify and additional margin here.
  */
-SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition) {
+SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabelMargin) {
 	if(!xAxisPosition) { 
 		xAxisPosition = "bottom"; 
 	} else {
@@ -240,6 +247,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition) {
 	}
 	this.xAxis.orient(xAxisPosition);
 	var xAxisPosY = (xAxisPosition === "top") ? 0 : this.height;
+	if(!axisLabelMargin) { axisLabelMargin = 0; }
 	
 	// draw axes first without labels
 	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .axis-label").remove();
@@ -258,71 +266,82 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition) {
 		axes.style(style, this.axisStyles[style]);
 	}
 	
+	// get size of ticks to know margin to place labels away if outside
+	var tickMargin = { x: 0, y: 0 };
+	this.svgGraphic.selectAll(".scatterplot-xaxis .tick").each(function() {
+		if(this.getBBox().height > tickMargin.x) {
+			tickMargin.x = this.getBBox().height;
+		}
+	});
+	this.svgGraphic.selectAll(".scatterplot-yaxis .tick").each(function() {
+		if(this.getBBox().width > tickMargin.y) {
+			tickMargin.y = this.getBBox().width;
+		}
+	});
+	
 	// default position on right-inside
 	var xLabelPos = {
-		a: 'end', 
-		x: this.width,
-		y: -6
+		a: 'middle', 
+		x: 0.5*this.width,
+		y: (xAxisPosition === "top") ? -(tickMargin.x + axisLabelMargin) : (tickMargin.x + 10 + axisLabelMargin)
 	};
 	var yLabelPos = {
-		a: 'end', 
-		x: 0,
-		y: 6
+		a: 'middle', 
+		x: -0.5*this.height,
+		y: -(tickMargin.y + 10 + axisLabelMargin)
 	};
 	// determine label position
 	if(labelPosition) {
-		// get size of ticks to know margin to place labels away if outside
-		var tickMargin = { x: 0, y: 0 };
-		this.svgGraphic.selectAll(".scatterplot-xaxis .tick").each(function() {
-			if(this.getBBox().height > tickMargin.x) {
-				tickMargin.x = this.getBBox().height;
-			}
-		});
-		this.svgGraphic.selectAll(".scatterplot-yaxis .tick").each(function() {
-			if(this.getBBox().width > tickMargin.y) {
-				tickMargin.y = this.getBBox().width;
-			}
-		});
 		// split by keys
 		var lpKeys = labelPosition.toLowerCase().split(/[ ,]+/);
-		var parallel = "right", perpendicular = "inside";
+		var xparallel = "center", yparallel = "center", perpendicular = "outside";
 		for(var i = 0; i < lpKeys.length; i++) {
 			if(lpKeys[i] === "outside") {
-				xLabelPos.y =(xAxisPosition === "top") ? -tickMargin.x : tickMargin.x + 10;
-				yLabelPos.y = -tickMargin.y - 10;
+				xLabelPos.y =(xAxisPosition === "top") ? -(tickMargin.x + axisLabelMargin) : (tickMargin.x + 10 + axisLabelMargin);
+				yLabelPos.y = -(tickMargin.y + 10 + axisLabelMargin);
 				perpendicular = "outside";
 			} else if(lpKeys[i] === "inside") {
-				xLabelPos.y = (xAxisPosition === "top") ? 14 : -6;
-				yLabelPos.y = 6;
+				xLabelPos.y = (xAxisPosition === "top") ? (14 + axisLabelMargin) : -(6 + axisLabelMargin);
+				yLabelPos.y = 6 + axisLabelMargin;
 				perpendicular = "inside";
-			}
-			if(lpKeys[i] === "left") {
-				xLabelPos.a = 'start';
-				xLabelPos.x = 0;
-				yLabelPos.a = 'start';
-				yLabelPos.x = -this.height;
-				parallel = "left";
 			} else if(lpKeys[i] === "center") {
 				xLabelPos.a = 'middle';
 				xLabelPos.x = 0.5*this.width;
 				yLabelPos.a = 'middle';
 				yLabelPos.x = -0.5*this.height;
-				parallel = "right";
+				xparallel = "center";
+				yparallel = "center";
+			} else if(lpKeys[i] === "left") {
+				xLabelPos.a = 'start';
+				xLabelPos.x = 0;
+				xparallel = "left";
 			} else if(lpKeys[i] === "right") {
 				xLabelPos.a = 'end';
 				xLabelPos.x = this.width;
+				xparallel = "right";
+			} else if(lpKeys[i] === "top") {
 				yLabelPos.a = 'end';
 				yLabelPos.x = 0;
-				parallel = "right";
+				yparallel = "top";
+			} else if(lpKeys[i] === "bottom") {
+				yLabelPos.a = 'start';
+				yLabelPos.x = -this.height;
+				yparallel = "bottom";
 			}
 		}
-		// left, being near axis crossing, needs some extra padding
-		if(parallel === "left") {
-			if(perpendicular === "outside") {
-				xLabelPos.x += 0;
-			} else if(perpendicular === "inside") {
+		// if near axis crossing, needs some extra padding
+		if(perpendicular === "inside") {
+			if(xparallel === "left") {
 				xLabelPos.x += 20;
-				yLabelPos.x += 20;
+			}
+			if(xAxisPosition === "bottom") {
+				if(yparallel === "bottom") {
+					yLabelPos.x += 20;
+				}
+			} else {
+				if(yparallel === "top") {
+					yLabelPos.x -= 20;
+				}
 			}
 		}
 	}
@@ -1196,11 +1215,9 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
  * @param {number[][]} areaCoordinates - array of area coordinate triplets [x, y0, y1]
  * @param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG 
  * 		element's CSS style.
- * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 
- *		pixels of width if not provided and if provided enforces minimum of 2).
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
  */
-SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, resolution, interpolation) {
+SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, interpolation) {
 	if(!areaCoordinates || !$.isArray(areaCoordinates) || areaCoordinates.length < 2) {
 		return;
 	}

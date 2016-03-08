@@ -119,18 +119,23 @@
           helptext="Let's start by creating a graph, similar as before. We'll not specify any axis options, so you can see what the default looks like.<br /><br />
             However, let's supply a custom color scale and play with some options for our axis labels, and draw the grid before drawing anything on the graph.<br /><br />
             <b>drawAxes(labelPosition):</b>
-            <p class='param'>@param {string} [labelPosition='inside right'] - Keyswords for the label positions on each axis. Keywords include 'inside' or 'outside' combined with 'left', 'center', or 'right'. Note that if you position labels outside, you may need to supply more margins to avoid overlapping tick labels (currently can only be done via recreating graph).</p>" 
+            <p class='param'>@param {string} [labelPosition='outside center'] - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top.</p>
+            <p class='param'>@param {string} [xAxisPosition='bottom'] - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom.</p>
+            <p class='param'>@param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
           sampleCode="var colors = d3.scale.ordinal()
     .range(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
 var graph = new SimpleGraph({
     container: '#simple-chart',
     width: 850,
     height: 580,
-    margins: { left: 50 }, // we'll want to expand our left-margin somewhat
+    margins: { top: 50, left: 50, bottom: 20, right: 20 }, // we'll want to expand our top and left margins
     colorScale: colors
 });
 graph.drawGrid();
-graph.drawAxes('center outside');" 
+graph.drawAxes(
+    'inside center', // draw labels on inside and center
+    'top'            // place x-axis on top of graph
+);" 
           onclick="openHelp(this)">
         Custom Color and Axis Labels
       </span>
@@ -138,7 +143,7 @@ graph.drawAxes('center outside');"
           class="btn" 
           helptitle="Adding an Area"
           helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
-            You'll notice that the area will overlap over the axes, so it's necessary to redraw the axis (let's also play with a different label placement).<br /><br />
+            You'll notice that the area will overlap over the axes and one of the axes labels, so it's necessary to redraw the axis (let's also play with a different label placement).<br /><br />
             <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
             <p class='param'>@param {string} name - Series name</p>
             <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
@@ -160,7 +165,8 @@ graph.addAreaBetweenTwoLines(
     {opacity: 0.6}  // let's make it transparent
 );
 graph.drawAreas();
-graph.drawAxes('left inside');" 
+// draw axes inside still, but let's place them on the further side from the axis crossing
+graph.drawAxes('inside bottom right', 'top');" 
           onclick="openHelp(this)">
         Adding an Area
       </span>
