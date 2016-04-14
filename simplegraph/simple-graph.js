@@ -120,8 +120,8 @@ var SimpleGraph = function(options) {
 	if(!options.axis.y.format) {
 		options.axis.y.format = ".0f";
 	}
-	this.xAxisLabel = (!options.axis.x.label) ? "x-value" : options.axis.x.label;
-	this.yAxisLabel = (!options.axis.y.label) ? "y-value" : options.axis.y.label;
+	this.xAxisLabel = (options.axis.x.label == null) ? "x-value" : options.axis.x.label;
+	this.yAxisLabel = (options.axis.y.label == null) ? "y-value" : options.axis.y.label;
 
 	// create the SVG
 	this.svg = d3.select(options.container)
@@ -227,7 +227,7 @@ SimpleGraph.prototype.destroy = function() {
 //************************************************************************************************************
 /**
  * (Re)draw axes on graph.
- * @param {string} [labelPosition="inside center"] - Keywords for the label positions on each axis. Keywords 
+ * @param {string} [labelPosition="outside center"] - Keywords for the label positions on each axis. Keywords 
  * 		include 'inside' or 'outside' for the position of both axis labels either inside or outside of the 
  *		axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' 
  *		to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement 
@@ -279,7 +279,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		}
 	});
 	
-	// default position on right-inside
+	// default position on center-outside
 	var xLabelPos = {
 		a: 'middle', 
 		x: 0.5*this.width,
