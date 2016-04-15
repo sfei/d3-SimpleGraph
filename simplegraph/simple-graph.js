@@ -23,6 +23,73 @@
  * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ************************************************************************************************************/
 
+// START flexible constructor
+(function(root, factory) {
+	// Because Internet Explorer... All credit due to Mathias Bynens <https://mathiasbynens.be/>
+	if(!String.prototype.startsWith) {
+		(function() {
+			'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
+			var defineProperty = (function() {
+				// IE 8 only supports `Object.defineProperty` on DOM elements
+				try {
+					var object = {};
+					var $defineProperty = Object.defineProperty;
+					var result = $defineProperty(object, object, object) && $defineProperty;
+				} catch(error) {}
+				return result;
+			}());
+			var toString = {}.toString;
+			var startsWith = function(search) {
+				if (this == null) {
+					throw TypeError();
+				}
+				var string = String(this);
+				if (search && toString.call(search) == '[object RegExp]') {
+					throw TypeError();
+				}
+				var stringLength = string.length;
+				var searchString = String(search);
+				var searchLength = searchString.length;
+				var position = arguments.length > 1 ? arguments[1] : undefined;
+				// `ToInteger`
+				var pos = position ? Number(position) : 0;
+				if (pos != pos) { // better `isNaN`
+					pos = 0;
+				}
+				var start = Math.min(Math.max(pos, 0), stringLength);
+				// Avoid the `indexOf` call if no match is possible
+				if (searchLength + start > stringLength) {
+					return false;
+				}
+				var index = -1;
+				while (++index < searchLength) {
+					if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
+						return false;
+					}
+				}
+				return true;
+			};
+			if (defineProperty) {
+				defineProperty(String.prototype, 'startsWith', {
+					'value': startsWith,
+					'configurable': true,
+					'writable': true
+				});
+			} else {
+				String.prototype.startsWith = startsWith;
+			}
+		}());
+	}
+	// adaptable for CommonJs, RequireJs, or non-framework instantiation
+	if(typeof exports === "object") {
+		module.exports = factory();
+	} else if(typeof define === "function" && define.amd) {
+		define([], factory);
+	} else {
+		root.SimpleGraph = factory();
+	}
+}(this, function() {
+	
 /**
  * Create a SimpleGraph instance and draw an empty graph.
  * @param {Object} [options] - Object literal of options (all optional).
@@ -53,7 +120,7 @@
  * @param {number} [options.axis.x.ticks] - Number of evenly spaced tick intervals on x-axis to create (due 
  * 		to nature of axis, may not always create exactly this amount but will attempt to)
  */
-var SimpleGraph = function(options) {
+function SimpleGraph(options) {
 	// otherwise reaching too deep will cause errors
 	if(!options) { options = {}; }
 	if(!options.margins) { options.margins = {}; }
@@ -80,10 +147,10 @@ var SimpleGraph = function(options) {
 
 	// adjust width and height by margins
 	this.margins = {
-		left: (!options.margins.left) ? 40 : options.margins.left, 
-		right: (!options.margins.right) ? 20 : options.margins.right, 
-		top: (!options.margins.top) ? 20 : options.margins.top, 
-		bottom: (!options.margins.bottom) ? 40 : options.margins.bottom
+		left: (!options.margins.left && options.margins.left != 0) ? 40 : options.margins.left, 
+		right: (!options.margins.right && options.margins.left != 0) ? 20 : options.margins.right, 
+		top: (!options.margins.top && options.margins.left != 0) ? 20 : options.margins.top, 
+		bottom: (!options.margins.bottom && options.margins.left != 0) ? 40 : options.margins.bottom
 	};
 	this.width = ((options.width) ?  options.width : 600) - this.margins.left - this.margins.right;
 	this.height = ((options.height) ?  options.height : 400) - this.margins.top - this.margins.bottom;
@@ -112,11 +179,20 @@ var SimpleGraph = function(options) {
 	if(!options.axis.x) {
 		options.axis.x = {};
 	}
-	if(!options.axis.x.format) {
-		options.axis.x.format = ".0f";
-	}
 	if(!options.axis.x.scale) {
 		options.axis.x.scale = d3.scale.linear;
+	}
+	if(!options.axis.x.format) {
+		if(options.axis.x.scale === d3.time.scale) {
+			options.axis.x.format = "%Y-%m-%d";
+		} else {
+			options.axis.x.format = ".0f";
+		}
+	}
+	if(options.axis.x.scale === d3.time.scale) {
+		options.axis.x.format = d3.time.format(options.axis.x.format);
+	} else {
+		options.axis.x.format = d3.format(options.axis.x.format);
 	}
 	if(!options.axis.y) {
 		options.axis.y = {};
@@ -125,7 +201,16 @@ var SimpleGraph = function(options) {
 		options.axis.y.scale = d3.scale.linear;
 	}
 	if(!options.axis.y.format) {
-		options.axis.y.format = ".0f";
+		if(options.axis.y.scale === d3.time.scale) {
+			options.axis.y.format = "%Y-%m-%d";
+		} else {
+			options.axis.y.format = ".0f";
+		}
+	}
+	if(options.axis.y.scale === d3.time.scale) {
+		options.axis.y.format = d3.time.format(options.axis.y.format);
+	} else {
+		options.axis.y.format = d3.format(options.axis.y.format);
 	}
 	this.xAxisLabel = (options.axis.x.label == null) ? "x-value" : options.axis.x.label;
 	this.yAxisLabel = (options.axis.y.label == null) ? "y-value" : options.axis.y.label;
@@ -147,18 +232,23 @@ var SimpleGraph = function(options) {
 		.range([0, this.width]);
 	this.xAxis = d3.svg.axis()
 		.scale(this.xScale)
-		.tickFormat(d3.format(options.axis.x.format))
+		.tickFormat(options.axis.x.format)
 		.orient("bottom");
 	this.xGridAxis = d3.svg.axis()
 		.scale(this.xScale)
-		.tickFormat(d3.format(options.axis.x.format))
+		.tickFormat(options.axis.x.format)
 		.orient("bottom");
 	if(options.axis.x.tickValues) {
 		this.xAxis.tickValues(options.axis.x.tickValues);
 		this.xGridAxis.tickValues(options.axis.x.tickValues);
 	} else if(options.axis.x.ticks) {
-		this.xAxis.ticks(options.axis.x.ticks);
-		this.xGridAxis.ticks(options.axis.x.ticks);
+		if($.isArray(options.axis.x.ticks)) {
+			this.xAxis.ticks(options.axis.x.ticks[0], options.axis.x.ticks[1]);
+			this.xGridAxis.ticks(options.axis.x.ticks[0], options.axis.x.ticks[1]);
+		} else {
+			this.xAxis.ticks(options.axis.x.ticks);
+			this.xGridAxis.ticks(options.axis.x.ticks);
+		}
 	}
 
 	// y-axis
@@ -167,19 +257,25 @@ var SimpleGraph = function(options) {
 		.range([this.height, 0]);
 	this.yAxis = d3.svg.axis()
 		.scale(this.yScale)
-		.tickFormat(d3.format(options.axis.y.format))
+		.tickFormat(options.axis.y.format)
 		.orient("left");
 	this.yGridAxis = d3.svg.axis()
 		.scale(this.yScale)
-		.tickFormat(d3.format(options.axis.y.format))
+		.tickFormat(options.axis.y.format)
 		.orient("left");
 	if(options.axis.y.tickValues) {
 		this.yAxis.tickValues(options.axis.y.tickValues);
 		this.yGridAxis.tickValues(options.axis.y.tickValues);
 	} else if(options.axis.y.ticks) {
-		this.yAxis.ticks(options.axis.y.ticks);
-		this.yGridAxis.ticks(options.axis.y.ticks);
+		if($.isArray(options.axis.y.ticks)) {
+			this.yAxis.ticks(options.axis.y.ticks[0], options.axis.y.ticks[1]);
+			this.yGridAxis.ticks(options.axis.y.ticks[0], options.axis.y.ticks[1]);
+		} else {
+			this.yAxis.ticks(options.axis.y.ticks);
+			this.yGridAxis.ticks(options.axis.y.ticks);
+		}
 	}
+
 	
 	this.drawAxes();
 };
@@ -1723,60 +1819,9 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
  * @param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.
  */
 
+// return object definition
+return SimpleGraph;
 
- 
-// Because Internet Explorer... All credit due to Mathias Bynens <https://mathiasbynens.be/>
-if(!String.prototype.startsWith) {
-	(function() {
-		'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
-		var defineProperty = (function() {
-			// IE 8 only supports `Object.defineProperty` on DOM elements
-			try {
-				var object = {};
-				var $defineProperty = Object.defineProperty;
-				var result = $defineProperty(object, object, object) && $defineProperty;
-			} catch(error) {}
-			return result;
-		}());
-		var toString = {}.toString;
-		var startsWith = function(search) {
-			if (this == null) {
-				throw TypeError();
-			}
-			var string = String(this);
-			if (search && toString.call(search) == '[object RegExp]') {
-				throw TypeError();
-			}
-			var stringLength = string.length;
-			var searchString = String(search);
-			var searchLength = searchString.length;
-			var position = arguments.length > 1 ? arguments[1] : undefined;
-			// `ToInteger`
-			var pos = position ? Number(position) : 0;
-			if (pos != pos) { // better `isNaN`
-				pos = 0;
-			}
-			var start = Math.min(Math.max(pos, 0), stringLength);
-			// Avoid the `indexOf` call if no match is possible
-			if (searchLength + start > stringLength) {
-				return false;
-			}
-			var index = -1;
-			while (++index < searchLength) {
-				if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
-					return false;
-				}
-			}
-			return true;
-		};
-		if (defineProperty) {
-			defineProperty(String.prototype, 'startsWith', {
-				'value': startsWith,
-				'configurable': true,
-				'writable': true
-			});
-		} else {
-			String.prototype.startsWith = startsWith;
-		}
-	}());
-}
+
+// END flexible constructor
+}));
