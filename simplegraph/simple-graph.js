@@ -43,6 +43,7 @@
  * 		both axes stored as key-value pairs where each key is the name of an appropriate style.
  * @param {Object} [options.axis.x] - X-axis options object (further expanded below).
  * @param {Object} [options.axis.y] - Y-axis options object (same as expanded x-axis options).
+ * @param {Object} [options.axis.x.scale=d3.scale.linear] - Optional class for scale type. Must be d3 scale.
  * @param {number} [options.axis.x.min=0] - Minimum value on axis 
  * @param {number} [options.axis.x.max=100] - Maximum value on axis.
  * @param {string} [options.axis.x.label="x-value"] - Axis label.
@@ -114,8 +115,14 @@ var SimpleGraph = function(options) {
 	if(!options.axis.x.format) {
 		options.axis.x.format = ".0f";
 	}
+	if(!options.axis.x.scale) {
+		options.axis.x.scale = d3.scale.linear;
+	}
 	if(!options.axis.y) {
 		options.axis.y = {};
+	}
+	if(!options.axis.y.scale) {
+		options.axis.y.scale = d3.scale.linear;
 	}
 	if(!options.axis.y.format) {
 		options.axis.y.format = ".0f";
@@ -135,7 +142,7 @@ var SimpleGraph = function(options) {
 		.attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
 
 	// x-axis
-	this.xScale = d3.scale.linear()
+	this.xScale = options.axis.x.scale()
 		.domain(this.minMax.x)
 		.range([0, this.width]);
 	this.xAxis = d3.svg.axis()
@@ -155,7 +162,7 @@ var SimpleGraph = function(options) {
 	}
 
 	// y-axis
-	this.yScale = d3.scale.linear()
+	this.yScale = options.axis.y.scale()
 		.domain(this.minMax.y)
 		.range([this.height, 0]);
 	this.yAxis = d3.svg.axis()
