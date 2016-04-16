@@ -23,9 +23,9 @@
  * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  ************************************************************************************************************/
 
-// START flexible constructor
-(function(root, factory) {
-	// Because Internet Explorer... All credit due to Mathias Bynens <https://mathiasbynens.be/>
+// START IIFE (Immediately-Invoked Function Expression) Constructor
+!function(root, factory) {
+	// Because Internet Explorer.. All credit due to Mathias Bynens <https://mathiasbynens.be/>
 	if(!String.prototype.startsWith) {
 		(function() {
 			'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
@@ -80,16 +80,20 @@
 			}
 		}());
 	}
-	// adaptable for CommonJs, RequireJs, or non-framework instantiation
-	if(typeof exports === "object") {
-		module.exports = factory();
-	} else if(typeof define === "function" && define.amd) {
-		define([], factory);
-	} else {
-		root.SimpleGraph = factory();
-	}
-}(this, function() {
 	
+	// CommonJS-based (e.g. NodeJS) API
+	if(typeof module === "object" && module.exports) {
+		module.exports = factory(require("d3"));
+	// AMD-based (e.g. RequireJS) API
+	} else if(typeof define === "function" && define.amd) {
+		define(["d3"], factory);
+	// Regular instantiation 
+	} else {
+		root.SimpleGraph = factory(root.d3);
+	}
+	
+}(this, function(d3) {
+
 /**
  * Create a SimpleGraph instance and draw an empty graph.
  * @param {Object} [options] - Object literal of options (all optional).
@@ -1823,5 +1827,5 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 return SimpleGraph;
 
 
-// END flexible constructor
-}));
+// END IIFE Constructor
+});
