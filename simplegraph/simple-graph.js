@@ -98,56 +98,49 @@
  * Create a SimpleGraph instance and draw an empty graph.
  * @param {Object} [options] - Object literal of options (all optional).
  * @param {string} [options.container='body'] - The DOM element query/selector to the element to append the 
- *		graph to.
+ *        graph to.
  * @param {number} [options.width=600] - Width value.
  * @param {number} [options.height=600] - Height value).
  * @param {Object} [options.margins={top:20,right:20,bottom:40,left:40}] - Margins for graph within 
- *		overarching SVG (e.g. with all default values, the width of the actual graph will be 540px in a 600px 
- * 		wide SVG element).
+ *        overarching SVG (e.g. with all default values, the width of the actual graph will be 540px in a 
+ *        600px wide SVG element).
  * @param {d3.scale} [options.colorScale=d3.scale.category10()] - Optional color scale to use with data. If 
- * 		data series will have non-numeric identifiers, it should be a categorical or ordinal scale.
+ *        data series will have non-numeric identifiers, it should be a categorical or ordinal scale.
  * @param {boolean} [allowDrawBeyondGraph=false] - Allow drawing beyond graph. If true, all data will be drawn 
- * 		as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut
- * 		off where they extend past the x/y-axis ranges.
- * @param {Object} [options.axis] - Optional dictionary of styles axes.
+ *        as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be 
+ *        cut off where they extend past the x/y-axis ranges.
+ * @param {Object} [options.axis] - Optional dictionary of axis options.
  * @param {Object} [option.axis.style={fill:"none",'stroke-width':0.5,stroke:'black'}] - Shared styles for 
- * 		both axes stored as key-value pairs where each key is the name of an appropriate style.
+ *        both axes stored as key-value pairs where each key is the name of an appropriate style.
  * @param {Object} [options.axis.x] - X-axis options object (further expanded below).
  * @param {Object} [options.axis.y] - Y-axis options object (same as expanded x-axis options).
- * @param {Object} [options.axis.x.scale=d3.scale.linear] - Optional class for scale type. Must be d3 scale.
+ * @param {string} [options.axis.x.format=".0f"] - Number format for tick labels.
  * @param {number} [options.axis.x.min=0] - Minimum value on axis 
  * @param {number} [options.axis.x.max=100] - Maximum value on axis.
  * @param {string} [options.axis.x.label="x-value"] - Axis label.
- * @param {string} [options.axis.x.format=".0f"] - Number format for tick labels.
+ * @param {Object} [options.axis.x.scale=d3.scale.linear] - Optional class for scale type. Must be d3 scale.
  * @param {number[]} [options.axis.x.tickValues] - Specific values on x-axis to create tick marks on (this 
- *		will take priority over options.axis.x.ticks if both are supplied).
+ *        will take priority over options.axis.x.ticks if both are supplied).
  * @param {number} [options.axis.x.ticks] - Number of evenly spaced tick intervals on x-axis to create (due 
- * 		to nature of axis, may not always create exactly this amount but will attempt to)
+ *        to nature of axis, may not always create exactly this amount but will attempt to).
+ * @param {Object} [options.axis.x.grid] - Optional dictionary of axis-grid options.
+ * @param {number[]} [options.axis.x.grid.tickValues] - Specific values on x-axis grid to create tick marks on
+ *        (this will take priority over options.axis.x.grid.ticks if both are supplied).
+ * @param {number} [options.axis.x.grid.ticks] - Number of evenly spaced tick intervals on x-axis grid to 
+ *        create (due to nature of axis, may not always create exactly this amount but will attempt to).
  */
 function SimpleGraph(options) {
 	// otherwise reaching too deep will cause errors
-	if(!options) { options = {}; }
-	if(!options.margins) { options.margins = {}; }
-	if(!options.axis) { options.axis = {}; }
-	if(!options.axis.x) { options.axis.x = {}; }
-	if(!options.axis.y) { options.axis.y = {}; }
+	if(!options)             { options = {}; }
+	if(!options.container)   { options.container = "body"; }
+	if(!options.margins)     { options.margins = {}; }
+	if(!options.axis)        { options.axis = {}; }
+	if(!options.axis.x)      { options.axis.x = {}; }
+	if(!options.axis.y)      { options.axis.y = {}; }
 	if(!options.axis.styles) { options.axis.styles = {}; }
 	
 	// Option to allow drawing outside graph range.
 	this.allowDrawBeyondGraph = options.allowDrawBeyondGraph;
-	
-	// right now the min/max for the axes are fairly fixed, should be customizable later
-	this.minMax = {
-		x: [
-			(options.axis.x.min) ? options.axis.x.min : 0, 
-			(options.axis.x.max) ? options.axis.x.max : 100
-		],
-		y: [
-			(options.axis.y.min) ? options.axis.y.min : 0, 
-			(options.axis.y.max) ? options.axis.y.max : 100
-			
-		]
-	};
 
 	// adjust width and height by margins
 	this.margins = {
@@ -162,9 +155,15 @@ function SimpleGraph(options) {
 	// category color scale
 	this.color = (options.colorScale) ? options.colorScale : d3.scale.category10();
 	
-	if(!options.container) {
-		options.container = "body";
-	}
+	// create the SVG
+	this.svg = d3.select(options.container).append("svg")
+		.attr("width", this.width + this.margins.left + this.margins.right)
+		.attr("height", this.height + this.margins.top + this.margins.bottom)
+		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
+		.style('font-size', '14px')
+		.style('overflow', 'visible');
+	this.svgGraphic = this.svg.append("g")
+		.attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
 	
 	// default axis styles
 	this.axisStyles = options.axis.style;
@@ -180,106 +179,83 @@ function SimpleGraph(options) {
 	if(!this.axisStyles.stroke) {
 		this.axisStyles.stroke = "black";
 	}
-	if(!options.axis.x) {
-		options.axis.x = {};
-	}
-	if(!options.axis.x.scale) {
-		options.axis.x.scale = d3.scale.linear;
-	}
-	if(!options.axis.x.format) {
-		if(options.axis.x.scale === d3.time.scale) {
-			options.axis.x.format = "%Y-%m-%d";
+	// specific axis options
+	var axes = ["x", "y"];
+	for(var i = 0; i < axes.length; i++) {
+		var a = axes[i];
+		if(!options.axis[a]) {
+			options.axis[a] = {};
+		}
+		if(!options.axis[a].scale) {
+			options.axis[a].scale = d3.scale.linear;
+		}
+		var scaleIsTime = options.axis[a].scale === d3.time.scale || options.axis[a].scale === d3.time.scale.utc
+		if(!options.axis[a].format) {
+			if(scaleIsTime) {
+				options.axis[a].format = "%Y-%m-%d";
+			} else {
+				options.axis[a].format = ".0f";
+			}
+		}
+		if(scaleIsTime) {
+			options.axis[a].format = d3.time.format(options.axis[a].format);
 		} else {
-			options.axis.x.format = ".0f";
+			options.axis[a].format = d3.format(options.axis[a].format);
+		}
+		if(!options.axis[a].grid) { options.axis[a].grid = {}; }
+				
+		this[a] = {};
+		this[a].label = (options.axis[a].label == null) ? (a === "x" ? "x-value" : "y-value") : options.axis[a].label;
+		
+		this[a].min = options.axis[a].min ? options.axis[a].min : 0, 
+		this[a].max = options.axis[a].max ? options.axis[a].max : 100
+
+		this[a].scale = options.axis.x.scale()
+			.domain([this[a].min, this[a].max])
+			.range(a === "x" ? [0, this.width] : [this.height, 0]);
+		this[a].axis = d3.svg.axis()
+			.scale(this[a].scale)
+			.tickFormat(options.axis[a].format)
+			.orient(a === "x" ? "bottom" : "left");
+		this[a].gridAxis = d3.svg.axis()
+			.scale(this[a].scale)
+			.tickFormat(options.axis[a].format)
+			.orient(a === "x" ? "bottom" : "left");
+	
+		if(options.axis[a].tickValues) {
+			this[a].axis.tickValues(options.axis[a].tickValues);
+			this[a].gridAxis.tickValues(options.axis[a].tickValues);
+		} else if(options.axis[a].ticks || options.axis[a].ticks === 0) {
+			if($.isArray(options.axis[a].ticks)) {
+				this[a].axis.ticks(options.axis[a].ticks[0], options.axis[a].ticks[1]);
+				this[a].gridAxis.ticks(options.axis[a].ticks[0], options.axis[a].ticks[1]);
+			} else {
+				this[a].axis.ticks(options.axis[a].ticks);
+				this[a].gridAxis.ticks(options.axis[a].ticks);
+			}
+		}
+		
+		if(options.axis[a].grid.tickValues) {
+			this[a].gridAxis.tickValues(options.axis[a].grid.tickValues);
+		} else if(options.axis[a].grid.ticks || options.axis[a].grid.ticks === 0) {
+			if($.isArray(options.axis[a].grid.ticks)) {
+				this[a].gridAxis.ticks(options.axis[a].grid.ticks[0], options.axis[a].grid.ticks[1]);
+			} else {
+				this[a].gridAxis.ticks(options.axis[a].grid.ticks);
+			}
 		}
 	}
-	if(options.axis.x.scale === d3.time.scale) {
-		options.axis.x.format = d3.time.format(options.axis.x.format);
-	} else {
-		options.axis.x.format = d3.format(options.axis.x.format);
-	}
-	if(!options.axis.y) {
-		options.axis.y = {};
-	}
-	if(!options.axis.y.scale) {
-		options.axis.y.scale = d3.scale.linear;
-	}
-	if(!options.axis.y.format) {
-		if(options.axis.y.scale === d3.time.scale) {
-			options.axis.y.format = "%Y-%m-%d";
-		} else {
-			options.axis.y.format = ".0f";
-		}
-	}
-	if(options.axis.y.scale === d3.time.scale) {
-		options.axis.y.format = d3.time.format(options.axis.y.format);
-	} else {
-		options.axis.y.format = d3.format(options.axis.y.format);
-	}
-	this.xAxisLabel = (options.axis.x.label == null) ? "x-value" : options.axis.x.label;
-	this.yAxisLabel = (options.axis.y.label == null) ? "y-value" : options.axis.y.label;
-
-	// create the SVG
-	this.svg = d3.select(options.container)
-	  .append("svg")
-		.attr("width", this.width + this.margins.left + this.margins.right)
-		.attr("height", this.height + this.margins.top + this.margins.bottom)
-		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
-		.style('font-size', '14px')
-		.style('overflow', 'visible');
-	this.svgGraphic = this.svg.append("g")
-		.attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
-
-	// x-axis
-	this.xScale = options.axis.x.scale()
-		.domain(this.minMax.x)
-		.range([0, this.width]);
-	this.xAxis = d3.svg.axis()
-		.scale(this.xScale)
-		.tickFormat(options.axis.x.format)
-		.orient("bottom");
-	this.xGridAxis = d3.svg.axis()
-		.scale(this.xScale)
-		.tickFormat(options.axis.x.format)
-		.orient("bottom");
-	if(options.axis.x.tickValues) {
-		this.xAxis.tickValues(options.axis.x.tickValues);
-		this.xGridAxis.tickValues(options.axis.x.tickValues);
-	} else if(options.axis.x.ticks) {
-		if($.isArray(options.axis.x.ticks)) {
-			this.xAxis.ticks(options.axis.x.ticks[0], options.axis.x.ticks[1]);
-			this.xGridAxis.ticks(options.axis.x.ticks[0], options.axis.x.ticks[1]);
-		} else {
-			this.xAxis.ticks(options.axis.x.ticks);
-			this.xGridAxis.ticks(options.axis.x.ticks);
-		}
-	}
-
-	// y-axis
-	this.yScale = options.axis.y.scale()
-		.domain(this.minMax.y)
-		.range([this.height, 0]);
-	this.yAxis = d3.svg.axis()
-		.scale(this.yScale)
-		.tickFormat(options.axis.y.format)
-		.orient("left");
-	this.yGridAxis = d3.svg.axis()
-		.scale(this.yScale)
-		.tickFormat(options.axis.y.format)
-		.orient("left");
-	if(options.axis.y.tickValues) {
-		this.yAxis.tickValues(options.axis.y.tickValues);
-		this.yGridAxis.tickValues(options.axis.y.tickValues);
-	} else if(options.axis.y.ticks) {
-		if($.isArray(options.axis.y.ticks)) {
-			this.yAxis.ticks(options.axis.y.ticks[0], options.axis.y.ticks[1]);
-			this.yGridAxis.ticks(options.axis.y.ticks[0], options.axis.y.ticks[1]);
-		} else {
-			this.yAxis.ticks(options.axis.y.ticks);
-			this.yGridAxis.ticks(options.axis.y.ticks);
-		}
-	}
-
+	// for backwards compatibility
+	this.minMax = {
+		x: [this.x.min, this.x.max],
+		y: [this.y.min, this.y.max]
+	};
+	this.xScale = this.x.scale;
+	this.xAxis = this.x.axis;
+	this.xGridAxis = this.x.gridAxes;
+	this.yScale = this.y.scale;
+	this.yAxis = this.y.axis;
+	this.yGridAxis = this.y.gridAxes;
 	
 	this.drawAxes();
 };
@@ -320,6 +296,8 @@ SimpleGraph.prototype.destroy = function() {
 	this.svgGraphic = null;
 	this.clearAllData();
 	this.color = null;
+	this.x = null;
+	this.y = null;
 	this.xScale = null;
 	this.yScale = null;
 	this.yAxis = null;
@@ -335,15 +313,15 @@ SimpleGraph.prototype.destroy = function() {
 /**
  * (Re)draw axes on graph.
  * @param {string} [labelPosition="outside center"] - Keywords for the label positions on each axis. Keywords 
- * 		include 'inside' or 'outside' for the position of both axis labels either inside or outside of the 
- *		axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' 
- *		to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement 
- * 		of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 
- * 		"center top" would first center both labels, then move the y-axis label to the top.
+ *        include 'inside' or 'outside' for the position of both axis labels either inside or outside of the 
+ *        axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right'
+ *        to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement
+ *        of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call 
+ *        of "center top" would first center both labels, then move the y-axis label to the top.
  * @param {string} [xAxisPosition="bottom"] - Placement option of the x-axis, allowing you to draw the x-axis 
- * 		line and labels on top or bottom.
- * @param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to 
- * 		overlap with the tick marks. However you may specify and additional margin here.
+ *        line and labels on top or bottom.
+ * @param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap
+ *        with the tick marks. However you may specify and additional margin here.
  */
 SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabelMargin) {
 	if(!xAxisPosition) { 
@@ -352,7 +330,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		xAxisPosition = xAxisPosition.toLowerCase().trim();
 		if(xAxisPosition !== "top") { xAxisPosition = "bottom"; }
 	}
-	this.xAxis.orient(xAxisPosition);
+	this.x.axis.orient(xAxisPosition);
 	var xAxisPosY = (xAxisPosition === "top") ? 0 : this.height;
 	if(!axisLabelMargin) { axisLabelMargin = 0; }
 	
@@ -361,10 +339,10 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	var xAxisG = this.svgGraphic.append("g")
 		.attr("class", "scatterplot-xaxis")
 		.attr("transform", "translate(0," + xAxisPosY + ")")
-		.call(this.xAxis);
+		.call(this.x.axis);
 	var yAxisG = this.svgGraphic.append("g")
 		.attr("class", "scatterplot-yaxis")
-		.call(this.yAxis);
+		.call(this.y.axis);
 	// for some reason ticks are by default invisible
 	this.svgGraphic.selectAll(".tick line").style("stroke", "#000");
 	// add styles
@@ -460,7 +438,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.attr("y", xLabelPos.y)
 		.style("text-anchor", xLabelPos.a)
 		.style("font-weight", "bolder")
-		.text(this.xAxisLabel);
+		.text(this.x.axisLabel);
 	yAxisG.append("text")
 		.attr("class", "axis-label")
 		.attr("transform", "rotate(-90)")
@@ -469,7 +447,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.attr("dy", ".71em")
 		.style("text-anchor", yLabelPos.a)
 		.style("font-weight", "bolder")
-		.text(this.yAxisLabel);
+		.text(this.y.axisLabel);
 };
 
 /**
@@ -489,19 +467,13 @@ SimpleGraph.prototype.drawGrid = function(style) {
 		.style("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(this.xGridAxis
-			.tickSize(-this.height, 0, 0)
-			.tickFormat("")
-		);
+		.call(this.x.gridAxis.tickSize(-this.height, 0, 0).tickFormat(""));
 	this.svgGraphic.append("g")
 		.attr("class", "scatterplot-grid")
 		.attr("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(this.yGridAxis
-			.tickSize(-this.width, 0, 0)
-			.tickFormat("")
-		);
+		.call(this.y.gridAxis.tickSize(-this.width, 0, 0).tickFormat(""));
 };
 
 /**
@@ -516,13 +488,13 @@ SimpleGraph.prototype.removeGrid = function() {
  * @param {number[]} position - x,y coordinate position from top-left corner of SVG
  * @param {string} [anchor="left"] - Optional anchor for the coordinate x-position (left, middle, or right).
  * @param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the 
- * 		exception of support for padding.
+ *        exception of support for padding.
  * @param {number} [itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new 
- * 		column will be started to the right. If set to 0 or less, infinite (that is, all will be put in single 
- * 		column). Note that if the next column exceeds the right margin of the graph, placement errors will 
- * 		result.
+ *        column will be started to the right. If set to 0 or less, infinite (that is, all will be put in 
+ *        single column). Note that if the next column exceeds the right margin of the graph, placement errors
+ *        will result.
  * @param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in 
- * 		legend (the second which is currently uncustomizable) so use care if decreasing row height.
+ *        legend (the second which is currently uncustomizable) so use care if decreasing row height.
  */
 SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight) {
 	this.svgGraphic.selectAll(".scatterplot-legend").remove();
@@ -614,7 +586,8 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 		}
 	}
 	
-	// local functions for adding items to legend by data type (not needed yet but will make custom item order easier for future)
+	// local functions for adding items to legend by data type (not needed yet but will make custom item order
+	// easier for future)
 	var self = this;
 	function addPointItem(data, drawPointLine) {
 		if(drawPointLine) {
@@ -824,8 +797,8 @@ SimpleGraph.prototype.resetColorScale = function(colorScale) {
  * @param {string} xValue - The x-value.
  * @param {string} yValue - The y-value.
  * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
- * 		where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
- * 		keys, if supplied).
+ *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
+ *        keys, if supplied).
  */
 SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size) {
 	if(!this.points) { this.points = []; }
@@ -844,16 +817,16 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size) {
 /**
  * Add points data with an array of objects.
  * @param {Object[]} data - The plot data as an array of objects. Use the dataPointName, xValueName, and 
- *		yValueName parameters to tell the function how to parse the data.
+ *        yValueName parameters to tell the function how to parse the data.
  * @param {string} dataPointName - The key name in each data object to retrieve the data point or data series
- *		name and label. Optional. If not supplied, or it cannot find the given key in the data object, 
- *		defaults to the index position in array of points.
+ *        name and label. Optional. If not supplied, or it cannot find the given key in the data object, 
+ *        defaults to the index position in array of points.
  * @param {string} xValueName - The key name in each data object to retrieve the x-value.
  * @param {string} yValueName - The key name in each data object to retrieve the y-value.
  * @param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.
  * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
- * 		where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
- * 		keys, if supplied).
+ *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
+ *        keys, if supplied).
  */
 SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size) {
 	if(!data || data.length === 0) {
@@ -906,8 +879,8 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
  * @param {string} name - The name of the data data series.
  * @param {Array[]} data - The plot data as an array of [x,y] arrays.
  * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
- * 		where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
- * 		keys, if supplied).
+ *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
+ *        keys, if supplied).
  */
 SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size) {
 	if(!data || data.length === 0) {
@@ -937,7 +910,7 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size) {
  * @param {string} name - series name
  * @param {Array[]} lineCoordinates - array of x,y coordinates (will automatically be sorted)
  * @param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
- * 		the resulting SVG element's CSS style.
+ *        the resulting SVG element's CSS style.
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
  */
 SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation) {
@@ -972,12 +945,12 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
  * @param {string} name - Series name
  * @callback lineFunction - Callback function such that function(x) returns y.
  * @param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
- * 		the resulting SVG element's CSS style.
- * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 
- *		pixels of width if not provided and if provided enforces minimum of 2).
+ *        the resulting SVG element's CSS style.
+ * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 
+ *        20 pixels of width if not provided and if provided enforces minimum of 2).
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
- * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will
- * 		still be truncated to the min-max of the graph if it extends past.
+ * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
+ *        will still be truncated to the min-max of the graph if it extends past.
  */
 SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style, resolution, interpolation, xRange) {
 	if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
@@ -997,13 +970,13 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 		interpolation = "linear";
 	}
 	if(!xRange) {
-		xRange = [this.minMax.x[0], this.minMax.x[1]];
+		xRange = [this.x.min, this.x.max];
 	} else {
-		if(xRange[0] < this.minMax.x[0]) {
-			xRange[0] = this.minMax.x[0];
+		if(xRange[0] < this.x.min) {
+			xRange[0] = this.x.min;
 		}
-		if(xRange[1] > this.minMax.x[1]) {
-			xRange[1] = this.minMax.x[1];
+		if(xRange[1] > this.x.max) {
+			xRange[1] = this.x.max;
 		}
 	}
 	if(!this.lines) {
@@ -1025,7 +998,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 	var coords = [];
 	if(xRange[1] > xRange[0]) {
 		var range = xRange[1] - xRange[0];
-		var ratio = range / (this.minMax.x[1] - this.minMax.x[0]);
+		var ratio = range / (this.x.max - this.x.min);
 		if(!resolution || typeof resolution !== "number") {
 			resolution = Math.floor(ratio*(this.width - this.margins.left - this.margins.right) / 20);
 		}
@@ -1035,8 +1008,8 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 		var increment = range / (resolution-1);
 		var x = xRange[0];
 		for(var i = 0; i < resolution; i++) {
-			if(x > this.minMax.x[1] && x - this.minMax.x[1] < 0.00001) {
-				x = this.minMax.x[1];
+			if(x > this.x.max && x - this.x.max < 0.00001) {
+				x = this.x.max;
 			}
 			var c = [x, lineFunction(x)];
 			if(this.allowDrawBeyondGraph) {
@@ -1044,7 +1017,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 				coords.push(c);
 			} else {
 				// if not, have to check y-value stays within range
-				var inRangeY = c[1] >= this.minMax.y[0] && c[1] <= this.minMax.y[1];
+				var inRangeY = c[1] >= this.y.min && c[1] <= this.y.max;
 				if(inRangeY) {
 					if(i > 0 && coords.length === 0) {
 						// was truncated, check for previous intercept for more exact starting point
@@ -1077,10 +1050,10 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
  * Interpolate lines for each data series in the points data. If called multiple times, will recalculate the 
  * lines and replace existing data.
  * @param {Object} [style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
- * 		the resulting SVG element's CSS style.
+ *        the resulting SVG element's CSS style.
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
  * @param {string} [handleOverlap="average"] - If there are 2 or more points overlapped for a given x-value, 
- * 		how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".
+ *        how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".
  */
 SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, handleOverlap) {
 	if(!this.points || this.points.length === 0) {
@@ -1188,8 +1161,8 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
 				addPointCheckOverlap(lineCoords, checkPoints[i]);
 			} else {
 				// if not allowed to draw beyond graph, have to proceed and cut off lines as needed
-				var inRangeX = checkPoints[i].x >= this.minMax.x[0] && checkPoints[i].x <= this.minMax.x[1];
-				var inRangeY = checkPoints[i].y >= this.minMax.y[0] && checkPoints[i].y <= this.minMax.y[1];
+				var inRangeX = checkPoints[i].x >= this.x.min && checkPoints[i].x <= this.x.max;
+				var inRangeY = checkPoints[i].y >= this.y.min && checkPoints[i].y <= this.y.max;
 				// if in range, add -- if not, end line, try to add, and start new
 				if(inRangeX && inRangeY) {
 					addPointCheckOverlap(lineCoords, checkPoints[i]);
@@ -1215,12 +1188,12 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
  * @callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.
  * @callback lineFunctionTop - callback function for top border of area such that function(x) returns y1.
  * @param {Object} [style={fill:"#ccc"}] - Object literal of key-value pairs that will be applied as 
- * 		the resulting SVG element's CSS style.
- * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 
- *		pixels of width if not provided and if provided enforces minimum of 2).
+ *        the resulting SVG element's CSS style.
+ * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 
+ *        20 pixels of width if not provided and if provided enforces minimum of 2).
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
- * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will
- * 		still be truncated to the min-max of the graph if it extends past.
+ * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
+ *        will still be truncated to the min-max of the graph if it extends past.
  */
 SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, style, resolution, interpolation, xRange) {
 	if(!lineFunctionTop || typeof lineFunctionTop !== "function") {
@@ -1237,13 +1210,13 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		interpolation = "linear";
 	}
 	if(!xRange) {
-		xRange = [this.minMax.x[0], this.minMax.x[1]];
+		xRange = [this.x.min, this.x.max];
 	} else {
-		if(xRange[0] < this.minMax.x[0]) {
-			xRange[0] = this.minMax.x[0];
+		if(xRange[0] < this.x.min) {
+			xRange[0] = this.x.min;
 		}
-		if(xRange[1] > this.minMax.x[1]) {
-			xRange[1] = this.minMax.x[1];
+		if(xRange[1] > this.x.max) {
+			xRange[1] = this.x.max;
 		}
 	}
 	if(!this.areas) {
@@ -1265,7 +1238,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 	var coords = [];
 	if(xRange[1] > xRange[0]) {
 		var range = xRange[1] - xRange[0];
-		var ratio = range / (this.minMax.x[1] - this.minMax.x[0]);
+		var ratio = range / (this.x.max - this.x.min);
 		if(!resolution || typeof resolution !== "number") {
 			resolution = Math.floor(ratio*(this.width - this.margins.left - this.margins.right) / 20);
 		}
@@ -1276,8 +1249,8 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		var x = xRange[0];
 		for(var i = 0; i < resolution; i++) {
 			// correct max by tolerance due to some bitwise-to-decimal discrepancies
-			if(x > this.minMax.x[1] && x - this.minMax.x[1] < 0.00001) {
-				x = this.minMax.x[1];
+			if(x > this.x.max && x - this.x.max < 0.00001) {
+				x = this.x.max;
 			}
 			var c = [x, lineFunctionBottom(x), lineFunctionTop(x)];
 			if(this.allowDrawBeyondGraph) {
@@ -1285,8 +1258,8 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 				coords.push(c);
 			} else {
 				// check coordinate range (only need to check Y)
-				var btmInRangeY = c[1] >= this.minMax.y[0] && c[1] <= this.minMax.y[1];
-				var topInRangeY = c[2] >= this.minMax.y[0] && c[2] <= this.minMax.y[1];
+				var btmInRangeY = c[1] >= this.y.min && c[1] <= this.y.max;
+				var topInRangeY = c[2] >= this.y.min && c[2] <= this.y.max;
 				if(btmInRangeY == topInRangeY) {
 					if(btmInRangeY) {
 						coords.push(c);
@@ -1296,9 +1269,9 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 					}
 				} else {
 					if(btmInRangeY) {
-						c[2] = this.minMax.y[1];
+						c[2] = this.y.max;
 					} else {
-						c[1] = this.minMax.y[0];
+						c[1] = this.y.min;
 					}
 					if(c[2] > c[1]) {
 						coords.push(c);
@@ -1321,7 +1294,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
  * @param {string} name - series name
  * @param {number[][]} areaCoordinates - array of area coordinate triplets [x, y0, y1]
  * @param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG 
- * 		element's CSS style.
+ *        element's CSS style.
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
  */
 SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, interpolation) {
@@ -1391,7 +1364,7 @@ SimpleGraph.prototype.clearAllData = function() {
  * there is no way to link the line function (or any additional data).
  * @param {string} seriesName - Name of the series for which you want to grab the line function.
  * @returns {function[]} - An array of the functions associated with this series (there may be more than one 
- *		if multiple lines share the same series name).
+ *        if multiple lines share the same series name).
  */
 SimpleGraph.prototype.getLineFunctionsBySeries = function(seriesName) {
 	var funcList = [];
@@ -1426,10 +1399,10 @@ SimpleGraph.prototype.getAreaFunctionsBySeries = function(seriesName) {
 SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 	var y1 = f(x1), y2 = f(x2);
 	var breakValue, increasing;
-	if(y1 < this.minMax.y[0] != y2 < this.minMax.y[0]) {
-		breakValue = this.minMax.y[0];
-	} else if(y1 > this.minMax.y[1] != y2 > this.minMax.y[1]) {
-		breakValue = this.minMax.y[1];
+	if(y1 < this.y.min != y2 < this.y.min) {
+		breakValue = this.y.min;
+	} else if(y1 > this.y.max != y2 > this.y.max) {
+		breakValue = this.y.max;
 	} else {
 		return null;
 	}
@@ -1444,7 +1417,7 @@ SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 	while(i++ < 100) {
 		y = f(x);
 		diff = Math.abs(y - breakValue);
-		if(x >= this.minMax.x[0] && x <= this.minMax.x[1] && diff < 0.000001) {
+		if(x >= this.x.min && x <= this.x.max && diff < 0.000001) {
 			return [x, breakValue];
 		}
 		if(i > 0 && lastDiff < diff) {
@@ -1487,8 +1460,8 @@ SimpleGraph.prototype.drawPoints = function() {
 	this.removePoints();
 	// for 'this' references
 	var color = this.color;
-	var xScale = this.xScale;
-	var yScale = this.yScale;
+	var xScale = this.x.scale;
+	var yScale = this.y.scale;
 	// if necessary, remove points that extend beyond graph
 	var drawPointsData;
 	if(this.allowDrawBeyondGraph) {
@@ -1496,10 +1469,10 @@ SimpleGraph.prototype.drawPoints = function() {
 	} else {
 		drawPointsData = [];
 		for(var i = 0; i < this.points.length; i++) {
-			var addPoint = this.points[i].x >= this.minMax.x[0];
-			addPoint = addPoint && this.points[i].x <= this.minMax.x[1];
-			addPoint = addPoint && this.points[i].y >= this.minMax.y[0];
-			addPoint = addPoint && this.points[i].y <= this.minMax.y[1];
+			var addPoint = this.points[i].x >= this.x.min;
+			addPoint = addPoint && this.points[i].x <= this.x.max;
+			addPoint = addPoint && this.points[i].y >= this.y.min;
+			addPoint = addPoint && this.points[i].y <= this.y.max;
 			if(addPoint) { drawPointsData.push(this.points[i]); }
 		}
 	}
@@ -1529,8 +1502,8 @@ SimpleGraph.prototype.drawLines = function() {
 	this.removeLines();
 	// for this references
 	var color = this.color;
-	var xScale = this.xScale;
-	var yScale = this.yScale;
+	var xScale = this.x.scale;
+	var yScale = this.y.scale;
 	var svgGraphic = this.svgGraphic;
 	// add the scatterplot interpolated lines all at once (no need to check allowDrawBeyondGraph as it is 
 	// handled during creation of those lines).
@@ -1598,8 +1571,8 @@ SimpleGraph.prototype.drawLines = function() {
 				for(var j = 0; j < lines[i].coords.length; j++) {
 					var c = lines[i].coords[j];
 					if(
-							c[0] >= this.minMax.x[0] && c[0] <= this.minMax.x[1] && 
-							c[1] >= this.minMax.y[0] && c[1] <= this.minMax.y[1]
+							c[0] >= this.x.min && c[0] <= this.x.max && 
+							c[1] >= this.y.min && c[1] <= this.y.max
 					) {
 						coords.push(c);
 					} else {
@@ -1630,8 +1603,8 @@ SimpleGraph.prototype.drawAreas = function() {
 	this.removeAreas();
 	// for this references
 	var color = this.color;
-	var xScale = this.xScale;
-	var yScale = this.yScale;
+	var xScale = this.x.scale;
+	var yScale = this.y.scale;
 	if(this.areas) {
 		for(var i = 0; i < this.areas.length; i++) {
 			var area = this.areas[i];
@@ -1700,12 +1673,12 @@ SimpleGraph.prototype.removeAll = function() {
  * returned SVG element or the class to determine type, regular lines are ".plotted-line" and lines drawn from
  * connecting points are ".scatterplot-line".
  * @param {tooltipTextFunction} textFunction - Callback function that handles the dynamic text appearing in 
- * 		the tooltip.
+ *        the tooltip.
  * @param {Object} [options] - Optional parameters.
- * @param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places 
- * 		the tooltip to the bottom right of the cursor).
- * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's 
- * 		CSS style (optional).
+ * @param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places
+ *        the tooltip to the bottom right of the cursor).
+ * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
+ *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
 	this.svgGraphic.selectAll(".scatterplot-point")
@@ -1715,12 +1688,12 @@ SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
 /**
  * Add tooltip function to the lines on the graph.
  * @param {tooltipTextFunction} textFunction - Callback function that handles the dynamic text appearing in 
- * 		the tooltip.
+ *        the tooltip.
  * @param {Object} [options] - Optional parameters.
  * @param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places 
- * 		the tooltip to the bottom right of the cursor).
- * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's 
- * 		CSS style (optional).
+ *        the tooltip to the bottom right of the cursor).
+ * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
+ *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
 	this.svgGraphic.selectAll(".scatterplot-line, .plotted-line")
@@ -1730,12 +1703,12 @@ SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
 /**
  * Add tooltip function to the areas on the graph.
  * @param {tooltipTextFunction} textFunction - Callback function that handles the dynamic text appearing in 
- * 		the tooltip.
+ *        the tooltip.
  * @param {Object} [options] - Optional parameters.
  * @param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places 
- * 		the tooltip to the bottom right of the cursor).
- * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's 
- * 		CSS style (optional).
+ *        the tooltip to the bottom right of the cursor).
+ * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
+ *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
 	this.svgGraphic.selectAll(".plotted-area")
@@ -1747,12 +1720,12 @@ SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
  * called explicitly, it is added to D3 SVG elements via call(). Use the 
  * addTooltipTo[Points|Lines|Areas]() functions instead.
  * @param {tooltipTextFunction} textFunction - Callback function that handles the dynamic text appearing in 
- * 		the tooltip.
+ *        the tooltip.
  * @param {Object} [options] - Optional parameters.
  * @param {number[]} [options.offset=[10,-15]] - The x,y offset of the tooltip from the cursor (default places 
- * 		the tooltip to the bottom right of the cursor).
- * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's 
- * 		CSS style (optional).
+ *        the tooltip to the bottom right of the cursor).
+ * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
+ *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) {
 	var svg = this.svg;
@@ -1815,9 +1788,9 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 /**
  * Handles the text appearing in the tooltip. Several parameters are provided to pull relevant data from.
  * @callback tooltipTextFunction
- * @param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 
- * 		'x', 'y', and any additional data keys specified. For lines and areas, only the raw coordinates are 
- *		stored.
+ * @param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 
+ *        'series', 'x', 'y', and any additional data keys specified. For lines and areas, only the raw 
+ *         coordinates are  stored.
  * @param {number[]} p - The x,y relative mouse position on the parent SVG.
  * @param {Object[]} s - Array of the SVG elements in the layer selected(or null).
  * @param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.
