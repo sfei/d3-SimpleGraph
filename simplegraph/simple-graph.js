@@ -179,9 +179,11 @@ function SimpleGraph(options) {
 	if(!this.axisStyles.stroke) {
 		this.axisStyles.stroke = "black";
 	}
-	// specific axis options
+	
+	// loop per axis to remove redundancies
 	var axes = ["x", "y"];
 	for(var i = 0; i < axes.length; i++) {
+		// specific axis options
 		var a = axes[i];
 		if(!options.axis[a]) {
 			options.axis[a] = {};
@@ -189,7 +191,8 @@ function SimpleGraph(options) {
 		if(!options.axis[a].scale) {
 			options.axis[a].scale = d3.scale.linear;
 		}
-		var scaleIsTime = options.axis[a].scale === d3.time.scale || options.axis[a].scale === d3.time.scale.utc
+		var scaleIsTime = options.axis[a].scale === d3.time.scale || options.axis[a].scale === d3.time.scale.utc;
+		var scaleIsLog = !scaleIsTime && options.axis[a].scale === d3.scale.log;
 		if(!options.axis[a].format) {
 			if(scaleIsTime) {
 				options.axis[a].format = "%Y-%m-%d";
@@ -203,25 +206,47 @@ function SimpleGraph(options) {
 			options.axis[a].format = d3.format(options.axis[a].format);
 		}
 		if(!options.axis[a].grid) { options.axis[a].grid = {}; }
+		if(scaleIsLog && !options.axis[a].logBase) { options.axis[a].logBase = 10; }
 				
 		this[a] = {};
 		this[a].label = (options.axis[a].label == null) ? (a === "x" ? "x-value" : "y-value") : options.axis[a].label;
 		
 		this[a].min = options.axis[a].min ? options.axis[a].min : 0, 
 		this[a].max = options.axis[a].max ? options.axis[a].max : 100
-
-		this[a].scale = options.axis.x.scale()
+		
+		// create scale
+		this[a].scale = options.axis[a].scale();
+		if(scaleIsLog) {
+			this[a].scale.base(options.axis[a].logBase);
+		}
+		this[a].scale
 			.domain([this[a].min, this[a].max])
 			.range(a === "x" ? [0, this.width] : [this.height, 0]);
+	
+		// create axes
 		this[a].axis = d3.svg.axis()
 			.scale(this[a].scale)
-			.tickFormat(options.axis[a].format)
 			.orient(a === "x" ? "bottom" : "left");
 		this[a].gridAxis = d3.svg.axis()
 			.scale(this[a].scale)
-			.tickFormat(options.axis[a].format)
 			.orient(a === "x" ? "bottom" : "left");
-	
+		
+		// log scale handles ticks differently
+		if(scaleIsLog) {
+			this[a].axis.tickFormat(options.axis[a].format)
+			if(options.axis[a].ticks) {
+				this[a].axis.ticks(options.axis[a].ticks, options.axis[a].format);
+			} else {
+				this[a].axis.ticks(options.axis[a].format);
+				if(options.axis[a].tickValues) {
+					this[a].axis.tickValues(options.axis[a].tickValues);
+				}
+			}
+			continue;
+		}
+		
+		// add ticks
+		this[a].axis.tickFormat(options.axis[a].format)
 		if(options.axis[a].tickValues) {
 			this[a].axis.tickValues(options.axis[a].tickValues);
 			this[a].gridAxis.tickValues(options.axis[a].tickValues);
@@ -235,6 +260,8 @@ function SimpleGraph(options) {
 			}
 		}
 		
+		// add sub-grid-ticks
+		this[a].gridAxis.tickFormat(options.axis[a].format)
 		if(options.axis[a].grid.tickValues) {
 			this[a].gridAxis.tickValues(options.axis[a].grid.tickValues);
 		} else if(options.axis[a].grid.ticks || options.axis[a].grid.ticks === 0) {
@@ -245,6 +272,7 @@ function SimpleGraph(options) {
 			}
 		}
 	}
+	
 	// for backwards compatibility
 	this.minMax = {
 		x: [this.x.min, this.x.max],
@@ -438,7 +466,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.attr("y", xLabelPos.y)
 		.style("text-anchor", xLabelPos.a)
 		.style("font-weight", "bolder")
-		.text(this.x.axisLabel);
+		.text(this.x.label);
 	yAxisG.append("text")
 		.attr("class", "axis-label")
 		.attr("transform", "rotate(-90)")
@@ -447,7 +475,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.attr("dy", ".71em")
 		.style("text-anchor", yLabelPos.a)
 		.style("font-weight", "bolder")
-		.text(this.y.axisLabel);
+		.text(this.y.label);
 };
 
 /**
@@ -1411,7 +1439,7 @@ SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
 	var lasty = y1, lastx = x1;          // store last x,y values
 	var y, diff, goHigher;               // vars scoped only in interation but to avoid redeclaring var
 	var lastDiff, lastGoHigher;          // some other memory items
-	x1 -= 0.00001;						 // add tolerances to min/max bounds as binary arithmetic can cause 
+	x1 -= 0.00001;                       // add tolerances to min/max bounds as binary arithmetic can cause 
 	x2 += 0.00001;                       // minor discrepancies when converted to decimal values
 	var i = 0;                           // increment for fail-safe stop condition
 	while(i++ < 100) {
@@ -1570,12 +1598,66 @@ SimpleGraph.prototype.drawLines = function() {
 				var coords = [];
 				for(var j = 0; j < lines[i].coords.length; j++) {
 					var c = lines[i].coords[j];
-					if(
-							c[0] >= this.x.min && c[0] <= this.x.max && 
-							c[1] >= this.y.min && c[1] <= this.y.max
-					) {
+					var addPoint = (c[1] || c[1] === 0);
+					addPoint = addPoint && c[0] >= this.x.min && c[0] <= this.x.max;
+					addPoint = addPoint && c[1] >= this.y.min && c[1] <= this.y.max;
+					if(addPoint) {
+						// if last coordinate was not added, find intercept to complete line to axis
+						if(coords.length === 0 && j > 0) {
+							var lastc = lines[i].coords[j-1];
+							if(lastc[1] || lastc[1] === 0) {
+								// this assumes linear interpolation, which may mess with the specified 
+								// interpolation for each line
+								var slope = (c[1] - lastc[1])/(c[0] - lastc[0]);
+								if(lastc[0] < this.x.min) {
+									coords.push([
+										0, 
+										lastc[1] + slope*-lastc[0]
+									]);
+								} else if(lastc[1] < this.y.min) {
+									coords.push([
+										lastc[0] + (this.y.min - lastc[1])/slope, 
+										this.y.min
+									]);
+								} else if(lastc[1] > this.y.max) {
+									coords.push([
+										lastc[0] + (this.y.max - lastc[1])/slope, 
+										this.y.min
+									]);
+								}
+							}
+						}
 						coords.push(c);
 					} else {
+						if(coords.length == 0) {
+							continue;
+						}
+						// complete line if necessary to end of graph or min/max of y
+						if(j > 0 && (c[1] || c[1] === 0)) {
+							var lastc = lines[i].coords[j-1];
+							var slope = (c[1] - lastc[1])/(c[0] - lastc[0]);
+							// if next point is beyond x-max, find intercept and break from loop
+							if(c[0] > this.x.max) {
+								coords.push([
+									this.x.max, 
+									lastc[1] + (this.x.max - c[0])*slope
+								]);
+								break;
+							}
+							// find nearest intercept entering y-range
+							if(c[1] < this.y.min) {
+								coords.push([
+									lastc[0] + (this.y.min - lastc[1])/slope, 
+									this.y.min
+								]);
+							} else if(c[1] > this.y.max) {
+								coords.push([
+									lastc[0] + (this.y.max - lastc[1])/slope, 
+									this.y.max
+								]);
+							}
+						}
+						// add line
 						addLine({
 							coords: coords, 
 							series: lines[i].series, 
@@ -1585,12 +1667,14 @@ SimpleGraph.prototype.drawLines = function() {
 						coords = [];
 					}
 				}
-				addLine({
-					coords: coords, 
-					series: lines[i].series, 
-					style: lines[i].style, 
-					interpolate: lines[i].interpolate
-				});
+				if(coords.length > 2) {
+					addLine({
+						coords: coords, 
+						series: lines[i].series, 
+						style: lines[i].style, 
+						interpolate: lines[i].interpolate
+					});
+				}
 			}
 		}
 	}
