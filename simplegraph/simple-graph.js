@@ -113,12 +113,14 @@
  * @param {Object} [option.axis.style={fill:"none",'stroke-width':0.5,stroke:'black'}] - Shared styles for 
  *        both axes stored as key-value pairs where each key is the name of an appropriate style.
  * @param {Object} [options.axis.x] - X-axis options object (further expanded below).
- * @param {Object} [options.axis.y] - Y-axis options object (same as expanded x-axis options).
+ * @param {Object} [options.axis.y] - Y-axis options object (same as expanded x-axis options below, so not 
+ *        duplicated).
  * @param {string} [options.axis.x.format=".0f"] - Number format for tick labels.
  * @param {number} [options.axis.x.min=0] - Minimum value on axis 
  * @param {number} [options.axis.x.max=100] - Maximum value on axis.
  * @param {string} [options.axis.x.label="x-value"] - Axis label.
  * @param {Object} [options.axis.x.scale=d3.scale.linear] - Optional class for scale type. Must be d3 scale.
+ * @param {Object} [options.axis.x.logBase=10] - Optional base number if using logarithmic scale.
  * @param {number[]} [options.axis.x.tickValues] - Specific values on x-axis to create tick marks on (this 
  *        will take priority over options.axis.x.ticks if both are supplied).
  * @param {number} [options.axis.x.ticks] - Number of evenly spaced tick intervals on x-axis to create (due 
@@ -200,16 +202,20 @@ function SimpleGraph(options) {
 				options.axis[a].format = ".0f";
 			}
 		}
-		if(scaleIsTime) {
-			options.axis[a].format = d3.time.format(options.axis[a].format);
-		} else {
-			options.axis[a].format = d3.format(options.axis[a].format);
-		}
 		if(!options.axis[a].grid) { options.axis[a].grid = {}; }
 		if(scaleIsLog && !options.axis[a].logBase) { options.axis[a].logBase = 10; }
 				
 		this[a] = {};
 		this[a].label = (options.axis[a].label == null) ? (a === "x" ? "x-value" : "y-value") : options.axis[a].label;
+		if(scaleIsTime) {
+			if(options.axis[a].scale === d3.time.scale.utc) {
+				this[a].format = d3.time.format.utc(options.axis[a].format);
+			} else {
+				this[a].format = d3.time.format(options.axis[a].format);
+			}
+		} else {
+			this[a].format = d3.format(options.axis[a].format);
+		}
 		
 		this[a].min = options.axis[a].min ? options.axis[a].min : 0, 
 		this[a].max = options.axis[a].max ? options.axis[a].max : 100
@@ -233,42 +239,40 @@ function SimpleGraph(options) {
 		
 		// log scale handles ticks differently
 		if(scaleIsLog) {
-			this[a].axis.tickFormat(options.axis[a].format)
+			this[a].axis.tickFormat(this[a].format)
 			if(options.axis[a].ticks) {
-				this[a].axis.ticks(options.axis[a].ticks, options.axis[a].format);
+				this[a].axis.ticks(options.axis[a].ticks, this[a].format);
 			} else {
-				this[a].axis.ticks(options.axis[a].format);
+				this[a].axis.ticks(this[a].format);
 				if(options.axis[a].tickValues) {
 					this[a].axis.tickValues(options.axis[a].tickValues);
 				}
 			}
-			continue;
-		}
-		
-		// add ticks
-		this[a].axis.tickFormat(options.axis[a].format)
-		if(options.axis[a].tickValues) {
-			this[a].axis.tickValues(options.axis[a].tickValues);
-			this[a].gridAxis.tickValues(options.axis[a].tickValues);
-		} else if(options.axis[a].ticks || options.axis[a].ticks === 0) {
-			if($.isArray(options.axis[a].ticks)) {
-				this[a].axis.ticks(options.axis[a].ticks[0], options.axis[a].ticks[1]);
-				this[a].gridAxis.ticks(options.axis[a].ticks[0], options.axis[a].ticks[1]);
-			} else {
-				this[a].axis.ticks(options.axis[a].ticks);
-				this[a].gridAxis.ticks(options.axis[a].ticks);
+		} else {
+			// add ticks
+			this[a].axis.tickFormat(this[a].format)
+			if(options.axis[a].tickValues) {
+				this[a].axis.tickValues(options.axis[a].tickValues);
+				this[a].gridAxis.tickValues(options.axis[a].tickValues);
+			} else if(options.axis[a].ticks || options.axis[a].ticks === 0) {
+				if($.isArray(options.axis[a].ticks)) {
+					this[a].axis.ticks(options.axis[a].ticks[0], options.axis[a].ticks[1]);
+					this[a].gridAxis.ticks(options.axis[a].ticks[0], options.axis[a].ticks[1]);
+				} else {
+					this[a].axis.ticks(options.axis[a].ticks);
+					this[a].gridAxis.ticks(options.axis[a].ticks);
+				}
 			}
-		}
-		
-		// add sub-grid-ticks
-		this[a].gridAxis.tickFormat(options.axis[a].format)
-		if(options.axis[a].grid.tickValues) {
-			this[a].gridAxis.tickValues(options.axis[a].grid.tickValues);
-		} else if(options.axis[a].grid.ticks || options.axis[a].grid.ticks === 0) {
-			if($.isArray(options.axis[a].grid.ticks)) {
-				this[a].gridAxis.ticks(options.axis[a].grid.ticks[0], options.axis[a].grid.ticks[1]);
-			} else {
-				this[a].gridAxis.ticks(options.axis[a].grid.ticks);
+			// add sub-grid-ticks
+			this[a].gridAxis.tickFormat(this[a].format)
+			if(options.axis[a].grid.tickValues) {
+				this[a].gridAxis.tickValues(options.axis[a].grid.tickValues);
+			} else if(options.axis[a].grid.ticks || options.axis[a].grid.ticks === 0) {
+				if($.isArray(options.axis[a].grid.ticks)) {
+					this[a].gridAxis.ticks(options.axis[a].grid.ticks[0], options.axis[a].grid.ticks[1]);
+				} else {
+					this[a].gridAxis.ticks(options.axis[a].grid.ticks);
+				}
 			}
 		}
 	}
@@ -1388,9 +1392,26 @@ SimpleGraph.prototype.clearAllData = function() {
 // Some Additional Data Functions
 //************************************************************************************************************
 /**
- * Retrieve a line function by the series name. Useful as D3 only binds an array of coordinates to a line, and
- * there is no way to link the line function (or any additional data).
- * @param {string} seriesName - Name of the series for which you want to grab the line function.
+ * Retrieve all point coordinates for a given series name.
+ * @param {string} seriesName - Name of the series for which you want to grab the point coordiantes.
+ * @returns {Number[][]} Array of x,y coordinate pairs.
+ */
+SimpleGraph.prototype.getPointCoordinatesBySeries = function(seriesName) {
+	var coordList = [];
+	if(this.points) {
+		for(var i = 0; i < this.points.length; i++) {
+			if(this.points[i].series === seriesName) {
+				coordList.push([this.points[i].x, this.points[i].y]);
+			}
+		}
+	}
+	return coordList;
+};
+
+/**
+ * Retrieve a line function for a given series name.. Useful as D3 only binds an array of coordinates to a 
+ * line, andthere is no way to link the line function (or any additional data).
+ * @param {string} seriesName - Name of the series for which you want to grab the line function(s).
  * @returns {function[]} - An array of the functions associated with this series (there may be more than one 
  *        if multiple lines share the same series name).
  */
@@ -1406,6 +1427,29 @@ SimpleGraph.prototype.getLineFunctionsBySeries = function(seriesName) {
 	return funcList;
 };
 
+/**
+ * Retrieve line coordinates for a given series name.
+ * @param {string} seriesName - Name of the series for which you want to grab the line coordinates(s).
+ * @returns {Number[][][]} - Multidimensional array of lines, then coordinate pairs making up that line.
+ */
+SimpleGraph.prototype.getLineCoordinatesBySeries = function(seriesName) {
+	var coordList = [];
+	if(this.lines) {
+		for(var i = 0; i < this.lines.length; i++) {
+			if(this.lines[i].series === seriesName) {
+				coordList.push(this.lines[i].coords);
+			}
+		}
+	}
+	return coordList;
+};
+
+/**
+ * Retrieve an area function for a given series name.
+ * @param {string} seriesName - Name of the series for which you want to grab the area function(s).
+ * @returns {function[][]} - A 2-dimensional array of areas and the function pairs (f1=y0 and f1=y1) to define
+ *        said area.
+ */
 SimpleGraph.prototype.getAreaFunctionsBySeries = function(seriesName) {
 	var funcList = [];
 	if(this.areas) {
@@ -1416,6 +1460,23 @@ SimpleGraph.prototype.getAreaFunctionsBySeries = function(seriesName) {
 		}
 	}
 	return funcList;
+};
+
+/**
+ * Retrieve area coordinates for a given series name.
+ * @param {string} seriesName - Name of the series for which you want to grab the area coordinates(s).
+ * @returns {Number[][][]} - Multidimensional array of areas, then coordinate triplets making up that area.
+ */
+SimpleGraph.prototype.getAreaCoordinatesBySeries = function(seriesName) {
+	var coordList = [];
+	if(this.areas) {
+		for(var i = 0; i < this.areas.length; i++) {
+			if(this.areas[i].series === seriesName) {
+				coordList.push(this.areas[i].coords);
+			}
+		}
+	}
+	return coordList;
 };
 
 /**
