@@ -156,6 +156,7 @@ function SimpleGraph(options) {
 	
 	// category color scale
 	this.color = (options.colorScale) ? options.colorScale : d3.scale.category10();
+	this.customColors = {};
 	
 	// create the SVG
 	this.svg = d3.select(options.container).append("svg")
@@ -328,6 +329,7 @@ SimpleGraph.prototype.destroy = function() {
 	this.svgGraphic = null;
 	this.clearAllData();
 	this.color = null;
+	this.customColors = null;
 	this.x = null;
 	this.y = null;
 	this.xScale = null;
@@ -767,15 +769,20 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
  * @param {string} name - name of the point or line series (case sensitive).
  * @returns {string} color information
  */
-SimpleGraph.prototype.getColorBySeriesName = function(name) {
+SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
 	if(!name) { return null; }
+	if(name in this.customColors) {
+		return this.customColors[name];
+	}
 	if(this.points) {
 		for(var p in this.points) {
 			var point = this.points[p];
 			if(name === point.series) {
+				// TODO, no style options yet available for points data
 				if(point.style && point.style.fill) {
 					return point.style.fill;
 				} else {
+					if(create) { return this.color(name); }
 					return (this.color.domain().indexOf(name) >= 0) ? this.color(name) : null;
 				}
 			}
@@ -788,6 +795,7 @@ SimpleGraph.prototype.getColorBySeriesName = function(name) {
 				if(line.style && line.style.stroke) {
 					return line.style.stroke;
 				} else {
+					if(create) { return this.color(name); }
 					return (this.color.domain().indexOf(name) >= 0) ? this.color(name) : null;
 				}
 			}
@@ -800,11 +808,13 @@ SimpleGraph.prototype.getColorBySeriesName = function(name) {
 				if(area.style && area.style.fill) {
 					return area.style.fill;
 				} else {
+					if(create) { return this.color(name); }
 					return (this.color.domain().indexOf(name) >= 0) ? this.color(name) : null;
 				}
 			}
 		}
 	}
+	if(create) { return this.color(name); }
 };
 
 /**
@@ -818,6 +828,16 @@ SimpleGraph.prototype.resetColorScale = function(colorScale) {
 		this.color.domain([]);
 	}
 }
+
+SimpleGraph.prototype.setSeriesColor = function(series, color) {
+	this.customColors[series] = color;
+};
+
+SimpleGraph.prototype.removeSeriesColor = function(series) {
+	if(this.customColors[series]) {
+		delete this.customColors[series];
+	};
+};
 
 
 //************************************************************************************************************
@@ -833,7 +853,8 @@ SimpleGraph.prototype.resetColorScale = function(colorScale) {
  *        keys, if supplied).
  */
 SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size) {
-	if(!this.points) { this.points = []; }
+	if(!this.points) { this.points = []; }	
+	if(!size || size <= 0) { size = 10; }
 	var p = {
 		series: name, 
 		x: parseFloat(xValue), 
@@ -851,8 +872,9 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size) {
  * @param {Object[]} data - The plot data as an array of objects. Use the dataPointName, xValueName, and 
  *        yValueName parameters to tell the function how to parse the data.
  * @param {string} dataPointName - The key name in each data object to retrieve the data point or data series
- *        name and label. Optional. If not supplied, or it cannot find the given key in the data object, 
- *        defaults to the index position in array of points.
+ *        name and label. If it cannot find the given key in the data object, assumes the given string is the 
+ *        series name for all points. If it is null or undefined, uses the index position (thus all points 
+ *        will be of unique series).
  * @param {string} xValueName - The key name in each data object to retrieve the x-value.
  * @param {string} yValueName - The key name in each data object to retrieve the y-value.
  * @param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.
@@ -865,12 +887,12 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 		return;
 	}
 	if(!this.points) { this.points = []; }
-	if(!size || (typeof size !== "number" && typeof size != "function")) { size = 10; }
+	if(!size || size <= 0) { size = 10; }
 	var pointIndex = -1;
 	// first we gotta comb through the data and organize it nicely
 	for(var i = 0; i < data.length; i++) {
-		// get data series name, if it exists
-		var seriesName = (dataPointName && data[i][dataPointName]) ? data[i][dataPointName] : i;
+		// get data series name, if it exists, otherwise assume dataPointName is series name
+		var seriesName = !dataPointName ? i : (data[i][dataPointName] ? data[i][dataPointName] : dataPointName);
 		var xValue = data[i][xValueName];
 		var yValue = data[i][yValueName];
 		// if any null values, skip
@@ -880,7 +902,7 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 		// nicely organize data
 		this.points.push({
 			series: seriesName, 
-			x: parseFloat(xValue), // ensure numeric type
+			x: xValue, 
 			y: parseFloat(yValue), 
 			pointsize: size
 		});
@@ -959,7 +981,7 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
 		style['stroke-width'] = 1.5;
 	}
 	if(!style.stroke) {
-		style.stroke = this.color(name);
+		style.stroke = this.getColorBySeriesName(name, true);
 	}
 	if(!interpolation) {
 		interpolation = "linear";
@@ -996,7 +1018,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 		style['stroke-width'] = 1.5;
 	}
 	if(!style.stroke) {
-		style.stroke = this.color(name);
+		style.stroke = this.getColorBySeriesName(name, true);
 	}
 	if(!interpolation) {
 		interpolation = "linear";
@@ -1548,6 +1570,7 @@ SimpleGraph.prototype.drawPoints = function() {
 	}
 	this.removePoints();
 	// for 'this' references
+	var self = this;
 	var color = this.color;
 	var xScale = this.x.scale;
 	var yScale = this.y.scale;
@@ -1568,6 +1591,7 @@ SimpleGraph.prototype.drawPoints = function() {
 	var points = this.svgGraphic.selectAll(".scatterplot-point")
 		.data(drawPointsData)
 	  .enter().append("rect")
+		.attr("series", function(d) { return d.series; })
 		.attr("class", "scatterplot-point")
 		.attr("width", function(d) { return (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize; })
 		.attr("height", function(d) { return (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize; })
@@ -1580,7 +1604,7 @@ SimpleGraph.prototype.drawPoints = function() {
 			return yScale(d.y)-size/2.0;
 		})
 		.attr("transform", function(d) { return "rotate(45," + xScale(d.x) + "," + yScale(d.y) + ")"; })
-		.style("fill", function(d) { return color(d.series);});
+		.style("fill", function(d) { return self.getColorBySeriesName(d.series, true); });
 };
 
 /**
@@ -1590,6 +1614,7 @@ SimpleGraph.prototype.drawPoints = function() {
 SimpleGraph.prototype.drawLines = function() {
 	this.removeLines();
 	// for this references
+	var self = this;
 	var color = this.color;
 	var xScale = this.x.scale;
 	var yScale = this.y.scale;
@@ -1608,7 +1633,9 @@ SimpleGraph.prototype.drawLines = function() {
 		  .enter().append("path")
 			.attr("series", function(l, i) { return drawLines[i].series; })
 			.attr("class", "scatterplot-line")
-			.style("stroke", function(l, i) { return color(drawLines[i].series); })
+			.style("stroke", function(l, i) {
+				return self.getColorBySeriesName(drawLines[i].series, true);
+			})
 			.style("fill", 'none')
 			.attr("d",
 				d3.svg.line()
@@ -1639,7 +1666,7 @@ SimpleGraph.prototype.drawLines = function() {
 			);
 		// add color if not specified
 		if(!('stroke' in lineData.style)) {
-			lineData.style.stroke = color(lineData.series);
+			lineData.style.stroke = self.getColorBySeriesName(lineData.series, true);
 		}
 		for(var skey in lineData.style) {
 			addLine.style(skey, lineData.style[skey]);
@@ -1747,6 +1774,7 @@ SimpleGraph.prototype.drawLines = function() {
 SimpleGraph.prototype.drawAreas = function() {
 	this.removeAreas();
 	// for this references
+	var self = this;
 	var color = this.color;
 	var xScale = this.x.scale;
 	var yScale = this.y.scale;
@@ -1767,7 +1795,7 @@ SimpleGraph.prototype.drawAreas = function() {
 				);
 			// add color if not specified
 			if(!('fill' in area.style)) {
-				area.style.fill = color(area.series);
+				area.style.fill = self.getColorBySeriesName(area.series, true);
 			}
 			for(var style in area.style) {
 				addArea.style(style, area.style[style]);
