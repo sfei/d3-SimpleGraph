@@ -115,35 +115,36 @@
       <p style="max-width:810px;margin:4px auto;">Click each button below for a tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console (usually opened up with F12). For best results you should go in the order shown.</p>
       <span 
           class="btn" 
-          helptitle="Custom Color Scale and Placing Axis Labels" 
-          helptext="Let's start by creating a graph, similar as before. We'll not specify any axis options, so you can see what the default looks like.<br /><br />
-            However, let's supply a custom color scale and play with some options for our axis labels, and draw the grid before drawing anything on the graph.<br /><br />
-            <b>drawAxes(labelPosition):</b>
-            <p class='param'>@param {string} [labelPosition='outside center'] - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top.</p>
-            <p class='param'>@param {string} [xAxisPosition='bottom'] - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom.</p>
-            <p class='param'>@param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
+          helptitle="Advanced Graph Options" 
+          helptext="Let's start by creating a graph, similar as before, but play with a few advanced options.<br /><br />
+            To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options (which will revert to default), but specify a y2-axis.<br /><br />
+            After creating the graph object, let's first draw the grid before drawing anything on the graph."
           sampleCode="var colors = d3.scale.ordinal()
     .range(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
 var graph = new SimpleGraph({
     container: '#simple-chart',
     width: 850,
     height: 580,
-    margins: { top: 50, left: 50, bottom: 20, right: 20 }, // we'll want to expand our top and left margins
-    colorScale: colors
+    // we'll want to expand our margins for playing with labels later
+    margins: { top: 50, left: 50, bottom: 50, right: 50 },
+    colorScale: colors, 
+    axis: {
+      y2: {
+        min: 0, 
+        max: 10,
+        label: 'y2-values'
+      }
+    }
 });
-graph.drawGrid();
-graph.drawAxes(
-    'inside center', // draw labels on inside and center
-    'top'            // place x-axis on top of graph
-);" 
+graph.drawGrid();" 
           onclick="openHelp(this)">
-        Custom Color and Axis Labels
+        Advanced Graph Options
       </span>
       <span 
           class="btn" 
           helptitle="Adding an Area"
           helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
-            You'll notice that the area will overlap over the axes and one of the axes labels, so it's necessary to redraw the axis (let's also play with a different label placement).<br /><br />
+            You'll notice that the area will overlap over the axes and one of the axes labels, so it's necessary to redraw the axis which we'll do in the next step.<br /><br />
             <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
             <p class='param'>@param {string} name - Series name</p>
             <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
@@ -151,7 +152,8 @@ graph.drawAxes(
             <p class='param'>@param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
             <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
             <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
-            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>"
+            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
+            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
           sampleCode="var bottomBoundary = function(x) {
     return -0.01*x*x + 1.6*x;
 };
@@ -164,16 +166,29 @@ graph.addAreaBetweenTwoLines(
     topBoundary,    // callback line function for top boundary
     {opacity: 0.6}  // let's make it transparent
 );
-graph.drawAreas();
-// draw axes inside still, but let's place them on the further side from the axis crossing
-graph.drawAxes('inside bottom right', 'top');" 
+graph.drawAreas();" 
           onclick="openHelp(this)">
         Adding an Area
       </span>
       <span 
           class="btn" 
+          helptitle="Axis Label Placement" 
+          helptext="Let's play with a custom label placement. We'll move the x-axis to the top, have the x-axis label centered, but the y-axis labels up top.<br /><br />
+            <b>drawAxes(labelPosition):</b>
+            <p class='param'>@param {string} [labelPosition='outside center'] - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top.</p>
+            <p class='param'>@param {string} [xAxisPosition='bottom'] - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom.</p>
+            <p class='param'>@param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
+          sampleCode="graph.drawAxes(
+    'inside top center', // draw labels on inside, y-axis labels on top, and x-axis centered
+    'top'                // place x-axis on top of graph
+);" 
+          onclick="openHelp(this)">
+        Axis Label Placement
+      </span>
+      <span 
+          class="btn" 
           helptitle="Adding a Range Limited Line"
-          helptext="Let's add a line, as a function, same as before, but this time, we'll limit it's range.<br /><br />
+          helptext="Let's add a line, as a function, same as previously, but using the new y2-axis we've created. Additionally, we'll limit it's range via an x-range parameter.<br /><br />
             Note two things in the result, one is that the line starts at 10 and ends at 90 (as specified), but also that when the line dips outside of the graph domain (where y values are below zero), it is not drawn. This can be called with the SimpleGraph.allowDrawBeyondGraph option, if desired.<br /><br />
             <b>addLineDataAsFunction(name, lineFunction, resolution, style, interpolation, xRange):</b>
             <p class='param'>@param {string} name - Series name</p>
@@ -181,9 +196,10 @@ graph.drawAxes('inside bottom right', 'top');"
             <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
             <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
             <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
-            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>"
+            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
+            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
           sampleCode="var limitedLineFunction = function(x) {
-    return (25*Math.sin(0.2*x) + 20);
+    return (2.5*Math.sin(0.2*x) + 2);
 };
 graph.addLineDataAsFunction(
     'Limited Line',
@@ -191,7 +207,8 @@ graph.addLineDataAsFunction(
     {'stroke-width':3.0},
     50,                   // compute line at 50 intervals
     'step-before',        // stepped drawing, just to demonstrate another type of interpolation
-    [10, 90]              // draw line only between 10 < x < 90
+    [10, 90],             // draw line only between 10 < x < 90
+    true                  // flags it for the y2-axis
 );
 graph.drawLines();" 
           onclick="openHelp(this)">
@@ -201,7 +218,8 @@ graph.drawLines();"
           class="btn" 
           helptitle="Customizing Tooltips"
           helptext="Now let's add tooltips to both our lines and areas. The call to add tooltips to areas looks identical to the function used for points and lines.<br /><br />
-            We will however use another method of retrieving the line function instead of calling from our globals. As well, let's add some custom styling to the tooltip."
+            Instead of calling from our globals, we will use two methods to retrieve the line data from within the graph object (using both is redudant but for demonstration). As well, let's add some custom styling to the tooltip.<br /><br />
+            Note that the y-values need no special handling for either y-axis, however to know which of these axes the value is placed on calls the boolean y2 parameter."
           sampleCode="var tooltipOptions = {
     style: {
         border: '1px solid #02D', 
@@ -212,10 +230,12 @@ graph.drawLines();"
 var lineTooltipFunction = function(d, p, s, i) {
     var seriesName = s[i].getAttribute('series');
     var lineFunctionArray = graph.getLineFunctionsBySeries(seriesName);
+    var linesData = graph.getLinesDataBySeries(seriesName)[0];
     if(lineFunctionArray.length > 0) {
         var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
         var y = lineFunctionArray[0](x).toFixed(1);
-        return x + ', ' + y;
+        // while we know it's always from the y2 axis as we have only one line, we'll dynamically check
+        return 'x: ' + x + ',&amp;lt;br /&amp;gt;' + (linesData.y2 ? 'y2' : 'y') + ': ' + y;
     }
 };
 var areaTooltipFunction = function(d, p, s, i) {
@@ -225,7 +245,7 @@ var areaTooltipFunction = function(d, p, s, i) {
         var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
         var y0 = lineFunctionArray[0][0](x).toFixed(1);
         var y1 = lineFunctionArray[0][1](x).toFixed(1);
-        return 'At ' + x + ':&amp;lt;br /&amp;gt;y0 = ' + y0 + '&amp;lt;br /&amp;gt;y1 = ' + y1;
+        return 'At ' + x + ':&amp;lt;br /&amp;gt;min = ' + y0 + '&amp;lt;br /&amp;gt;max = ' + y1;
     }
 };
 graph.addTooltipToLines(lineTooltipFunction, tooltipOptions);

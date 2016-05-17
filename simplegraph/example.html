@@ -172,7 +172,8 @@
             <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
             <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
             <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
-            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>"
+            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
+            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
           sampleCode="// our wacky line function (saved to global scope for use later)
 var wackyLineFunction = function(x) {
     return (15*Math.sin(0.2*x) + 0.02*x*x + 40);
@@ -199,7 +200,8 @@ graph.drawLines();"
             <p class='param'>@param {string} xValueName - The key name in each data object to retrieve the x-value.</p>
             <p class='param'>@param {string} yValueName - The key name in each data object to retrieve the y-value.</p>
             <p class='param'>@param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.</p>
-            <p class='param'>@param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied).</p>"
+            <p class='param'>@param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied).</p>
+            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
           sampleCode="graph.addPointsData(
   scores,           // example data supplied with this page
   'name',           // the key name for the data series

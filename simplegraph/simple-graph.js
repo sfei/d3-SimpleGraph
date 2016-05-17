@@ -184,11 +184,13 @@ function SimpleGraph(options) {
 	}
 	
 	// loop per axis to remove redundancies
-	var axes = ["x", "y"];
+	var axes = ["x", "y", "y2"];
 	for(var i = 0; i < axes.length; i++) {
 		// specific axis options
 		var a = axes[i];
 		if(!options.axis[a]) {
+			// if no second y-axis, just skip
+			if(a === "y2") { continue; }
 			options.axis[a] = {};
 		}
 		if(!options.axis[a].scale) {
@@ -233,10 +235,10 @@ function SimpleGraph(options) {
 		// create axes
 		this[a].axis = d3.svg.axis()
 			.scale(this[a].scale)
-			.orient(a === "x" ? "bottom" : "left");
+			.orient(a === "x" ? "bottom" : (a === "y2" ? "right" : "left"));
 		this[a].gridAxis = d3.svg.axis()
 			.scale(this[a].scale)
-			.orient(a === "x" ? "bottom" : "left");
+			.orient(a === "x" ? "bottom" : (a === "y2" ? "right" : "left"));
 		
 		// log scale handles ticks differently
 		if(scaleIsLog) {
@@ -338,6 +340,9 @@ SimpleGraph.prototype.destroy = function() {
 	this.xAxis = null;
 	this.yGridAxis = null;
 	this.xGridAxis = null;
+	this.points = null;
+	this.lines = null;
+	this.areas = null;
 };
 
 
@@ -369,7 +374,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	if(!axisLabelMargin) { axisLabelMargin = 0; }
 	
 	// draw axes first without labels
-	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .axis-label").remove();
+	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .scatterplot-y2axis, .axis-label").remove();
 	var xAxisG = this.svgGraphic.append("g")
 		.attr("class", "scatterplot-xaxis")
 		.attr("transform", "translate(0," + xAxisPosY + ")")
@@ -377,10 +382,14 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	var yAxisG = this.svgGraphic.append("g")
 		.attr("class", "scatterplot-yaxis")
 		.call(this.y.axis);
+	var y2AxisG = !this.y2 ? null : this.svgGraphic.append("g")
+		.attr("class", "scatterplot-y2axis")
+		.attr("transform", "translate(" + this.width + ",0)")
+		.call(this.y2.axis);
 	// for some reason ticks are by default invisible
 	this.svgGraphic.selectAll(".tick line").style("stroke", "#000");
 	// add styles
-	var axes = this.svgGraphic.selectAll(".scatterplot-xaxis .domain, .scatterplot-yaxis .domain");
+	var axes = this.svgGraphic.selectAll(".scatterplot-xaxis .domain, .scatterplot-yaxis .domain, .scatterplot-y2axis .domain");
 	for(var style in this.axisStyles) {
 		axes.style(style, this.axisStyles[style]);
 	}
@@ -397,6 +406,11 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 			tickMargin.y = this.getBBox().width;
 		}
 	});
+	this.svgGraphic.selectAll(".scatterplot-y2axis .tick").each(function() {
+		if(this.getBBox().width > tickMargin.y) {
+			tickMargin.y = this.getBBox().width;
+		}
+	});
 	
 	// default position on center-outside
 	var xLabelPos = {
@@ -407,6 +421,11 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	var yLabelPos = {
 		a: 'middle', 
 		x: -0.5*this.height,
+		y: -(tickMargin.y + 10 + axisLabelMargin)
+	};
+	var y2LabelPos = {
+		a: 'middle', 
+		x: 0.5*this.height,
 		y: -(tickMargin.y + 10 + axisLabelMargin)
 	};
 	// determine label position
@@ -448,18 +467,50 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 				yparallel = "bottom";
 			}
 		}
+		y2LabelPos.x = -yLabelPos.x;
+		y2LabelPos.y = yLabelPos.y;
+		y2LabelPos.a = yLabelPos.a;
+		if(y2LabelPos.a === "start") {
+			y2LabelPos.a = "end";
+		} else if(y2LabelPos.a === "end") {
+			y2LabelPos.a = "start"
+		}
 		// if near axis crossing, needs some extra padding
 		if(perpendicular === "inside") {
 			if(xparallel === "left") {
-				xLabelPos.x += 20;
+				xLabelPos.x += 10;
+			} else if(xparallel === "right" && this.y2) {
+				xLabelPos.x -= 10;
 			}
 			if(xAxisPosition === "bottom") {
 				if(yparallel === "bottom") {
-					yLabelPos.x += 20;
+					yLabelPos.x += 10;
+					y2LabelPos.x -= 10;
+					if(xparallel === "left") {
+						xLabelPos.x += 10;
+						yLabelPos.x += 10;
+					} else if(xparallel === "right" && this.y2) {
+						xLabelPos.x -= 10;
+						y2LabelPos.x -= 10;
+					}
+				} else {
+					yLabelPos.x -= 10;
+					y2LabelPos.x += 10;
 				}
 			} else {
 				if(yparallel === "top") {
-					yLabelPos.x -= 20;
+					yLabelPos.x -= 10;
+					y2LabelPos.x += 10;
+					if(xparallel === "left") {
+						xLabelPos.x += 10;
+						yLabelPos.x -= 10;
+					} else if(xparallel === "right" && this.y2) {
+						xLabelPos.x -= 10;
+						y2LabelPos.x += 10;
+					}
+				} else {
+					yLabelPos.x += 10;
+					y2LabelPos.x -= 10;
 				}
 			}
 		}
@@ -482,6 +533,17 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.style("text-anchor", yLabelPos.a)
 		.style("font-weight", "bolder")
 		.text(this.y.label);
+	if(y2AxisG) {
+		y2AxisG.append("text")
+			.attr("class", "axis-label")
+			.attr("transform", "rotate(90)")
+			.attr("x", y2LabelPos.x)
+			.attr("y", y2LabelPos.y)
+			.attr("dy", ".71em")
+			.style("text-anchor", y2LabelPos.a)
+			.style("font-weight", "bolder")
+			.text(this.y2.label);
+	}
 };
 
 /**
@@ -851,14 +913,16 @@ SimpleGraph.prototype.removeSeriesColor = function(series) {
  * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
-SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size) {
+SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis) {
 	if(!this.points) { this.points = []; }	
 	if(!size || size <= 0) { size = 10; }
 	var p = {
 		series: name, 
 		x: parseFloat(xValue), 
-		y: parseFloat(yValue),
+		y: parseFloat(yValue), 
+		y2: y2Axis ? true : false, 
 		pointsize: size
 	};
 	if(isNaN(p.y)) {
@@ -881,8 +945,9 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size) {
  * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
-SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size) {
+SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size, y2Axis) {
 	if(!data || data.length === 0) {
 		return;
 	}
@@ -904,6 +969,7 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 			series: seriesName, 
 			x: xValue, 
 			y: parseFloat(yValue), 
+			y2: y2Axis ? true : false, 
 			pointsize: size
 		});
 		pointIndex++;
@@ -935,8 +1001,9 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
  * @param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function 
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
-SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size) {
+SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis) {
 	if(!data || data.length === 0) {
 		return;
 	}
@@ -949,7 +1016,8 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size) {
 		var p = {
 			series: name, 
 			x: parseFloat(data[i][0]),
-			y: parseFloat(data[i][1]),
+			y: parseFloat(data[i][1]), 
+			y2: y2Axis ? true : false, 
 			pointsize: size
 		};
 		if(isNaN(p.y)) {
@@ -966,8 +1034,9 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size) {
  * @param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
  *        the resulting SVG element's CSS style.
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
-SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation) {
+SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation, y2Axis) {
 	if(!lineCoordinates || lineCoordinates.length === 0) { return; }
 	if(!this.lines) {
 		this.lines = [];
@@ -989,6 +1058,7 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
 	this.lines.push({
 		series: name, 
 		coords: lineCoordinates, 
+		y2: y2Axis ? true : false, 
 		style: style, 
 		interpolate: interpolation
 	});
@@ -1005,8 +1075,9 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
  * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
  *        will still be truncated to the min-max of the graph if it extends past.
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
-SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style, resolution, interpolation, xRange) {
+SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style, resolution, interpolation, xRange, y2Axis) {
 	if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
 		return;
 	}
@@ -1043,12 +1114,14 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 				series: name, 
 				lineFunction: lineFunction, 
 				coords: coords, 
+				y2: y2Axis ? true : false, 
 				style: style, 
 				interpolate: interpolation
 			});
 		}
 	}
 	
+	var yAxis = y2Axis ? this.y2 : this.y;
 	var coords = [];
 	if(xRange[1] > xRange[0]) {
 		var range = xRange[1] - xRange[0];
@@ -1071,11 +1144,11 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 				coords.push(c);
 			} else {
 				// if not, have to check y-value stays within range
-				var inRangeY = c[1] >= this.y.min && c[1] <= this.y.max;
+				var inRangeY = c[1] >= yAxis.min && c[1] <= yAxis.max;
 				if(inRangeY) {
 					if(i > 0 && coords.length === 0) {
 						// was truncated, check for previous intercept for more exact starting point
-						var intercept = this.findIntercept(lineFunction, x-increment, x);
+						var intercept = this.findIntercept(lineFunction, x-increment, x, y2Axis);
 						if(intercept) {
 							coords = [intercept, c];
 						}
@@ -1084,7 +1157,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 				} else {
 					// try to find nearest y-intercept for more exact ending point
 					if(coords.length > 0) {
-						var intercept = this.findIntercept(lineFunction, x-increment, x);
+						var intercept = this.findIntercept(lineFunction, x-increment, x, y2Axis);
 						if(intercept) {
 							coords.push(intercept);
 						}
@@ -1139,6 +1212,7 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
 	for(var i = 0; i < this.points.length; i++) {
 		var series = this.points[i].series;
 		if(series in pointsBySeries) {
+			pointsBySeries[series].y2 = this.points[i].y2;
 			pointsBySeries[series].points.push(this.points[i])
 		} else {
 			pointsBySeries[series] = {points: [this.points[i]]}
@@ -1190,17 +1264,20 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
 		}
 	}
 	// local function to add to our array of point-connecting-lines (just here for better readability)
-	function addPointLineSeries(series, arrayCoords, arrayToPush) {
+	function addPointLineSeries(series, arrayCoords, arrayToPush, y2) {
 		if(arrayCoords.length >= 2) {
 			arrayToPush.push({
 				series: series, 
-				coords: arrayCoords
+				coords: arrayCoords, 
+				y2: y2
 			});
 		}
 	}
+	
 	// start looping
 	for(var series in pointsBySeries) {
 		var checkPoints = pointsBySeries[series].points;
+		var yAxis = pointsBySeries[series].y2 ? this.y2 : this.y;
 		// less than 2 points, skip
 		if(checkPoints.length < 2) {
 			continue;
@@ -1216,18 +1293,18 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
 			} else {
 				// if not allowed to draw beyond graph, have to proceed and cut off lines as needed
 				var inRangeX = checkPoints[i].x >= this.x.min && checkPoints[i].x <= this.x.max;
-				var inRangeY = checkPoints[i].y >= this.y.min && checkPoints[i].y <= this.y.max;
+				var inRangeY = checkPoints[i].y >= yAxis.min && checkPoints[i].y <= yAxis.max;
 				// if in range, add -- if not, end line, try to add, and start new
 				if(inRangeX && inRangeY) {
 					addPointCheckOverlap(lineCoords, checkPoints[i]);
 				} else {
-					addPointLineSeries(series, lineCoords, this.pointLines);
+					addPointLineSeries(series, lineCoords, this.pointLines, pointsBySeries[series].y2);
 					lineCoords = [];
 				}
 			}
 		}
 		// always try to add after loop
-		addPointLineSeries(series, lineCoords, this.pointLines);
+		addPointLineSeries(series, lineCoords, this.pointLines, pointsBySeries[series].y2);
 	}
 	if(this.pointLines.length > 0) {
 		// style and interpolation are shared, so only need to add to first in list
@@ -1248,8 +1325,9 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
  * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
  *        will still be truncated to the min-max of the graph if it extends past.
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
-SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, style, resolution, interpolation, xRange) {
+SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, style, resolution, interpolation, xRange, y2Axis) {
 	if(!lineFunctionTop || typeof lineFunctionTop !== "function") {
 		return;
 	}
@@ -1283,12 +1361,14 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 				series: name, 
 				functions: [lineFunctionBottom, lineFunctionTop], 
 				coords: coords, 
+				y2: y2Axis ? true : false, 
 				style: style, 
 				interpolate: interpolation
 			});
 		}
 	}
 	// create coordinates
+	var yAxis = y2Axis ? this.y2 : this.y;
 	var coords = [];
 	if(xRange[1] > xRange[0]) {
 		var range = xRange[1] - xRange[0];
@@ -1312,8 +1392,8 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 				coords.push(c);
 			} else {
 				// check coordinate range (only need to check Y)
-				var btmInRangeY = c[1] >= this.y.min && c[1] <= this.y.max;
-				var topInRangeY = c[2] >= this.y.min && c[2] <= this.y.max;
+				var btmInRangeY = c[1] >= yAxis.min && c[1] <= yAxis.max;
+				var topInRangeY = c[2] >= yAxis.min && c[2] <= yAxis.max;
 				if(btmInRangeY == topInRangeY) {
 					if(btmInRangeY) {
 						coords.push(c);
@@ -1323,9 +1403,9 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 					}
 				} else {
 					if(btmInRangeY) {
-						c[2] = this.y.max;
+						c[2] = yAxis.max;
 					} else {
-						c[1] = this.y.min;
+						c[1] = yAxis.min;
 					}
 					if(c[2] > c[1]) {
 						coords.push(c);
@@ -1350,8 +1430,9 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
  * @param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG 
  *        element's CSS style.
  * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
-SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, interpolation) {
+SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, interpolation, y2Axis) {
 	if(!areaCoordinates || !$.isArray(areaCoordinates) || areaCoordinates.length < 2) {
 		return;
 	}
@@ -1368,6 +1449,7 @@ SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, sty
 	this.areas.push({
 		series: name, 
 		coords: areaCoordinates, 
+		y2: y2Axis ? true : false, 
 		style: style, 
 		interpolate: interpolation
 	});
@@ -1413,6 +1495,18 @@ SimpleGraph.prototype.clearAllData = function() {
 //************************************************************************************************************
 // Some Additional Data Functions
 //************************************************************************************************************
+SimpleGraph.prototype.getPointsDataBySeries = function(seriesName) {
+	var pointData = [];
+	if(this.points) {
+		for(var i = 0; i < this.points.length; i++) {
+			if(this.points[i].series === seriesName) {
+				pointData.push(this.points[i]);
+			}
+		}
+	}
+	return pointData;
+};
+
 /**
  * Retrieve all point coordinates for a given series name.
  * @param {string} seriesName - Name of the series for which you want to grab the point coordiantes.
@@ -1423,11 +1517,26 @@ SimpleGraph.prototype.getPointCoordinatesBySeries = function(seriesName) {
 	if(this.points) {
 		for(var i = 0; i < this.points.length; i++) {
 			if(this.points[i].series === seriesName) {
-				coordList.push([this.points[i].x, this.points[i].y]);
+				coordList.push([
+					this.points[i].x, 
+					this.points[i].y || this.points[i].y === 0 ? this.points[i].y : this.points[i].y2
+				]);
 			}
 		}
 	}
 	return coordList;
+};
+
+SimpleGraph.prototype.getLinesDataBySeries = function(seriesName) {
+	var lineData = [];
+	if(this.lines) {
+		for(var i = 0; i < this.lines.length; i++) {
+			if(this.lines[i].series === seriesName) {
+				lineData.push(this.lines[i]);
+			}
+		}
+	}
+	return lineData;
 };
 
 /**
@@ -1464,6 +1573,18 @@ SimpleGraph.prototype.getLineCoordinatesBySeries = function(seriesName) {
 		}
 	}
 	return coordList;
+};
+
+SimpleGraph.prototype.getAreasDataBySeries = function(seriesName) {
+	var areaData = [];
+	if(this.areas) {
+		for(var i = 0; i < this.areas.length; i++) {
+			if(this.areas[i].series === seriesName) {
+				areaData.push(this.areas[i]);
+			}
+		}
+	}
+	return areaData;
 };
 
 /**
@@ -1507,13 +1628,14 @@ SimpleGraph.prototype.getAreaCoordinatesBySeries = function(seriesName) {
  * @param x1 - Lower bound of x range to check.
  * @param x2 - Higher bound of x range to check.
  */
-SimpleGraph.prototype.findIntercept = function(f, x1, x2) {
+SimpleGraph.prototype.findIntercept = function(f, x1, x2, y2Axis) {
 	var y1 = f(x1), y2 = f(x2);
 	var breakValue, increasing;
-	if(y1 < this.y.min != y2 < this.y.min) {
-		breakValue = this.y.min;
-	} else if(y1 > this.y.max != y2 > this.y.max) {
-		breakValue = this.y.max;
+	var yAxis = y2Axis ? this.y2 : this.y;
+	if(y1 < yAxis.min != y2 < yAxis.min) {
+		breakValue = yAxis.min;
+	} else if(y1 > yAxis.max != y2 > yAxis.max) {
+		breakValue = yAxis.max;
 	} else {
 		return null;
 	}
@@ -1574,6 +1696,7 @@ SimpleGraph.prototype.drawPoints = function() {
 	var color = this.color;
 	var xScale = this.x.scale;
 	var yScale = this.y.scale;
+	var y2Scale = this.y2 ? this.y2.scale : null;
 	// if necessary, remove points that extend beyond graph
 	var drawPointsData;
 	if(this.allowDrawBeyondGraph) {
@@ -1581,10 +1704,11 @@ SimpleGraph.prototype.drawPoints = function() {
 	} else {
 		drawPointsData = [];
 		for(var i = 0; i < this.points.length; i++) {
+			var yAxis = this.points[i].y2 ? this.y2 : this.y;
 			var addPoint = this.points[i].x >= this.x.min;
 			addPoint = addPoint && this.points[i].x <= this.x.max;
-			addPoint = addPoint && this.points[i].y >= this.y.min;
-			addPoint = addPoint && this.points[i].y <= this.y.max;
+			addPoint = addPoint && this.points[i].y >= yAxis.min;
+			addPoint = addPoint && this.points[i].y <= yAxis.max;
 			if(addPoint) { drawPointsData.push(this.points[i]); }
 		}
 	}
@@ -1601,9 +1725,11 @@ SimpleGraph.prototype.drawPoints = function() {
 		})
 		.attr("y", function(d) {
 			var size = (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize;
-			return yScale(d.y)-size/2.0;
+			return (d.y2 ? y2Scale : yScale)(d.y)-size/2.0;
 		})
-		.attr("transform", function(d) { return "rotate(45," + xScale(d.x) + "," + yScale(d.y) + ")"; })
+		.attr("transform", function(d) {
+			return "rotate(45," + xScale(d.x) + "," + (d.y2 ? y2Scale : yScale)(d.y) + ")";
+		})
 		.style("fill", function(d) { return self.getColorBySeriesName(d.series, true); });
 };
 
@@ -1617,11 +1743,47 @@ SimpleGraph.prototype.drawLines = function() {
 	var self = this;
 	var color = this.color;
 	var xScale = this.x.scale;
-	var yScale = this.y.scale;
 	var svgGraphic = this.svgGraphic;
+	
+	// local function for adding lines to graph as it may be used multiple times per loop
+	function addLine(lineData, className, styles) {
+		if(lineData.coords.length < 2) {
+			return;
+		}
+		var yScale = lineData.y2 ? self.y2.scale : self.y.scale;
+		var addedLine = svgGraphic.selectAll(".temporary-line")
+			.data([lineData.coords])
+		  .enter().append("path")
+			.attr("series", lineData.series)
+			.attr("class", className)
+			.style("fill", 'none')
+			.attr("d",
+				d3.svg.line()
+					.x(function(c) { return xScale(c[0]); })
+					.y(function(c) { return yScale(c[1]); })
+					.interpolate(lineData.interpolate)
+			);
+		if(!styles) {
+			styles = lineData.styles ? lineData.styles : {};
+		}
+		for(var skey in styles) {
+			addedLine.style(skey, styles[skey]);
+		}
+		// add color if not specified
+		if(!('stroke' in styles)) {
+			addedLine.style('stroke', self.getColorBySeriesName(lineData.series, true));
+		}
+	}
+	
 	// add the scatterplot interpolated lines all at once (no need to check allowDrawBeyondGraph as it is 
 	// handled during creation of those lines).
 	if(this.pointLines && this.pointLines.length > 0) {
+		for(var l = 0; l < this.pointLines.length; l++) {
+			var yScale = this.pointLines[l].y2 ? this.y2.scale : this.y.scale;
+			// styles only stored in first
+			addLine(this.pointLines[l], "scatterplot-line", this.pointLines[0].style);
+		}
+		/*
 		var drawLines = this.pointLines;
 		// concatenate all line coordinates into array
 		var linesAsCoords = [];
@@ -1646,39 +1808,16 @@ SimpleGraph.prototype.drawLines = function() {
 		for(var style in drawLines[0].style) {
 			addLines.style(style, drawLines[0].style[style]);
 		}
+		*/
 	}
-	// local function for adding lines to graph as it may be used multiple times per loop
-	function addLine(lineData) {
-		if(lineData.coords.length < 2) {
-			return;
-		}
-		var addLine = svgGraphic.selectAll(".temporary-line")
-			.data([lineData.coords])
-		  .enter().append("path")
-			.attr("series", lineData.series)
-			.attr("class", "plotted-line")
-			.style("fill", 'none')
-			.attr("d",
-				d3.svg.line()
-					.x(function(c) { return xScale(c[0]); })
-					.y(function(c) { return yScale(c[1]); })
-					.interpolate(lineData.interpolate)
-			);
-		// add color if not specified
-		if(!('stroke' in lineData.style)) {
-			lineData.style.stroke = self.getColorBySeriesName(lineData.series, true);
-		}
-		for(var skey in lineData.style) {
-			addLine.style(skey, lineData.style[skey]);
-		}
-	}
+	
 	// add individually added lines one at a time (allows more custom styles)
 	if(this.lines) {
 		var lines = this.lines;
 		for(var i = 0; i < lines.length; i++) {
 			if(this.allowDrawBeyondGraph) {
 				// if allowed to extend, just add the whole line at once
-				addLine(lines[i]);
+				addLine(lines[i], "plotted-line");
 			} else {
 				// if not, go through coordinates and break as necessary (this is somewhat redundant for 
 				// lines added as a function as they check when adding the data itself, but needed if we 
@@ -1686,9 +1825,10 @@ SimpleGraph.prototype.drawLines = function() {
 				var coords = [];
 				for(var j = 0; j < lines[i].coords.length; j++) {
 					var c = lines[i].coords[j];
+					var yAxis = lines[i].y2 ? this.y2 : this.y;
 					var addPoint = (c[1] || c[1] === 0);
 					addPoint = addPoint && c[0] >= this.x.min && c[0] <= this.x.max;
-					addPoint = addPoint && c[1] >= this.y.min && c[1] <= this.y.max;
+					addPoint = addPoint && c[1] >= yAxis.min && c[1] <= yAxis.max;
 					if(addPoint) {
 						// if last coordinate was not added, find intercept to complete line to axis
 						if(coords.length === 0 && j > 0) {
@@ -1702,15 +1842,15 @@ SimpleGraph.prototype.drawLines = function() {
 										0, 
 										lastc[1] + slope*-lastc[0]
 									]);
-								} else if(lastc[1] < this.y.min) {
+								} else if(lastc[1] < yAxis.min) {
 									coords.push([
-										lastc[0] + (this.y.min - lastc[1])/slope, 
-										this.y.min
+										lastc[0] + (yAxis.min - lastc[1])/slope, 
+										yAxis.min
 									]);
-								} else if(lastc[1] > this.y.max) {
+								} else if(lastc[1] > yAxis.max) {
 									coords.push([
-										lastc[0] + (this.y.max - lastc[1])/slope, 
-										this.y.min
+										lastc[0] + (yAxis.max - lastc[1])/slope, 
+										yAxis.min
 									]);
 								}
 							}
@@ -1733,35 +1873,37 @@ SimpleGraph.prototype.drawLines = function() {
 								break;
 							}
 							// find nearest intercept entering y-range
-							if(c[1] < this.y.min) {
+							if(c[1] < yAxis.min) {
 								coords.push([
-									lastc[0] + (this.y.min - lastc[1])/slope, 
-									this.y.min
+									lastc[0] + (yAxis.min - lastc[1])/slope, 
+									yAxis.min
 								]);
-							} else if(c[1] > this.y.max) {
+							} else if(c[1] > yAxis.max) {
 								coords.push([
-									lastc[0] + (this.y.max - lastc[1])/slope, 
-									this.y.max
+									lastc[0] + (yAxis.max - lastc[1])/slope, 
+									yAxis.max
 								]);
 							}
 						}
 						// add line
 						addLine({
 							coords: coords, 
+							y2: lines[i].y2, 
 							series: lines[i].series, 
 							style: lines[i].style, 
 							interpolate: lines[i].interpolate
-						});
+						}, "plotted-line");
 						coords = [];
 					}
 				}
 				if(coords.length > 2) {
 					addLine({
 						coords: coords, 
+						y2: lines[i].y2, 
 						series: lines[i].series, 
 						style: lines[i].style, 
 						interpolate: lines[i].interpolate
-					});
+					}, "plotted-line");
 				}
 			}
 		}
@@ -1777,10 +1919,10 @@ SimpleGraph.prototype.drawAreas = function() {
 	var self = this;
 	var color = this.color;
 	var xScale = this.x.scale;
-	var yScale = this.y.scale;
 	if(this.areas) {
 		for(var i = 0; i < this.areas.length; i++) {
 			var area = this.areas[i];
+			var yScale = area.y2 ? self.y2.scale : self.y.scale;
 			var addArea = this.svgGraphic.selectAll(".temporary-area")
 				.data([area.coords])
 			  .enter().append("path")
