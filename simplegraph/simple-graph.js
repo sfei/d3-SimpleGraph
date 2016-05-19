@@ -207,9 +207,12 @@ function SimpleGraph(options) {
 		}
 		if(!options.axis[a].grid) { options.axis[a].grid = {}; }
 		if(scaleIsLog && !options.axis[a].logBase) { options.axis[a].logBase = 10; }
-				
-		this[a] = {};
-		this[a].label = (options.axis[a].label == null) ? (a === "x" ? "x-value" : "y-value") : options.axis[a].label;
+		
+		this[a] = {
+			label: (options.axis[a].label == null) ? (a === "x" ? "x-value" : "y-value") : options.axis[a].label, 
+			isDate: scaleIsTime, 
+			isLog: scaleIsLog
+		};
 		if(scaleIsTime) {
 			if(options.axis[a].scale === d3.time.scale.utc) {
 				this[a].format = d3.time.format.utc(options.axis[a].format);
@@ -1109,7 +1112,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 	}
 	// local function to add line data as if it gets clipped, we may be adding multiple
 	function addLine(linesArray, coords) {
-		if(coords.length > 2) {
+		if(coords && coords.length >= 2) {
 			linesArray.push({
 				series: name, 
 				lineFunction: lineFunction, 
@@ -1121,54 +1124,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 		}
 	}
 	
-	var yAxis = y2Axis ? this.y2 : this.y;
-	var coords = [];
-	if(xRange[1] > xRange[0]) {
-		var range = xRange[1] - xRange[0];
-		var ratio = range / (this.x.max - this.x.min);
-		if(!resolution || typeof resolution !== "number") {
-			resolution = Math.floor(ratio*(this.width - this.margins.left - this.margins.right) / 20);
-		}
-		if(resolution < 2) {
-			resolution = 2;
-		}
-		var increment = range / (resolution-1);
-		var x = xRange[0];
-		for(var i = 0; i < resolution; i++) {
-			if(x > this.x.max && x - this.x.max < 0.00001) {
-				x = this.x.max;
-			}
-			var c = [x, lineFunction(x)];
-			if(this.allowDrawBeyondGraph) {
-				// if it can extend beyond graph, always add
-				coords.push(c);
-			} else {
-				// if not, have to check y-value stays within range
-				var inRangeY = c[1] >= yAxis.min && c[1] <= yAxis.max;
-				if(inRangeY) {
-					if(i > 0 && coords.length === 0) {
-						// was truncated, check for previous intercept for more exact starting point
-						var intercept = this.findIntercept(lineFunction, x-increment, x, y2Axis);
-						if(intercept) {
-							coords = [intercept, c];
-						}
-					}
-					coords.push(c);
-				} else {
-					// try to find nearest y-intercept for more exact ending point
-					if(coords.length > 0) {
-						var intercept = this.findIntercept(lineFunction, x-increment, x, y2Axis);
-						if(intercept) {
-							coords.push(intercept);
-						}
-						addLine(this.lines, coords);
-					}
-					coords = [];
-				}
-			}
-			x += increment;
-		}
-	}
+	var coords = this.getCoordsFromFunctions(lineFunction, null, resolution, xRange, y2Axis);
 	// always attempt to add line after loop
 	addLine(this.lines, coords);
 };
@@ -1356,7 +1312,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 	}
 	// local function for adding to areas, as if cut off because extending beyond graph, may get repeated
 	function addAreas(areasArray, coords) {
-		if(coords.length > 2) {
+		if(coords && coords.length >= 2) {
 			areasArray.push({
 				series: name, 
 				functions: [lineFunctionBottom, lineFunctionTop], 
@@ -1368,59 +1324,9 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		}
 	}
 	// create coordinates
-	var yAxis = y2Axis ? this.y2 : this.y;
-	var coords = [];
-	if(xRange[1] > xRange[0]) {
-		var range = xRange[1] - xRange[0];
-		var ratio = range / (this.x.max - this.x.min);
-		if(!resolution || typeof resolution !== "number") {
-			resolution = Math.floor(ratio*(this.width - this.margins.left - this.margins.right) / 20);
-		}
-		if(resolution < 2) {
-			resolution = 2;
-		}
-		var increment = range / (resolution-1);
-		var x = xRange[0];
-		for(var i = 0; i < resolution; i++) {
-			// correct max by tolerance due to some bitwise-to-decimal discrepancies
-			if(x > this.x.max && x - this.x.max < 0.00001) {
-				x = this.x.max;
-			}
-			var c = [x, lineFunctionBottom(x), lineFunctionTop(x)];
-			if(this.allowDrawBeyondGraph) {
-				// simple, add all coordinates
-				coords.push(c);
-			} else {
-				// check coordinate range (only need to check Y)
-				var btmInRangeY = c[1] >= yAxis.min && c[1] <= yAxis.max;
-				var topInRangeY = c[2] >= yAxis.min && c[2] <= yAxis.max;
-				if(btmInRangeY == topInRangeY) {
-					if(btmInRangeY) {
-						coords.push(c);
-					} else {
-						addAreas(this.areas, coords);
-						coords = [];
-					}
-				} else {
-					if(btmInRangeY) {
-						c[2] = yAxis.max;
-					} else {
-						c[1] = yAxis.min;
-					}
-					if(c[2] > c[1]) {
-						coords.push(c);
-					} else {
-						console.log(coords);
-						addAreas(this.areas, coords);
-						coords = [];
-					}
-				}
-			}
-			x += increment;
-		}
-		// always attempt to add after loop
-		addAreas(this.areas, coords);
-	}
+	var coords = this.getCoordsFromFunctions(lineFunctionBottom, lineFunctionTop, resolution, xRange, y2Axis);
+	// always attempt to add after loop
+	addAreas(this.areas, coords);
 };
 
 /**
@@ -1453,6 +1359,95 @@ SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, sty
 		style: style, 
 		interpolate: interpolation
 	});
+};
+
+/**
+ * Internal function for handling how to pick coordinates for given function(s) and resolution over the 
+ * x-axis. Complicated due to the fact that axis may be normal, log-scale, or date.
+ * @callback funcA - callback function such that function(x) returns y.
+ * @callback [funcB] - callback function such that function(x) returns y.
+ * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 
+ *        20 pixels of width if not provided and if provided enforces minimum of 2).
+ * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
+ *        will still be truncated to the min-max of the graph if it extends past.
+ * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ */
+SimpleGraph.prototype.getCoordsFromFunctions = function(funcA, funcB, resolution, xRange, y2Axis) {
+	// get y-axis
+	var yAxis = y2Axis ? this.y2 : this.y;
+	// get range and ratio
+	var range = xRange[1] - xRange[0];
+	if(range <= 0) { return null; }
+	var ratio = range / (this.x.max - this.x.min);
+	// resolution enforced to minimun 2, and if not provided based off width of graph
+	if(!resolution || typeof resolution !== "number") {
+		resolution = Math.floor(ratio*(this.width - this.margins.left - this.margins.right) / 20);
+	}
+	if(resolution < 2) {
+		resolution = 2;
+	}
+	// how increments are handled and needed variables
+	var incrementFunc;
+	if(!this.x.isLog) {
+		// if not log-scale, standard increment (this works for dates too)
+		var increment = range/(resolution-1);
+		var isDate = this.x.isDate;
+		// standard increment function
+		incrementFunc = function(n) {
+			if(isDate) {
+				return new DateUTC(n.getTime() + increment);
+			}
+			return n += increment;
+		};
+	} else {
+		// increment in exponential scale fit to range and resolution
+		var base = Math.pow(xRange[1]/xRange[0], 1-resolution)
+		incrementFunc = function(n) {
+			n *= base;
+			return (n > xRange[1]) ? xRange[1] : n;
+		};
+	}
+	
+	var coords = [];
+	var x = xRange[0];
+	for(var i = 0; i < resolution; i++) {
+		if(x > this.x.max && x - this.x.max < 0.00001) {
+			x = this.x.max;
+		}
+		var c = [x, funcA(x)];
+		if(funcB) { c.push(funcB(x)); }
+		
+		if(this.allowDrawBeyondGraph) {
+			// if it can extend beyond graph, always add
+			coords.push(c);
+		} else {
+			// if not, have to check y-value stays within range
+			var inRangeY = c[1] >= yAxis.min && c[1] <= yAxis.max;
+			if(inRangeY) {
+				if(i > 0 && coords.length === 0) {
+					// was truncated, check for previous intercept for more exact starting point
+					var intercept = this.findIntercept(lineFunction, x-increment, x, y2Axis);
+					if(intercept) {
+						coords = [intercept, c];
+					}
+				}
+				coords.push(c);
+			} else {
+				// try to find nearest y-intercept for more exact ending point
+				if(coords.length > 0) {
+					var intercept = this.findIntercept(lineFunction, x-increment, x, y2Axis);
+					if(intercept) {
+						coords.push(intercept);
+					}
+					addLine(this.lines, coords);
+				}
+				coords = [];
+			}
+		}
+		x = incrementFunc(x);
+	}
+	
+	return coords;
 };
 
 
@@ -1764,7 +1759,7 @@ SimpleGraph.prototype.drawLines = function() {
 					.interpolate(lineData.interpolate)
 			);
 		if(!styles) {
-			styles = lineData.styles ? lineData.styles : {};
+			styles = lineData.style ? lineData.style : {};
 		}
 		for(var skey in styles) {
 			addedLine.style(skey, styles[skey]);
@@ -1783,32 +1778,6 @@ SimpleGraph.prototype.drawLines = function() {
 			// styles only stored in first
 			addLine(this.pointLines[l], "scatterplot-line", this.pointLines[0].style);
 		}
-		/*
-		var drawLines = this.pointLines;
-		// concatenate all line coordinates into array
-		var linesAsCoords = [];
-		for(var i = 0; i < drawLines.length; i++) {
-			linesAsCoords.push(drawLines[i].coords);
-		}
-		var addLines = this.svgGraphic.selectAll(".scatterplot-line")
-			.data(linesAsCoords)
-		  .enter().append("path")
-			.attr("series", function(l, i) { return drawLines[i].series; })
-			.attr("class", "scatterplot-line")
-			.style("stroke", function(l, i) {
-				return self.getColorBySeriesName(drawLines[i].series, true);
-			})
-			.style("fill", 'none')
-			.attr("d",
-				d3.svg.line()
-					.x(function(c) { return xScale(c[0]); })
-					.y(function(c) { return yScale(c[1]); })
-					.interpolate(drawLines[0].interpolate)
-			);
-		for(var style in drawLines[0].style) {
-			addLines.style(style, drawLines[0].style[style]);
-		}
-		*/
 	}
 	
 	// add individually added lines one at a time (allows more custom styles)
@@ -1896,7 +1865,7 @@ SimpleGraph.prototype.drawLines = function() {
 						coords = [];
 					}
 				}
-				if(coords.length > 2) {
+				if(coords.length >= 2) {
 					addLine({
 						coords: coords, 
 						y2: lines[i].y2, 
