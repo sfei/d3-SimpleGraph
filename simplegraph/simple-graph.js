@@ -144,7 +144,7 @@ function SimpleGraph(options) {
 		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
 		.style('font-size', '14px')
 		.style('overflow', 'visible');
-	this.svgGraphic = this.svg.append("g")
+	this.svgGraph = this.svg.append("g")
 		.attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
 	
 	this.resetAxisOptions(options.axis);
@@ -332,7 +332,7 @@ SimpleGraph.prototype.getSvgElement = function() {
  * @returns {object} the D3 SVG element
  */
 SimpleGraph.prototype.getSvgGraphic = function() {	
-	return this.svgGraphic;
+	return this.svgGraph;
 };
 
 /**
@@ -348,7 +348,7 @@ SimpleGraph.prototype.remove = function() {
 SimpleGraph.prototype.destroy = function() {
 	this.svg.remove();
 	this.svg = null;
-	this.svgGraphic = null;
+	this.svgGraph = null;
 	this.clearAllData();
 	this.color = null;
 	this.customColors = null;
@@ -392,39 +392,39 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	if(!axisLabelMargin) { axisLabelMargin = 0; }
 	
 	// draw axes first without labels
-	this.svgGraphic.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .scatterplot-y2axis, .axis-label").remove();
-	var xAxisG = this.svgGraphic.append("g")
+	this.svgGraph.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .scatterplot-y2axis, .axis-label").remove();
+	var xAxisG = this.svgGraph.append("g")
 		.attr("class", "scatterplot-xaxis")
 		.attr("transform", "translate(0," + xAxisPosY + ")")
 		.call(this.x.axis);
-	var yAxisG = this.svgGraphic.append("g")
+	var yAxisG = this.svgGraph.append("g")
 		.attr("class", "scatterplot-yaxis")
 		.call(this.y.axis);
-	var y2AxisG = !this.y2 ? null : this.svgGraphic.append("g")
+	var y2AxisG = !this.y2 ? null : this.svgGraph.append("g")
 		.attr("class", "scatterplot-y2axis")
 		.attr("transform", "translate(" + this.width + ",0)")
 		.call(this.y2.axis);
 	// for some reason ticks are by default invisible
-	this.svgGraphic.selectAll(".tick line").style("stroke", "#000");
+	this.svgGraph.selectAll(".tick line").style("stroke", "#000");
 	// add styles
-	var axes = this.svgGraphic.selectAll(".scatterplot-xaxis .domain, .scatterplot-yaxis .domain, .scatterplot-y2axis .domain");
+	var axes = this.svgGraph.selectAll(".scatterplot-xaxis .domain, .scatterplot-yaxis .domain, .scatterplot-y2axis .domain");
 	for(var style in this.axisStyles) {
 		axes.style(style, this.axisStyles[style]);
 	}
 	
 	// get size of ticks to know margin to place labels away if outside
 	var tickMargin = { x: 0, y: 0, y2: 0 };
-	this.svgGraphic.selectAll(".scatterplot-xaxis .tick").each(function() {
+	this.svgGraph.selectAll(".scatterplot-xaxis .tick").each(function() {
 		if(this.getBBox().height > tickMargin.x) {
 			tickMargin.x = this.getBBox().height;
 		}
 	});
-	this.svgGraphic.selectAll(".scatterplot-yaxis .tick").each(function() {
+	this.svgGraph.selectAll(".scatterplot-yaxis .tick").each(function() {
 		if(this.getBBox().width > tickMargin.y) {
 			tickMargin.y = this.getBBox().width;
 		}
 	});
-	this.svgGraphic.selectAll(".scatterplot-y2axis .tick").each(function() {
+	this.svgGraph.selectAll(".scatterplot-y2axis .tick").each(function() {
 		if(this.getBBox().width > tickMargin.y2) {
 			tickMargin.y2 = this.getBBox().width;
 		}
@@ -569,20 +569,20 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
  * @param {Object} [style={opacity:0.4,stroke:"#555",'stroke-width':0.3}]
  */
 SimpleGraph.prototype.drawGrid = function(style) {
-	this.svgGraphic.selectAll(".scatterplot-grid").remove();
+	this.svgGraph.selectAll(".scatterplot-grid").remove();
 	// default styles
 	var opacity = (style && style.opacity) ? parseFloat(style.opacity) : 0.4;
 	var stroke = (style && style.stroke) ? style.stroke : "#555";
 	var strokeWidth = (style && style['stroke-width']) ? parseFloat(style['stroke-width']) : 0.3;
 	
-	this.svgGraphic.append("g")
+	this.svgGraph.append("g")
 		.attr("class", "scatterplot-grid")
 		.attr("transform", "translate(0," + this.height + ")")
 		.style("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
 		.call(this.x.gridAxis.tickSize(-this.height, 0, 0).tickFormat(""));
-	this.svgGraphic.append("g")
+	this.svgGraph.append("g")
 		.attr("class", "scatterplot-grid")
 		.attr("opacity", opacity)
 		.style("stroke", stroke)
@@ -594,12 +594,12 @@ SimpleGraph.prototype.drawGrid = function(style) {
  * Remove grid, if it exists.
  */
 SimpleGraph.prototype.removeGrid = function() {
-	this.svgGraphic.selectAll(".scatterplot-grid").remove();
+	this.svgGraph.selectAll(".scatterplot-grid").remove();
 };
 
 /**
  * Draw the legend onto the graph. If legend already exists, will redraw it.
- * @param {number[]} position - x,y coordinate position from top-left corner of SVG
+ * @param {number[]} position - x,y coordinate position from top-left corner of SVG.
  * @param {string} [anchor="left"] - Optional anchor for the coordinate x-position (left, middle, or right).
  * @param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the 
  *        exception of support for padding.
@@ -611,7 +611,7 @@ SimpleGraph.prototype.removeGrid = function() {
  *        legend (the second which is currently uncustomizable) so use care if decreasing row height.
  */
 SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight) {
-	this.svgGraphic.selectAll(".scatterplot-legend").remove();
+	this.svgGraph.selectAll(".scatterplot-legend").remove();
 	
 	if(!position) {
 		position = { x: 0, y: 0 };
@@ -665,7 +665,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 	bgstyle['padding-bottom'] = parseInt(bgstyle['padding-bottom']);
 	
 	// create legend graphic and background
-	var legend = this.svgGraphic.append("g")
+	var legend = this.svg.append("g")
 		.attr("class", "scatterplot-legend")
 		.attr("transform", "translate(" + position.x + "," + position.y + ")");
 	var legendBg = legend.append("rect")
@@ -751,6 +751,9 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 		for(var style in data.style) {
 			path.style(style, data.style[style]);
 		}
+		if(!("stroke" in data.style)) {
+			path.style("stroke", self.getColorBySeriesName(data.series));
+		}
 		legend.append("text")
 			.attr("x", xOffset+23)
 			.attr("y", yOffset+9)
@@ -767,6 +770,9 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 			.attr("height", 18);
 		for(var style in data.style) {
 			symbol.style(style, data.style[style]);
+		}
+		if(!("fill" in data.style)) {
+			symbol.style("fill", self.getColorBySeriesName(data.series));
 		}
 		legend.append("text")
 			.attr("x", xOffset+23)
@@ -1509,7 +1515,7 @@ SimpleGraph.prototype.drawPoints = function() {
 		}
 	}
 
-	var points = this.svgGraphic.selectAll(".scatterplot-point")
+	var points = this.svgGraph.selectAll(".scatterplot-point")
 		.data(drawPointsData)
 	  .enter().append("rect")
 		.attr("series", function(d) { return d.series; })
@@ -1540,7 +1546,7 @@ SimpleGraph.prototype.drawLines = function() {
 	var self = this;
 	var color = this.color;
 	var xScale = this.x.scale;
-	var svgGraphic = this.svgGraphic;
+	var svgGraph = this.svgGraph;
 	
 	// local function for adding lines to graph as it may be used multiple times per loop
 	function addLine(lineData, lineCoords, className) {
@@ -1548,7 +1554,7 @@ SimpleGraph.prototype.drawLines = function() {
 			return;
 		}
 		var yScale = lineData.y2 ? self.y2.scale : self.y.scale;
-		var addedLine = svgGraphic.selectAll(".temporary-line")
+		var addedLine = svgGraph.selectAll(".temporary-line")
 			.data([lineCoords])
 		  .enter().append("path")
 			.attr("series", lineData.series)
@@ -1633,7 +1639,7 @@ SimpleGraph.prototype.drawAreas = function() {
 			return;
 		}
 		var yScale = areaData.y2 ? self.y2.scale : self.y.scale;
-		var addedArea = self.svgGraphic.selectAll(".temporary-area")
+		var addedArea = self.svgGraph.selectAll(".temporary-area")
 			.data([areaCoords])
 		  .enter().append("path")
 			.attr("series", areaData.series)
@@ -1690,12 +1696,6 @@ SimpleGraph.prototype.drawAreas = function() {
 //************************************************************************************************************
 // Mostly "private" functions for creating line coordinates from function
 //************************************************************************************************************
-/**
- * Find intercept given a slope and two x-values.
- * @callback f - Function to evaluate with format f(x)=y
- * @param x1 - Lower bound of x range to check.
- * @param x2 - Higher bound of x range to check.
- */
 SimpleGraph.prototype.findIntercept = function(f, x1, x2, y2Axis) {
 	var y1 = f(x1), y2 = f(x2);
 	var breakValue, increasing;
@@ -2068,28 +2068,28 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
  * Remove all points on graph.
  */
 SimpleGraph.prototype.removePoints = function() {
-	this.svgGraphic.selectAll(".scatterplot-dot, .scatterplot-point").remove();
+	this.svgGraph.selectAll(".scatterplot-dot, .scatterplot-point").remove();
 };
 
 /**
  * Remove lines from graph.
  */
 SimpleGraph.prototype.removeLines = function() {
-	this.svgGraphic.selectAll(".scatterplot-line, .plotted-line").remove();
+	this.svgGraph.selectAll(".scatterplot-line, .plotted-line").remove();
 };
 
 /**
  * Remove areas from graph.
  */
 SimpleGraph.prototype.removeAreas = function() {
-	this.svgGraphic.selectAll(".plotted-area").remove();
+	this.svgGraph.selectAll(".plotted-area").remove();
 };
 
 /**
  * Remove everything from graph.
  */
 SimpleGraph.prototype.removeAll = function() {
-	this.svgGraphic.selectAll(".scatterplot-dot, .scatterplot-point, .scatterplot-line, .plotted-line, .plotted-area").remove();
+	this.svgGraph.selectAll(".scatterplot-dot, .scatterplot-point, .scatterplot-line, .plotted-line, .plotted-area").remove();
 };
 
 
@@ -2110,7 +2110,7 @@ SimpleGraph.prototype.removeAll = function() {
  *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
-	this.svgGraphic.selectAll(".scatterplot-point")
+	this.svgGraph.selectAll(".scatterplot-point")
 		.call(this.addTooltipFunctionality(tooltipFunction, options));
 };
 
@@ -2125,7 +2125,7 @@ SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
  *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
-	this.svgGraphic.selectAll(".scatterplot-line, .plotted-line")
+	this.svgGraph.selectAll(".scatterplot-line, .plotted-line")
 		.call(this.addTooltipFunctionality(tooltipFunction, options));
 };
 
@@ -2140,7 +2140,7 @@ SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
  *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
-	this.svgGraphic.selectAll(".plotted-area")
+	this.svgGraph.selectAll(".plotted-area")
 		.call(this.addTooltipFunctionality(tooltipFunction, options));
 };
 
@@ -2234,12 +2234,12 @@ SimpleGraph.prototype.highlightPoints = function(series, validationCallback, siz
 	var selectQuery = ".scatterplot-point";
 	if(series) { selectQuery += "[series='" + series + "']"; }
 	var self = this;
-	this.svgGraphic.selectAll(selectQuery).each(function(d, i, s) {
+	this.svgGraph.selectAll(selectQuery).each(function(d, i, s) {
 		if(!validationCallback(d)) { return false; }
 		var xScale = self.x.scale;
 		var yScale = d.y2 ? self.y2.scale : self.y.scale;
 		var fill = fill ? fill : self.getColorBySeriesName(d.series, true);
-		var rect = self.svgGraphic.append("rect")
+		var rect = self.svgGraph.append("rect")
 			.attr("class", "scatterplot-point-highlight")
 			.attr("width", size)
 			.attr("height", size)
@@ -2256,7 +2256,7 @@ SimpleGraph.prototype.highlightPoints = function(series, validationCallback, siz
 };
 
 SimpleGraph.prototype.removeHighlightPoints = function() {
-	this.svgGraphic.selectAll(".scatterplot-point-highlight").remove();
+	this.svgGraph.selectAll(".scatterplot-point-highlight").remove();
 };
 
 SimpleGraph.prototype.removeHighlights = function() {
