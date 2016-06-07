@@ -42,13 +42,14 @@
         left: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden;
+        overflow-y: auto;
         background-color: rgba(80, 80, 80, 0.4);
       }
       #help-dialog {
         position: relative;
         top: 20%;
         margin: auto;
+        margin-bottom: 40px;
         width: 600px;
         min-height: 200px;
         background: #77b8e0;
@@ -377,7 +378,11 @@ graph.drawLegend(
         $("#help-dialog-content").html(elem.getAttribute("helptext"));
         $("#help-dialog code").html(elem.getAttribute("sampleCode"));
         $("#help-dialog-container").show();
-        $("#help-dialog").css("top", (0.5*($(window).height() - $("#help-dialog").height()) - 20) + "px");
+        var hdElem = $("#help-dialog");
+        var hdOffset = hdElem.css("top", (0.5*($(window).height() - $("#help-dialog").height()) - 20)).offset();
+        if(hdOffset.top < 40) {
+          hdElem.css("top", 40)
+        }
     }
     // copy code snippet to clipboard functionality
     function copyToClipboard() {

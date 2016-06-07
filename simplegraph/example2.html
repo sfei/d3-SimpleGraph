@@ -42,13 +42,14 @@
         left: 0;
         width: 100%;
         height: 100%;
-        overflow: hidden;
+        overflow-y: auto;
         background-color: rgba(80, 80, 80, 0.4);
       }
       #help-dialog {
         position: relative;
         top: 20%;
         margin: auto;
+        margin-bottom: 40px;
         width: 600px;
         min-height: 200px;
         background: #77b8e0;
@@ -217,9 +218,22 @@ graph.drawLines();"
       <span 
           class="btn" 
           helptitle="Customizing Tooltips"
-          helptext="Now let's add tooltips to both our lines and areas. The call to add tooltips to areas looks identical to the function used for points and lines.<br /><br />
-            Instead of calling from our globals, we will use two methods to retrieve the line data from within the graph object (using both is redudant but for demonstration). As well, let's add some custom styling to the tooltip.<br /><br />
-            Note that the y-values need no special handling for either y-axis, however to know which of these axes the value is placed on calls the boolean y2 parameter."
+          helptext="Now let's add tooltips to both our lines and areas. As well, let's add some custom styling to the tooltip.
+            <br /><br />
+            The call to add tooltips to areas looks identical to the function used for points and lines, but instead of calling from our globals, we will use two methods to retrieve the series data from within the graph object (using both is redudant but for demonstration). Also note that the y-values need no special handling for either y-axis, however to know which of these axes the value is placed on calls the boolean y2 parameter.<br /><br />
+            <b>LineData:</b>
+            <p class='param'>@property {string} series - The series name this line belongs to.</p>
+            <p class='param'>@property {callback} lineFunction - The line function defining this line (or null if the line was provided as a series of coordinates.</p>
+            <p class='param'>@property {number[][]} coords - The line as a series of coordinates (or null if the line was provided as a function.</p>
+            <p class='param'>@property {number} resolution - If the line was defined by a function, the resolution to draw the line, i.e. the number of points to draw then interpolate a line through, or null if using default settings.</p>
+            <p class='param'>@property {number[]} xRange - The minimum and maximum x-values the drawn line may not exceed, or null if  there are no limits.</p>
+            <p class='param'>@property {boolean} y2 - If true, the y-values of the line correlates to the y2 axis.</p>
+            <p class='param'>@property {Object} style - A dictionary of styles to apply to the line. Even if no style was provided with  the data, a default 'stroke' style value provided.</p>
+            <p class='param'>@property {string} interpolate - The interpolation type.when drawing the line.</p>
+            <br />
+            <b>getLinesDataBySeries(seriesName):</b>
+            <p class='param'>@param {string} seriesName - Name of the series for which you want to grab data.</p>
+            <p class='param'>@returns {LineData[]} Array of line data.</p>"
           sampleCode="var tooltipOptions = {
     style: {
         border: '1px solid #02D', 
@@ -229,22 +243,21 @@ graph.drawLines();"
 };
 var lineTooltipFunction = function(d, p, s, i) {
     var seriesName = s[i].getAttribute('series');
-    var lineFunctionArray = graph.getLineFunctionsBySeries(seriesName);
     var linesData = graph.getLinesDataBySeries(seriesName)[0];
-    if(lineFunctionArray.length > 0) {
+    if(linesData.lineFunction) {
         var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
-        var y = lineFunctionArray[0](x).toFixed(1);
+        var y = linesData.lineFunction(x).toFixed(1);
         // while we know it's always from the y2 axis as we have only one line, we'll dynamically check
         return 'x: ' + x + ',&amp;lt;br /&amp;gt;' + (linesData.y2 ? 'y2' : 'y') + ': ' + y;
     }
 };
 var areaTooltipFunction = function(d, p, s, i) {
     var seriesName = s[i].getAttribute('series');
-    var lineFunctionArray = graph.getAreaFunctionsBySeries(seriesName);
-    if(lineFunctionArray.length > 0) {
+    var areasData = graph.getAreasDataBySeries(seriesName)[0];
+    if(areasData.areaFunctions) {
         var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
-        var y0 = lineFunctionArray[0][0](x).toFixed(1);
-        var y1 = lineFunctionArray[0][1](x).toFixed(1);
+        var y0 = areasData.areaFunctions[0](x).toFixed(1);
+        var y1 = areasData.areaFunctions[1](x).toFixed(1);
         return 'At ' + x + ':&amp;lt;br /&amp;gt;min = ' + y0 + '&amp;lt;br /&amp;gt;max = ' + y1;
     }
 };
@@ -283,7 +296,11 @@ graph.addTooltipToAreas(areaTooltipFunction, tooltipOptions);"
         $("#help-dialog-content").html(elem.getAttribute("helptext"));
         $("#help-dialog code").html(elem.getAttribute("sampleCode"));
         $("#help-dialog-container").show();
-        $("#help-dialog").css("top", (0.5*($(window).height() - $("#help-dialog").height()) - 20) + "px");
+        var hdElem = $("#help-dialog");
+        var hdOffset = hdElem.css("top", (0.5*($(window).height() - $("#help-dialog").height()) - 20)).offset();
+        if(hdOffset.top < 40) {
+          hdElem.css("top", 40)
+        }
     }
     // copy code snippet to clipboard functionality
     function copyToClipboard() {
