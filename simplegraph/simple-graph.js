@@ -80,6 +80,65 @@
 			}
 		}());
 	}
+	if(!String.prototype.endsWith) {
+		(function() {
+			'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
+			var defineProperty = (function() {
+				// IE 8 only supports `Object.defineProperty` on DOM elements
+				try {
+					var object = {};
+					var $defineProperty = Object.defineProperty;
+					var result = $defineProperty(object, object, object) && $defineProperty;
+				} catch(error) {}
+				return result;
+			}());
+			var toString = {}.toString;
+			var endsWith = function(search) {
+				if (this == null) {
+					throw TypeError();
+				}
+				var string = String(this);
+				if (search && toString.call(search) == '[object RegExp]') {
+					throw TypeError();
+				}
+				var stringLength = string.length;
+				var searchString = String(search);
+				var searchLength = searchString.length;
+				var pos = stringLength;
+				if (arguments.length > 1) {
+					var position = arguments[1];
+					if (position !== undefined) {
+						// `ToInteger`
+						pos = position ? Number(position) : 0;
+						if (pos != pos) { // better `isNaN`
+							pos = 0;
+						}
+					}
+				}
+				var end = Math.min(Math.max(pos, 0), stringLength);
+				var start = end - searchLength;
+				if (start < 0) {
+					return false;
+				}
+				var index = -1;
+				while (++index < searchLength) {
+					if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
+						return false;
+					}
+				}
+				return true;
+			};
+			if (defineProperty) {
+				defineProperty(String.prototype, 'endsWith', {
+					'value': endsWith,
+					'configurable': true,
+					'writable': true
+				});
+			} else {
+				String.prototype.endsWith = endsWith;
+			}
+		}());
+	}
 	
 	// CommonJS-based (e.g. NodeJS) API
 	if(typeof module === "object" && module.exports) {
@@ -392,7 +451,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	if(!axisLabelMargin) { axisLabelMargin = 0; }
 	
 	// draw axes first without labels
-	this.svgGraph.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .scatterplot-y2axis, .axis-label").remove();
+	this.svg.selectAll(".scatterplot-xaxis, .scatterplot-yaxis, .scatterplot-y2axis, .axis-label").remove();
 	var xAxisG = this.svgGraph.append("g")
 		.attr("class", "scatterplot-xaxis")
 		.attr("transform", "translate(0," + xAxisPosY + ")")
@@ -611,7 +670,7 @@ SimpleGraph.prototype.removeGrid = function() {
  *        legend (the second which is currently uncustomizable) so use care if decreasing row height.
  */
 SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight) {
-	this.svgGraph.selectAll(".scatterplot-legend").remove();
+	this.svg.selectAll(".scatterplot-legend").remove();
 	
 	if(!position) {
 		position = { x: 0, y: 0 };
@@ -664,7 +723,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 	bgstyle['padding-top'] = parseInt(bgstyle['padding-top']);
 	bgstyle['padding-bottom'] = parseInt(bgstyle['padding-bottom']);
 	
-	// create legend graphic and background
+	// create legend graphic and background (note, added to top SVG not svgGraph)
 	var legend = this.svg.append("g")
 		.attr("class", "scatterplot-legend")
 		.attr("transform", "translate(" + position.x + "," + position.y + ")");
@@ -1776,7 +1835,7 @@ SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Ax
 						lastCoords[0] + slope*(coords[1] - lastCoords[1])
 					];
 					if(intercept[1] >= yAxis.min && intercept[1] <= yAxis.max) {
-						segement.push(intercept)
+						segement.push(intercept);
 					}
 				}
 				// add if within y-range
@@ -1808,18 +1867,20 @@ SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Ax
 		if(coords[1] >= yAxis.min && coords[1] <= yAxis.max) {
 			// case: first point of new segment
 			if(segment.length === 0 && lastCoords) {
-				// get y-intercept
-				var yTarget = slope > 0 ? yAxis.min : yAxis.max;
-				var lastX = this.x.isDate ? lastCoords[0].getTime() : lastCoords[0];
-				coords = [
-					lastX + (yTarget - lastCoords[1])/slope, 
-					yTarget
-				];
-				if(this.x.isDate) {
-					coords[0] = new Date(coords[0]);
+				if(slope === 0) {
+					// get y-intercept
+					var yTarget = slope > 0 ? yAxis.min : yAxis.max;
+					var lastX = this.x.isDate ? lastCoords[0].getTime() : lastCoords[0];
+					coords = [
+						lastX + (yTarget - lastCoords[1])/slope, 
+						yTarget
+					];
+					if(this.x.isDate) {
+						coords[0] = new Date(coords[0]);
+					}
+					// force repeat of the coords that original came in for this loop (intercept will become last)
+					c--;
 				}
-				// force repeat of the coords that original came in for this loop (intercept will become last)
-				c--;
 			}
 			// add to segment
 			segment.push(coords);
@@ -2261,6 +2322,44 @@ SimpleGraph.prototype.removeHighlightPoints = function() {
 
 SimpleGraph.prototype.removeHighlights = function() {
 	this.removeHighlightPoints();
+};
+
+
+//************************************************************************************************************
+// Save graph function
+//************************************************************************************************************
+/**
+ * Save graph as a PNG.
+ * @param {string} [pngName] - Default name to save png.
+ */
+SimpleGraph.prototype.saveAsPng = function(pngName) {
+	var canvas = document.createElement("canvas");
+	canvas.style.display = "none";
+	canvas.width = this.containerWidth;
+	canvas.height = this.containerHeight;
+	
+	var svgHtml = this.svg
+		.attr("version", "1.1")
+		.attr("xmlns", "http://www.w3.org/2000/svg")
+		.attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
+		.node().outerHTML;
+
+	if(!pngName) { pngName = "graph.png"; }
+	if(!pngName.toLowerCase().endsWith(".png")) { pngName += ".png"; }
+	var a = document.createElement("a");
+	a.style.display = "none";
+	this.svg.node().parentNode.appendChild(a);
+	
+	var image = new Image();
+	image.src = "data:image/svg+xml;base64," + btoa(svgHtml);
+	$(image).load(function() {
+		canvas.getContext("2d").drawImage(image, 0, 0);
+		a.download = pngName;
+		a.href = canvas.toDataURL("image/png");
+		a.click();
+		a.remove();
+		canvas.remove();
+	});
 };
 
 
