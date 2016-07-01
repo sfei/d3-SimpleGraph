@@ -669,7 +669,7 @@ SimpleGraph.prototype.removeGrid = function() {
  * @param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in 
  *        legend (the second which is currently uncustomizable) so use care if decreasing row height.
  */
-SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight) {
+SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight, exclude) {
 	this.svg.selectAll(".scatterplot-legend").remove();
 	
 	if(!position) {
@@ -685,6 +685,10 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 	if(!anchor) {
 		anchor = "left";
 	}
+	
+	if(!exclude) { exclude = []; }
+	if(typeof exclude === "string") { exclude = exclude.trim().split(/\s+/); }
+	for(var i = 0; i < exclude.length; i++) { exclude[i] = exclude[i].toLowerCase(); }
 	
 	// default styles for legend container (padding is set via explicit sides)
 	if(!bgstyle) { bgstyle = {}; }
@@ -843,7 +847,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 	}
 	
 	// start with areas data
-	if(this.areas) {
+	if(this.areas && $.inArray("areas", exclude) < 0) {
 		var areaSeries = [];
 		for(var i = 0; i < this.areas.length; i++) {
 			var name = this.areas[i].series;
@@ -854,7 +858,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 		}
 	}
 	// then lines
-	if(this.lines) {
+	if(this.lines && $.inArray("lines", exclude) < 0) {
 		var lineSeries = [];
 		for(var i = 0; i < this.lines.length; i++) {
 			var name = this.lines[i].series;
@@ -865,7 +869,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 		}
 	}
 	// finally points
-	if(this.points) {
+	if(this.points && $.inArray("points", exclude) < 0) {
 		var pointSeries = [];
 		for(var i = 0; i < this.points.length; i++) {
 			var name = this.points[i].series;
@@ -1036,7 +1040,6 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 	}
 	if(!this.points) { this.points = []; }
 	if(!size || size <= 0) { size = 10; }
-	var pointIndex = -1;
 	// first we gotta comb through the data and organize it nicely
 	for(var i = 0; i < data.length; i++) {
 		// get data series name, if it exists, otherwise assume dataPointName is series name
@@ -1048,14 +1051,17 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 			continue;
 		}
 		// nicely organize data
-		this.points.push({
+		var point = {
 			series: seriesName, 
 			x: xValue, 
 			y: parseFloat(yValue), 
 			y2: y2Axis ? true : false, 
 			pointsize: size
-		});
-		pointIndex++;
+		};
+		// check for NaN (from ND)
+		if(isNaN(point.y)) {
+			point.y = 0;
+		}
 		// additonal keys
 		if(additionalDataKeys && $.isArray(additionalDataKeys)) {
 			for(var k = 0; k < additionalDataKeys.length; k++) {
@@ -1063,17 +1069,14 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 				var asKey = key;
 				// if key exists (name, x, y are reserved), adjust key name
 				var t = 2;
-				while(asKey in this.points[pointIndex]) {
+				while(asKey in point) {
 					asKey = key + String(t);
 					t++;
 				}
-				this.points[pointIndex][asKey] = data[i][key];
+				point[asKey] = data[i][key];
 			}
 		}
-		// check for NaN (from ND)
-		if(isNaN(this.points[pointIndex].y)) {
-			this.points[pointIndex].y = 0;
-		}
+		this.points.push(point);
 	}
 };
 
@@ -2333,33 +2336,62 @@ SimpleGraph.prototype.removeHighlights = function() {
  * @param {string} [pngName] - Default name to save png.
  */
 SimpleGraph.prototype.saveAsPng = function(pngName) {
+	if(!pngName) { pngName = "graph.png"; }
+	if(!pngName.toLowerCase().endsWith(".png")) { pngName += ".png"; }
+	
+	var svgNode = this.svg
+		.attr("version", "1.1")
+		.attr("xmlns", "http://www.w3.org/2000/svg")
+		.attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
+		.node();
+	var serializer = new XMLSerializer();
+	var svgHtml = serializer.serializeToString(svgNode);
+	
 	var canvas = document.createElement("canvas");
 	canvas.style.display = "none";
 	canvas.width = this.containerWidth;
 	canvas.height = this.containerHeight;
 	
-	var svgHtml = this.svg
-		.attr("version", "1.1")
-		.attr("xmlns", "http://www.w3.org/2000/svg")
-		.attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
-		.node().outerHTML;
-
-	if(!pngName) { pngName = "graph.png"; }
-	if(!pngName.toLowerCase().endsWith(".png")) { pngName += ".png"; }
+	// because internet explorer, this is only way around the security error
+	if(canvg) {
+		// have to manually replace the width/height in cases of bottom-buffer IE hack for resizable graphs
+		svgHtml = svgHtml.replace("style=\"width: 100%; height: 1px;", "style=\"width:" + this.containerWidth + "px; height:" + this.containerHeight + "px;");
+		// draw via canvg, which is totally redudant if not for the fact this is only way to bypass security error
+		canvg(canvas, svgHtml);
+		navigator.msSaveBlob(
+			new Blob([canvas.msToBlob()], {type:"image/png"}), 
+			pngName
+		);
+		return;
+	}
+	
 	var a = document.createElement("a");
 	a.style.display = "none";
+	a.download = pngName;
 	this.svg.node().parentNode.appendChild(a);
 	
-	var image = new Image();
-	image.src = "data:image/svg+xml;base64," + btoa(svgHtml);
-	$(image).load(function() {
-		canvas.getContext("2d").drawImage(image, 0, 0);
-		a.download = pngName;
-		a.href = canvas.toDataURL("image/png");
-		a.click();
-		a.remove();
+	var img = new Image();
+	img.onload = function() {
+		// freaking internet explorer..
+		canvas.getContext("2d").drawImage(img, 0, 0);
+		if(navigator.msSaveBlob) {
+			try {
+				navigator.msSaveBlob(
+					new Blob([canvas.msToBlob()], {type:"image/png"}), 
+					pngName
+				);
+			} catch(e) {
+				// still doesn't work because of overly strict security restrictions in IE
+				alert("Sorry, SVG to PNG downloads are restricted in Internet Explorer, please try with another browser.");
+			}
+		} else {
+			a.href = canvas.toDataURL("image/png");
+			a.click();
+		}
+		a.parentElement.removeChild(a);
 		canvas.remove();
-	});
+	};
+	img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgHtml)));
 };
 
 
