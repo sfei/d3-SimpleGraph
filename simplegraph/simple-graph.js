@@ -595,14 +595,14 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	
 	// add labels
 	xAxisG.append("text")
-		.attr("class", "axis-label")
+		.attr("class", "axis-label scatterplot-xaxis")
 		.attr("x", xLabelPos.x)
 		.attr("y", xLabelPos.y)
 		.style("text-anchor", xLabelPos.a)
 		.style("font-weight", "bolder")
 		.text(this.x.label);
 	yAxisG.append("text")
-		.attr("class", "axis-label")
+		.attr("class", "axis-label scatterplot-yaxis")
 		.attr("transform", "rotate(-90)")
 		.attr("x", yLabelPos.x)
 		.attr("y", yLabelPos.y)
@@ -612,7 +612,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.text(this.y.label);
 	if(y2AxisG) {
 		y2AxisG.append("text")
-			.attr("class", "axis-label")
+			.attr("class", "axis-label scatterplot-y2axis")
 			.attr("transform", "rotate(90)")
 			.attr("x", y2LabelPos.x)
 			.attr("y", y2LabelPos.y)
@@ -1646,7 +1646,7 @@ SimpleGraph.prototype.drawLines = function() {
 			if(this.allowDrawBeyondGraph) {
 				addLine(line, line.coords, "scatterplot-line");
 			} else {
-				var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2Axis);
+				var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2);
 				for(var s = 0; s < lineSegments.length; s++) {
 					addLine(line, lineSegments[s], "scatterplot-line");
 				}
@@ -1675,7 +1675,7 @@ SimpleGraph.prototype.drawLines = function() {
 				if(this.allowDrawBeyondGraph) {
 					addLine(line.coords, "plotted-line");
 				} else {
-					var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2Axis);
+					var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2);
 					for(var s = 0; s < lineSegments.length; s++) {
 						addLine(line, lineSegments[s], "plotted-line");
 					}
@@ -1733,7 +1733,7 @@ SimpleGraph.prototype.drawAreas = function() {
 					area.areaFunctions[1], 
 					area.resolution, 
 					area.xRange, 
-					area.y2Axis, 
+					area.y2, 
 					!this.allowDrawBeyondGraph
 				);
 				for(var p = 0; p < areaPolys.length; p++) {
@@ -1744,7 +1744,7 @@ SimpleGraph.prototype.drawAreas = function() {
 				if(this.allowDrawBeyondGraph) {
 					addArea(area.coords, "plotted-area");
 				} else {
-					var areaPolys = this.getAreaPolysFromCoordinates(area.coords, area.y2Axis);
+					var areaPolys = this.getAreaPolysFromCoordinates(area.coords, area.y2);
 					for(var p = 0; p < areaPolys.length; p++) {
 						addArea(area, areaPolys[p], "plotted-area");
 					}
@@ -1824,6 +1824,8 @@ SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Ax
 				lineSegments.push(segment);
 			}
 			segment = [];
+			lastCoords = null;
+			continue;
 		}
 		// note, if date, this will become y per milliseconds
 		var slope = (!lastCoords) ? 0 : (lineCoords[c][1] - lastCoords[1]) / (lineCoords[c][0] - lastCoords[0]);
@@ -1838,7 +1840,7 @@ SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Ax
 						lastCoords[0] + slope*(coords[1] - lastCoords[1])
 					];
 					if(intercept[1] >= yAxis.min && intercept[1] <= yAxis.max) {
-						segement.push(intercept);
+						segment.push(intercept);
 					}
 				}
 				// add if within y-range
@@ -2054,6 +2056,16 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
 	var endOfCoords = [false, false];
 	var yAxis = y2Axis ? this.y2 : this.y;
 	var coordA, coordB;
+	
+	function linear(coords, i, x) {
+		var i2 = i+1;
+		if(i2 === coords.length) {
+			i2 = i;
+			i--;
+		}
+		var slope = (coords[i2][1] - coords[i][1]) / (coords[i2][0] - coords[i][0]);
+		return coords[i][1] + (x - coords[i][0])*slope;
+	}
 
 	while(true) {
 		// grab coords
@@ -2068,7 +2080,7 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
 			// both coords moved
 			moveCoords[0] = moveCoords[1] = true;
 		} else if(coordA[0] < coordB[0]) {
-			var matchY = funcB(coordA[0]);
+			var matchY = !endOfLines[1] ? linear(lineB[li[1]], ci[1], coordA[0]) : coordA[1];
 			if(matchY < yAxis.min) {
 				matchY = yAxis.min;
 			} else if(matchY > yAxis.max) {
@@ -2079,7 +2091,7 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
 			// only move lower coordinate
 			moveCoords[0] = true;
 		} else {
-			var matchY = funcA(coordB[0]);
+			var matchY = !endOfLines[0] ? linear(lineA[li[0]], ci[0], coordB[0]) : coordB[1];
 			if(matchY < yAxis.min) {
 				matchY = yAxis.min;
 			} else if(matchY > yAxis.max) {
@@ -2352,8 +2364,9 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
 	canvas.width = this.containerWidth;
 	canvas.height = this.containerHeight;
 	
-	// because internet explorer, this is only way around the security error
-	if(canvg) {
+	// because internet explorer, this is only way around the security error (requires canvg library which is 
+	// not explicitly requires, assumed loaded somewhere on the page)
+	if(navigator.msSaveBlob && canvg) {
 		// have to manually replace the width/height in cases of bottom-buffer IE hack for resizable graphs
 		svgHtml = svgHtml.replace("style=\"width: 100%; height: 1px;", "style=\"width:" + this.containerWidth + "px; height:" + this.containerHeight + "px;");
 		// draw via canvg, which is totally redudant if not for the fact this is only way to bypass security error
@@ -2372,8 +2385,8 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
 	
 	var img = new Image();
 	img.onload = function() {
-		// freaking internet explorer..
 		canvas.getContext("2d").drawImage(img, 0, 0);
+		// freaking internet explorer..
 		if(navigator.msSaveBlob) {
 			try {
 				navigator.msSaveBlob(

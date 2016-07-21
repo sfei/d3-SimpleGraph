@@ -118,7 +118,7 @@
           class="btn" 
           helptitle="Advanced Graph Options" 
           helptext="Let's start by creating a graph, similar as before, but play with a few advanced options.<br /><br />
-            To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options (which will revert to default), but specify a y2-axis.<br /><br />
+            To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options except the label (the rest will revert to default), but specify a y2-axis.<br /><br />
             After creating the graph object, let's first draw the grid before drawing anything on the graph."
           sampleCode="var colors = d3.scale.ordinal()
     .range(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
@@ -130,10 +130,16 @@ var graph = new SimpleGraph({
     margins: { top: 50, left: 50, bottom: 50, right: 50 },
     colorScale: colors, 
     axis: {
+      x: {
+        label: 'x-value'
+      }, 
+      y: {
+        label: 'y-value'
+      }, 
       y2: {
         min: 0, 
         max: 10,
-        label: 'y2-values'
+        label: 'y2-value'
       }
     }
 });
