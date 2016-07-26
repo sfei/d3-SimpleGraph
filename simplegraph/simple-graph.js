@@ -2054,18 +2054,7 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
 	var ci = [0, 0];
 	var endOfLines = [false, false];
 	var endOfCoords = [false, false];
-	var yAxis = y2Axis ? this.y2 : this.y;
 	var coordA, coordB;
-	
-	function linear(coords, i, x) {
-		var i2 = i+1;
-		if(i2 === coords.length) {
-			i2 = i;
-			i--;
-		}
-		var slope = (coords[i2][1] - coords[i][1]) / (coords[i2][0] - coords[i][0]);
-		return coords[i][1] + (x - coords[i][0])*slope;
-	}
 
 	while(true) {
 		// grab coords
@@ -2074,31 +2063,33 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
 		// whether to progress each line
 		var moveCoords = [false, false];
 		
-		if(coordA[0] === coordB[0]) {
+		if(!coordA && !coordB) {
+			break;
+		} else if(!coordA || !coordB) {
+			// if null value in either coordinate or odd situation if inconsistent number of coordinates, 
+			// pinch off area and move
+			moveCoords = [true, true];
+			if(areaCoords.length >= 2) {
+				areas.push(areaCoords);
+			}
+			areaCoords = [];
+		} else if(coordA[0] === coordB[0]) {
 			// matching, just add
 			areaCoords.push([coordA[0], coordA[1], coordB[1]]);
 			// both coords moved
 			moveCoords[0] = moveCoords[1] = true;
-		} else if(coordA[0] < coordB[0]) {
-			var matchY = !endOfLines[1] ? linear(lineB[li[1]], ci[1], coordA[0]) : coordA[1];
-			if(matchY < yAxis.min) {
-				matchY = yAxis.min;
-			} else if(matchY > yAxis.max) {
-				matchY = yAxis.max;
-			}
-			// push coords
-			areaCoords.push([coordA[0], coordA[1], matchY]);
-			// only move lower coordinate
-			moveCoords[0] = true;
 		} else {
-			var matchY = !endOfLines[0] ? linear(lineA[li[0]], ci[0], coordB[0]) : coordB[1];
-			if(matchY < yAxis.min) {
-				matchY = yAxis.min;
-			} else if(matchY > yAxis.max) {
-				matchY = yAxis.max;
+			// if one set of coords needs to catch up, don't add the coord (assume no area), pinch existing 
+			// coords to areas if available
+			if(coordA[0] < coordB[0]) {
+				moveCoords[0] = true;
+			} else {
+				moveCoords[1] = true;
 			}
-			areaCoords.push([coordB[0], matchY, coordB[1]]);
-			moveCoords[1] = true;
+			if(areaCoords.length >= 2) {
+				areas.push(areaCoords);
+			}
+			areaCoords = [];
 		}
 		
 		var newLines = [false, false];
