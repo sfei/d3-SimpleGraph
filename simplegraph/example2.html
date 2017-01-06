@@ -3,7 +3,7 @@
   <head>
     <title>SimpleGraph Additional Functionality</title>
     <meta charset="UTF-8">
-    <script src="d3.min.js"></script>
+    <script src="d3.v4.4.1.min.js"></script>
     <script src="simple-graph.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <style>
@@ -120,8 +120,7 @@
           helptext="Let's start by creating a graph, similar as before, but play with a few advanced options.<br /><br />
             To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options except the label (the rest will revert to default), but specify a y2-axis.<br /><br />
             After creating the graph object, let's first draw the grid before drawing anything on the graph."
-          sampleCode="var colors = d3.scale.ordinal()
-    .range(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
+          sampleCode="var colors = d3.scaleOrdinal(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
 var graph = new SimpleGraph({
     container: '#simple-chart',
     width: 850,
@@ -158,7 +157,7 @@ graph.drawGrid();"
             <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
             <p class='param'>@param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
             <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
-            <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
+            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
             <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
             <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
           sampleCode="var bottomBoundary = function(x) {
@@ -202,7 +201,7 @@ graph.drawAreas();"
             <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
             <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
             <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
-            <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
+            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
             <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
             <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
           sampleCode="var limitedLineFunction = function(x) {
@@ -213,7 +212,7 @@ graph.addLineDataAsFunction(
      limitedLineFunction,
     {'stroke-width':3.0},
     50,                   // compute line at 50 intervals
-    'step-before',        // stepped drawing, just to demonstrate another type of interpolation
+    d3.curveStepBefore,   // stepped drawing, just to demonstrate another type of interpolation
     [10, 90],             // draw line only between 10 < x < 90
     true                  // flags it for the y2-axis
 );

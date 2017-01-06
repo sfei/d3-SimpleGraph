@@ -163,8 +163,9 @@
  * @param {Object} [options.margins={top:20,right:20,bottom:40,left:40}] - Margins for graph within 
  *        overarching SVG (e.g. with all default values, the width of the actual graph will be 540px in a 
  *        600px wide SVG element).
- * @param {d3.scale} [options.colorScale=d3.scale.category10()] - Optional color scale to use with data. If 
- *        data series will have non-numeric identifiers, it should be a categorical or ordinal scale.
+ * @param {d3.scale} [options.colorScale=d3.scaleOrdinal(d3.schemeCategory10)] - Optional color scale to use 
+ *        with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal 
+ *        scale.
  * @param {boolean} [allowDrawBeyondGraph=false] - Allow drawing beyond graph. If true, all data will be drawn 
  *        as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be 
  *        cut off where they extend past the x/y-axis ranges.
@@ -193,7 +194,7 @@ function SimpleGraph(options) {
 	this.height = this.containerHeight - this.margins.top - this.margins.bottom;
 	
 	// category color scale
-	this.color = (options.colorScale) ? options.colorScale : d3.scale.category10();
+	this.color = (options.colorScale) ? options.colorScale : d3.scaleOrdinal(d3.schemeCategory10);
 	this.customColors = {};
 	
 	// create the SVG
@@ -268,10 +269,10 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 			axisOptions[a] = {};
 		}
 		if(!axisOptions[a].scale) {
-			axisOptions[a].scale = d3.scale.linear;
+			axisOptions[a].scale = d3.scaleLinear;
 		}
-		var scaleIsTime = axisOptions[a].scale === d3.time.scale || axisOptions[a].scale === d3.time.scale.utc;
-		var scaleIsLog = !scaleIsTime && axisOptions[a].scale === d3.scale.log;
+		var scaleIsTime = axisOptions[a].scale === d3.scaleTime || axisOptions[a].scale === d3.scaleUtc;
+		var scaleIsLog = !scaleIsTime && axisOptions[a].scale === d3.scaleLog;
 		if(!axisOptions[a].format) {
 			if(scaleIsTime) {
 				axisOptions[a].format = "%Y-%m-%d";
@@ -289,9 +290,9 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 		};
 		if(scaleIsTime) {
 			if(axisOptions[a].scale === d3.time.scale.utc) {
-				this[a].format = d3.time.format.utc(axisOptions[a].format);
+				this[a].format = d3.utcFormat(axisOptions[a].format);
 			} else {
-				this[a].format = d3.time.format(axisOptions[a].format);
+				this[a].format = d3.timeFormat(axisOptions[a].format);
 			}
 		} else {
 			this[a].format = d3.format(axisOptions[a].format);
@@ -310,12 +311,19 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 			.range(a === "x" ? [0, this.width] : [this.height, 0]);
 	
 		// create axes
-		this[a].axis = d3.svg.axis()
-			.scale(this[a].scale)
-			.orient(a === "x" ? "bottom" : (a === "y2" ? "right" : "left"));
-		this[a].gridAxis = d3.svg.axis()
-			.scale(this[a].scale)
-			.orient(a === "x" ? "bottom" : (a === "y2" ? "right" : "left"));
+		if(a === "x") {
+			// note axis will be reconstructed at drawing since top/bottom specified there
+			this[a].axis = d3.axisBottom(this[a].scale);
+			this[a].gridAxis = d3.axisBottom(this[a].scale);
+		} else {
+			if(a === "y2") {
+				this[a].axis = d3.axisRight(this[a].scale);
+				this[a].gridAxis = d3.axisRight(this[a].scale);
+			} else {
+				this[a].axis = d3.axisLeft(this[a].scale);
+				this[a].gridAxis = d3.axisLeft(this[a].scale);
+			}
+		}
 		
 		// log scale handles ticks differently
 		if(scaleIsLog) {
@@ -335,7 +343,7 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 				this[a].axis.tickValues(axisOptions[a].tickValues);
 				this[a].gridAxis.tickValues(axisOptions[a].tickValues);
 			} else if(axisOptions[a].ticks || axisOptions[a].ticks === 0) {
-				if($.isArray(axisOptions[a].ticks)) {
+				if(Array.isArray(axisOptions[a].ticks)) {
 					this[a].axis.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
 					this[a].gridAxis.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
 				} else {
@@ -348,7 +356,7 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 			if(axisOptions[a].grid.tickValues) {
 				this[a].gridAxis.tickValues(axisOptions[a].grid.tickValues);
 			} else if(axisOptions[a].grid.ticks || axisOptions[a].grid.ticks === 0) {
-				if($.isArray(axisOptions[a].grid.ticks)) {
+				if(Array.isArray(axisOptions[a].grid.ticks)) {
 					this[a].gridAxis.ticks(axisOptions[a].grid.ticks[0], axisOptions[a].grid.ticks[1]);
 				} else {
 					this[a].gridAxis.ticks(axisOptions[a].grid.ticks);
@@ -446,8 +454,13 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		xAxisPosition = xAxisPosition.toLowerCase().trim();
 		if(xAxisPosition !== "top") { xAxisPosition = "bottom"; }
 	}
-	this.x.axis.orient(xAxisPosition);
-	var xAxisPosY = (xAxisPosition === "top") ? 0 : this.height;
+	var xAxisPosY = 0;
+	if(xAxisPosition === "top") {
+		this.x.axis = d3.axisTop(this.x.scale);
+	} else {
+		this.x.axis = d3.axisBottom(this.x.scale);
+		xAxisPosY = this.height;
+	}
 	if(!axisLabelMargin) { axisLabelMargin = 0; }
 	
 	// draw axes first without labels
@@ -598,6 +611,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.attr("class", "axis-label scatterplot-xaxis")
 		.attr("x", xLabelPos.x)
 		.attr("y", xLabelPos.y)
+		.attr("fill", "#000")
 		.style("text-anchor", xLabelPos.a)
 		.style("font-weight", "bolder")
 		.text(this.x.label);
@@ -607,6 +621,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.attr("x", yLabelPos.x)
 		.attr("y", yLabelPos.y)
 		.attr("dy", ".71em")
+		.attr("fill", "#000")
 		.style("text-anchor", yLabelPos.a)
 		.style("font-weight", "bolder")
 		.text(this.y.label);
@@ -617,6 +632,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 			.attr("x", y2LabelPos.x)
 			.attr("y", y2LabelPos.y)
 			.attr("dy", ".71em")
+			.attr("fill", "#000")
 			.style("text-anchor", y2LabelPos.a)
 			.style("font-weight", "bolder")
 			.text(this.y2.label);
@@ -640,13 +656,13 @@ SimpleGraph.prototype.drawGrid = function(style) {
 		.style("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(this.x.gridAxis.tickSize(-this.height, 0, 0).tickFormat(""));
+		.call(this.x.gridAxis.tickSize(-this.height).tickFormat(""));
 	this.svgGraph.append("g")
 		.attr("class", "scatterplot-grid")
 		.attr("opacity", opacity)
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
-		.call(this.y.gridAxis.tickSize(-this.width, 0, 0).tickFormat(""));
+		.call(this.y.gridAxis.tickSize(-this.width).tickFormat(""));
 };
 
 /**
@@ -847,7 +863,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 	}
 	
 	// start with areas data
-	if(this.areas && $.inArray("areas", exclude) < 0) {
+	if(this.areas && exclude.indexOf("areas") < 0) {
 		var areaSeries = [];
 		for(var i = 0; i < this.areas.length; i++) {
 			var name = this.areas[i].series;
@@ -858,7 +874,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 		}
 	}
 	// then lines
-	if(this.lines && $.inArray("lines", exclude) < 0) {
+	if(this.lines && exclude.indexOf("lines") < 0) {
 		var lineSeries = [];
 		for(var i = 0; i < this.lines.length; i++) {
 			var name = this.lines[i].series;
@@ -869,7 +885,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 		}
 	}
 	// finally points
-	if(this.points && $.inArray("points", exclude) < 0) {
+	if(this.points && exclude.indexOf("points") < 0) {
 		var pointSeries = [];
 		for(var i = 0; i < this.points.length; i++) {
 			var name = this.points[i].series;
@@ -971,7 +987,7 @@ SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
  * @param {d3.scale} colorScale - Color scale to replace with or null.
  */
 SimpleGraph.prototype.resetColorScale = function(colorScale) {
-	if(!colorScale) {
+	if(colorScale) {
 		this.color = colorScale;
 	} else {
 		this.color.domain([]);
@@ -1082,7 +1098,7 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 			point.wasNull = true;
 		}
 		// additonal keys
-		if(additionalDataKeys && $.isArray(additionalDataKeys)) {
+		if(additionalDataKeys && Array.isArray(additionalDataKeys)) {
 			for(var k = 0; k < additionalDataKeys.length; k++) {
 				var key = additionalDataKeys[k];
 				var asKey = key;
@@ -1145,7 +1161,7 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, 
  * @param {Array[]} lineCoordinates - array of x,y coordinates.
  * @param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
  *        the resulting SVG element's CSS style.
- * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
 SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation, y2Axis) {
@@ -1162,7 +1178,7 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
 		style['stroke-width'] = 1.5;
 	}
 	if(!interpolation) {
-		interpolation = "linear";
+		interpolation = d3.curveLinear;
 	}
 	this.lines.push({
 		series: name, 
@@ -1182,7 +1198,7 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
  *        the resulting SVG element's CSS style.
  * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 
  *        20 pixels of width if not provided and if provided enforces minimum of 2).
- * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
  *        will still be truncated to the min-max of the graph if it extends past.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
@@ -1199,7 +1215,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 		style['stroke-width'] = 1.5;
 	}
 	if(!interpolation) {
-		interpolation = "linear";
+		interpolation = d3.curveLinear;
 	}
 	if(!this.lines) {
 		this.lines = [];
@@ -1221,7 +1237,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
  * lines and replace existing data.
  * @param {Object} [style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
  *        the resulting SVG element's CSS style.
- * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {string} [handleOverlap="average"] - If there are 2 or more points overlapped for a given x-value, 
  *        how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".
  */
@@ -1247,7 +1263,7 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
 		delete style.stroke;
 	}
 	if(!interpolation) {
-		interpolation = "linear";
+		interpolation = d3.curveLinear;
 	}
 	// this multiple series of loops isn't pretty but necessary for flexible preprocessing
 	// first organize points by data series
@@ -1288,7 +1304,7 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
 					exists = true;
 					// if it exists, add to count and..
 					if(handleOverlap === "median") {
-						if(!$.isArray(lineCoords[j][2])) {
+						if(!Array.isArray(lineCoords[j][2])) {
 							lineCoords[j][2] = [];
 						}
 						lineCoords[j][2].push(pointToAdd.y);
@@ -1344,7 +1360,7 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
  *        the resulting SVG element's CSS style.
  * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 
  *        20 pixels of width if not provided and if provided enforces minimum of 2).
- * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
  *        will still be truncated to the min-max of the graph if it extends past.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
@@ -1361,7 +1377,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		style = {};
 	}
 	if(!interpolation) {
-		interpolation = "linear";
+		interpolation = d3.curveLinear;
 	}
 	if(!this.areas) {
 		this.areas = [];
@@ -1384,11 +1400,11 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
  * @param {number[][]} areaCoordinates - array of area coordinate triplets [x, y0, y1]
  * @param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG 
  *        element's CSS style.
- * @param {string} [interpolation="linear"] - Type of interpolation to draw line with.
+ * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
 SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, interpolation, y2Axis) {
-	if(!areaCoordinates || !$.isArray(areaCoordinates) || areaCoordinates.length < 2) {
+	if(!areaCoordinates || !Array.isArray(areaCoordinates) || areaCoordinates.length < 2) {
 		return;
 	}
 	// default styles
@@ -1396,7 +1412,7 @@ SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, sty
 		style = {};
 	}
 	if(!interpolation) {
-		interpolation = "linear";
+		interpolation = d3.curveLinear;
 	}
 	if(!this.areas) {
 		this.areas = [];
@@ -1512,7 +1528,7 @@ SimpleGraph.prototype.getPointCoordinatesBySeries = function(seriesName) {
  * @property {boolean} y2 - If true, the y-values of the line correlates to the y2 axis.
  * @property {Object} style - A dictionary of styles to apply to the line. Even if no style was provided with 
  *           the data, a default 'stroke' style value provided.
- * @property {string} interpolate - The interpolation type.when drawing the line.
+ * @property {string} interpolate - The interpolation type (now curve factory) when drawing the line.
  */
 /**
  * Grab all line data by series names.
@@ -1546,7 +1562,7 @@ SimpleGraph.prototype.getLinesDataBySeries = function(seriesName) {
  *           there are no limits.
  * @property {boolean} y2 - If true, the y-values of the area correlates to the y2 axis.
  * @property {Object} style - A dictionary of styles to apply to the area.
- * @property {string} interpolate - The interpolation type.when drawing the area.
+ * @property {string} interpolate - The interpolation type (now curve factory) when drawing the area.
  */
 /**
  * Grab all area data by series names.
@@ -1656,10 +1672,10 @@ SimpleGraph.prototype.drawLines = function() {
 			.attr("class", className)
 			.style("fill", 'none')
 			.attr("d",
-				d3.svg.line()
+				d3.line()
 					.x(function(c) { return xScale(c[0]); })
 					.y(function(c) { return yScale(c[1]); })
-					.interpolate(lineData.interpolate)
+					.curve(lineData.interpolate)
 			);
 		// add styles
 		var styles = lineData.style ? lineData.style : {};
@@ -1740,11 +1756,11 @@ SimpleGraph.prototype.drawAreas = function() {
 			.attr("series", areaData.series)
 			.attr("class", className)
 			.attr("d",
-				d3.svg.area()
+				d3.area()
 					.x(function(c) { return xScale(c[0]); })
 					.y0(function(c) { return yScale(c[1]); })
 					.y1(function(c) { return yScale(c[2]); })
-					.interpolate(areaData.interpolate)
+					.curve(areaData.interpolate)
 			);
 		var styles = areaData.style ? areaData.style : {};
 		for(var skey in styles) {
@@ -2267,12 +2283,16 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 			// set relative position of tool-tip
 			var absMousePos = d3.mouse(d3Body.node());
 			var tooltipOffset = (options.offset) ? options.offset : [10, -15];
-			// Clean up lost tooltips
-			d3Body.selectAll('.d3-tooltip').remove();
-			// Append tooltip
-			tooltipDiv = d3Body.append('div')
-				.attr('class', 'd3-tooltip')
-				.style({
+			// Check if tooltip div already exists
+			var styles = {};
+			if(!tooltipDiv) {
+				// Clean up lost tooltips
+				d3Body.selectAll('.d3-tooltip').remove();
+				// Append tooltip 
+				tooltipDiv = d3Body.append('div');
+				tooltipDiv.attr('class', 'd3-tooltip');
+				// full styles
+				styles = {
 					'position': 'absolute', 
 					'left': (absMousePos[0] + tooltipOffset[0])+'px', 
 					'top': (absMousePos[1] + tooltipOffset[1])+'px', 
@@ -2283,7 +2303,17 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 					'padding': '4px 6px', 
 					'font-family': "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif", 
 					'font-size': '12px'
-				});
+				};
+			} else {
+				// just update position
+				styles = {
+					'left': (absMousePos[0] + tooltipOffset[0])+'px', 
+					'top': (absMousePos[1] + tooltipOffset[1])+'px'
+				};
+			}
+			for(var styleKey in styles) {
+				tooltipDiv.style(styleKey, styles[styleKey]);
+			}
 			// add custom styles if provided
 			if(options.style) {
 				for(var styleKey in options.style) {
@@ -2295,14 +2325,15 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 			if(tooltipDiv) {
 				// Move tooltip
 				var absMousePos = d3.mouse(d3Body.node());
-				tooltipDiv.style({
-					'left': (absMousePos[0] + 20)+'px',
-					'top': (absMousePos[1])+'px'
-				});
-				var tooltipText = (textFunction) ? textFunction(d, d3.mouse(svg.node()), selection[0], i) : null;
+				var tooltipOffset = (options.offset) ? options.offset : [10, -15];
+				tooltipDiv.style('left', (absMousePos[0] + tooltipOffset[0])+'px');
+				tooltipDiv.style('top', (absMousePos[1] + tooltipOffset[1])+'px');
+				// TODO: selection is no longer array-like, hides it in _groups var -- this seems unideal, update/change when able
+				var tooltipText = (textFunction) ? textFunction(d, d3.mouse(svg.node()), selection._groups[0], i) : null;
 				// If no text, remove tooltip
 				if(!tooltipText) {
 					tooltipDiv.remove();
+					tooltipDiv = null;
 				} else {
 					tooltipDiv.html(tooltipText);
 				}
@@ -2310,7 +2341,10 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 		})
 		.on("mouseout", function(d, i) {
 			// Remove tooltip
-			if(tooltipDiv) { tooltipDiv.remove(); }
+			if(tooltipDiv) {
+				tooltipDiv.remove();
+				tooltipDiv = null;
+			}
 		});
 	};
 };

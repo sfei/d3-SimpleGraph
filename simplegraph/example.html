@@ -3,7 +3,7 @@
   <head>
     <title>D3 SimpleGraph Introduction</title>
     <meta charset="UTF-8">
-    <script src="d3.min.js"></script>
+    <script src="d3.v4.4.1.min.js"></script>
     <script src="simple-graph.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <style>
@@ -136,7 +136,7 @@
             <p class='param'>@param {number} [options.width=600] - Width value.</p>
             <p class='param'>@param {number} [options.height=600] - Height value).</p>
             <p class='param'>@param {Object} [options.margins={top:20,right:20,bottom:40,left:40}] - Margins for graph within overarching SVG (e.g. with all default values, the width of the actual graph will be 540px in a 600px wide SVG element).</p>
-            <p class='param'>@param {d3.scale} [options.colorScale=d3.scale.category10()] - Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale.</p>
+            <p class='param'>@param {d3.scale} [options.colorScale=d3.scaleOrdinal(d3.schemeCategory10)] - Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale.</p>
             <p class='param'>@param {boolean} [allowDrawBeyondGraph=false] - Allow drawing beyond graph. If true, all data will be drawn as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut off where they extend past the x/y-axis ranges.</p>
             <p class='param'>@param {Object} [options.axis] - Optional dictionary of styles axes. There are further nested parameters which are not truncated for length considerations, but available in the full documentation.</p>" 
           sampleCode="var graph = new SimpleGraph({
@@ -172,7 +172,7 @@
             <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
             <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
             <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
-            <p class='param'>@param {string} [interpolation='linear'] - Type of interpolation to draw line with.</p>
+            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
             <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
             <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
           sampleCode="// our wacky line function (saved to global scope for use later)
@@ -184,7 +184,7 @@ graph.addLineDataAsFunction(
      wackyLineFunction,   // callback line function
     {'stroke-width':3.0}, // change the stroke-width to something thicker
     20,                   // compute line at 20 intervals
-    'basis'               // b-spline smoothing function built in D3
+    d3.curveBasis         // b-spline smoothing function built in D3
 );
 graph.drawLines();" 
           onclick="openHelp(this)">
