@@ -595,14 +595,14 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	
 	// add labels
 	xAxisG.append("text")
-		.attr("class", "axis-label")
+		.attr("class", "axis-label scatterplot-xaxis")
 		.attr("x", xLabelPos.x)
 		.attr("y", xLabelPos.y)
 		.style("text-anchor", xLabelPos.a)
 		.style("font-weight", "bolder")
 		.text(this.x.label);
 	yAxisG.append("text")
-		.attr("class", "axis-label")
+		.attr("class", "axis-label scatterplot-yaxis")
 		.attr("transform", "rotate(-90)")
 		.attr("x", yLabelPos.x)
 		.attr("y", yLabelPos.y)
@@ -612,7 +612,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		.text(this.y.label);
 	if(y2AxisG) {
 		y2AxisG.append("text")
-			.attr("class", "axis-label")
+			.attr("class", "axis-label scatterplot-y2axis")
 			.attr("transform", "rotate(90)")
 			.attr("x", y2LabelPos.x)
 			.attr("y", y2LabelPos.y)
@@ -1001,8 +1001,10 @@ SimpleGraph.prototype.removeSeriesColor = function(series) {
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
+ *        undefined/null y-values are not added.
  */
-SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis) {
+SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis, showNulls) {
 	if(!this.points) { this.points = []; }	
 	if(!size || size <= 0) { size = 10; }
 	var p = {
@@ -1012,8 +1014,13 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis
 		y2: y2Axis ? true : false, 
 		pointsize: size
 	};
-	if(isNaN(p.y)) {
-		p.y = 0;
+	if(isNaN(p.y) || (!p.y && p.y !== 0)) {
+		if(showNulls) {
+			p.y = 0;
+			p.wasNull = true;
+		} else {
+			return;
+		}
 	}
 	this.points.push(p);
 };
@@ -1033,8 +1040,10 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
+ *        undefined/null y-values are not added.
  */
-SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size, y2Axis) {
+SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size, y2Axis, showNulls) {
 	if(!data || data.length === 0) {
 		return;
 	}
@@ -1046,8 +1055,8 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 		var seriesName = !dataPointName ? i : (data[i][dataPointName] ? data[i][dataPointName] : dataPointName);
 		var xValue = data[i][xValueName];
 		var yValue = data[i][yValueName];
-		// if any null values, skip
-		if(xValue === undefined || xValue === null || yValue === undefined || yValue === null) {
+		// if any null x-values, skip
+		if(xValue === undefined || xValue === null) {
 			continue;
 		}
 		// nicely organize data
@@ -1058,9 +1067,19 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 			y2: y2Axis ? true : false, 
 			pointsize: size
 		};
-		// check for NaN (from ND)
+		// check for nulls
+		if(isNaN(point.y) || (!point.y && point.y !== 0)) {
+			if(showNulls) {
+				point.y = 0;
+				point.wasNull = true;
+			} else {
+				continue;
+			}
+		}
+		// check for NaN 
 		if(isNaN(point.y)) {
 			point.y = 0;
+			point.wasNull = true;
 		}
 		// additonal keys
 		if(additionalDataKeys && $.isArray(additionalDataKeys)) {
@@ -1088,8 +1107,10 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
+ *        undefined/null y-values are not added.
  */
-SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis) {
+SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, showNulls) {
 	if(!data || data.length === 0) {
 		return;
 	}
@@ -1106,8 +1127,13 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis) 
 			y2: y2Axis ? true : false, 
 			pointsize: size
 		};
-		if(isNaN(p.y)) {
-			p.y = 0;
+		if(isNaN(p.y) || (!p.y && p.y !== 0)) {
+			if(showNulls) {
+				p.y = 0;
+				p.wasNull = true;
+			} else {
+				continue;
+			}
 		}
 		this.points.push(p);
 	}
@@ -1595,7 +1621,14 @@ SimpleGraph.prototype.drawPoints = function() {
 		.attr("transform", function(d) {
 			return "rotate(45," + xScale(d.x) + "," + (d.y2 ? y2Scale : yScale)(d.y) + ")";
 		})
-		.style("fill", function(d) { return self.getColorBySeriesName(d.series, true); });
+		.style("fill", function(d) {
+			if(d.wasNull) { return "none"; }
+			return self.getColorBySeriesName(d.series, true);
+		})
+		.style("stroke", function(d) {
+			if(!d.wasNull) { return null; }
+			return self.getColorBySeriesName(d.series, true);
+		});
 };
 
 /**
@@ -1646,7 +1679,7 @@ SimpleGraph.prototype.drawLines = function() {
 			if(this.allowDrawBeyondGraph) {
 				addLine(line, line.coords, "scatterplot-line");
 			} else {
-				var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2Axis);
+				var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2);
 				for(var s = 0; s < lineSegments.length; s++) {
 					addLine(line, lineSegments[s], "scatterplot-line");
 				}
@@ -1675,7 +1708,7 @@ SimpleGraph.prototype.drawLines = function() {
 				if(this.allowDrawBeyondGraph) {
 					addLine(line.coords, "plotted-line");
 				} else {
-					var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2Axis);
+					var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2);
 					for(var s = 0; s < lineSegments.length; s++) {
 						addLine(line, lineSegments[s], "plotted-line");
 					}
@@ -1733,7 +1766,7 @@ SimpleGraph.prototype.drawAreas = function() {
 					area.areaFunctions[1], 
 					area.resolution, 
 					area.xRange, 
-					area.y2Axis, 
+					area.y2, 
 					!this.allowDrawBeyondGraph
 				);
 				for(var p = 0; p < areaPolys.length; p++) {
@@ -1744,7 +1777,7 @@ SimpleGraph.prototype.drawAreas = function() {
 				if(this.allowDrawBeyondGraph) {
 					addArea(area.coords, "plotted-area");
 				} else {
-					var areaPolys = this.getAreaPolysFromCoordinates(area.coords, area.y2Axis);
+					var areaPolys = this.getAreaPolysFromCoordinates(area.coords, area.y2);
 					for(var p = 0; p < areaPolys.length; p++) {
 						addArea(area, areaPolys[p], "plotted-area");
 					}
@@ -1824,6 +1857,8 @@ SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Ax
 				lineSegments.push(segment);
 			}
 			segment = [];
+			lastCoords = null;
+			continue;
 		}
 		// note, if date, this will become y per milliseconds
 		var slope = (!lastCoords) ? 0 : (lineCoords[c][1] - lastCoords[1]) / (lineCoords[c][0] - lastCoords[0]);
@@ -1838,7 +1873,7 @@ SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Ax
 						lastCoords[0] + slope*(coords[1] - lastCoords[1])
 					];
 					if(intercept[1] >= yAxis.min && intercept[1] <= yAxis.max) {
-						segement.push(intercept);
+						segment.push(intercept);
 					}
 				}
 				// add if within y-range
@@ -1933,7 +1968,7 @@ SimpleGraph.prototype.getLineSegmentsFromFunction = function(lineFunction, resol
 		if(xRange[1] > this.x.max) { xRange[0] = this.x.max; }
 	}
 	if(!resolution || typeof resolution !== "number") {
-		resolution = Math.floor((xRange[1]- xRange[0])*(this.width - this.margins.left - this.margins.right) / 20);
+		resolution = Math.floor((this.width - this.margins.left - this.margins.right) / 10);
 	}
 	if(resolution < 2) {
 		resolution = 2;
@@ -2052,7 +2087,6 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
 	var ci = [0, 0];
 	var endOfLines = [false, false];
 	var endOfCoords = [false, false];
-	var yAxis = y2Axis ? this.y2 : this.y;
 	var coordA, coordB;
 
 	while(true) {
@@ -2062,31 +2096,33 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
 		// whether to progress each line
 		var moveCoords = [false, false];
 		
-		if(coordA[0] === coordB[0]) {
+		if(!coordA && !coordB) {
+			break;
+		} else if(!coordA || !coordB) {
+			// if null value in either coordinate or odd situation if inconsistent number of coordinates, 
+			// pinch off area and move
+			moveCoords = [true, true];
+			if(areaCoords.length >= 2) {
+				areas.push(areaCoords);
+			}
+			areaCoords = [];
+		} else if(coordA[0] === coordB[0]) {
 			// matching, just add
 			areaCoords.push([coordA[0], coordA[1], coordB[1]]);
 			// both coords moved
 			moveCoords[0] = moveCoords[1] = true;
-		} else if(coordA[0] < coordB[0]) {
-			var matchY = funcB(coordA[0]);
-			if(matchY < yAxis.min) {
-				matchY = yAxis.min;
-			} else if(matchY > yAxis.max) {
-				matchY = yAxis.max;
-			}
-			// push coords
-			areaCoords.push([coordA[0], coordA[1], matchY]);
-			// only move lower coordinate
-			moveCoords[0] = true;
 		} else {
-			var matchY = funcA(coordB[0]);
-			if(matchY < yAxis.min) {
-				matchY = yAxis.min;
-			} else if(matchY > yAxis.max) {
-				matchY = yAxis.max;
+			// if one set of coords needs to catch up, don't add the coord (assume no area), pinch existing 
+			// coords to areas if available
+			if(coordA[0] < coordB[0]) {
+				moveCoords[0] = true;
+			} else {
+				moveCoords[1] = true;
 			}
-			areaCoords.push([coordB[0], matchY, coordB[1]]);
-			moveCoords[1] = true;
+			if(areaCoords.length >= 2) {
+				areas.push(areaCoords);
+			}
+			areaCoords = [];
 		}
 		
 		var newLines = [false, false];
@@ -2256,19 +2292,20 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 			}
 		})
 		.on('mousemove', function(d, i) {
-			if(!tooltipDiv) { return; }
-			// Move tooltip
-			var absMousePos = d3.mouse(d3Body.node());
-			tooltipDiv.style({
-				'left': (absMousePos[0] + 20)+'px',
-				'top': (absMousePos[1])+'px'
-			});
-			var tooltipText = (textFunction) ? textFunction(d, d3.mouse(svg.node()), selection[0], i) : null;
-			// If no text, remove tooltip
-			if(!tooltipText) {
-				tooltipDiv.remove();
-			} else {
-				tooltipDiv.html(tooltipText);
+			if(tooltipDiv) {
+				// Move tooltip
+				var absMousePos = d3.mouse(d3Body.node());
+				tooltipDiv.style({
+					'left': (absMousePos[0] + 20)+'px',
+					'top': (absMousePos[1])+'px'
+				});
+				var tooltipText = (textFunction) ? textFunction(d, d3.mouse(svg.node()), selection[0], i) : null;
+				// If no text, remove tooltip
+				if(!tooltipText) {
+					tooltipDiv.remove();
+				} else {
+					tooltipDiv.html(tooltipText);
+				}
 			}
 		})
 		.on("mouseout", function(d, i) {
@@ -2302,7 +2339,9 @@ SimpleGraph.prototype.highlightPoints = function(series, validationCallback, siz
 		if(!validationCallback(d)) { return false; }
 		var xScale = self.x.scale;
 		var yScale = d.y2 ? self.y2.scale : self.y.scale;
-		var fill = fill ? fill : self.getColorBySeriesName(d.series, true);
+		if(!fill) {
+			fill = d.wasNull ? "none" : self.getColorBySeriesName(d.series, true);
+		};
 		var rect = self.svgGraph.append("rect")
 			.attr("class", "scatterplot-point-highlight")
 			.attr("width", size)
@@ -2352,8 +2391,9 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
 	canvas.width = this.containerWidth;
 	canvas.height = this.containerHeight;
 	
-	// because internet explorer, this is only way around the security error
-	if(canvg) {
+	// because internet explorer, this is only way around the security error (requires canvg library which is 
+	// not explicitly requires, assumed loaded somewhere on the page)
+	if(navigator.msSaveBlob && canvg) {
 		// have to manually replace the width/height in cases of bottom-buffer IE hack for resizable graphs
 		svgHtml = svgHtml.replace("style=\"width: 100%; height: 1px;", "style=\"width:" + this.containerWidth + "px; height:" + this.containerHeight + "px;");
 		// draw via canvg, which is totally redudant if not for the fact this is only way to bypass security error
@@ -2372,8 +2412,8 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
 	
 	var img = new Image();
 	img.onload = function() {
-		// freaking internet explorer..
 		canvas.getContext("2d").drawImage(img, 0, 0);
+		// freaking internet explorer..
 		if(navigator.msSaveBlob) {
 			try {
 				navigator.msSaveBlob(
