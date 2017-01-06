@@ -1001,8 +1001,10 @@ SimpleGraph.prototype.removeSeriesColor = function(series) {
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
+ *        undefined/null y-values are not added.
  */
-SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis) {
+SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis, showNulls) {
 	if(!this.points) { this.points = []; }	
 	if(!size || size <= 0) { size = 10; }
 	var p = {
@@ -1012,8 +1014,13 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis
 		y2: y2Axis ? true : false, 
 		pointsize: size
 	};
-	if(isNaN(p.y)) {
-		p.y = 0;
+	if(isNaN(p.y) || (!p.y && p.y !== 0)) {
+		if(showNulls) {
+			p.y = 0;
+			p.wasNull = true;
+		} else {
+			return;
+		}
 	}
 	this.points.push(p);
 };
@@ -1033,8 +1040,10 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
+ *        undefined/null y-values are not added.
  */
-SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size, y2Axis) {
+SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size, y2Axis, showNulls) {
 	if(!data || data.length === 0) {
 		return;
 	}
@@ -1046,8 +1055,8 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 		var seriesName = !dataPointName ? i : (data[i][dataPointName] ? data[i][dataPointName] : dataPointName);
 		var xValue = data[i][xValueName];
 		var yValue = data[i][yValueName];
-		// if any null values, skip
-		if(xValue === undefined || xValue === null || yValue === undefined || yValue === null) {
+		// if any null x-values, skip
+		if(xValue === undefined || xValue === null) {
 			continue;
 		}
 		// nicely organize data
@@ -1058,9 +1067,19 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 			y2: y2Axis ? true : false, 
 			pointsize: size
 		};
-		// check for NaN (from ND)
+		// check for nulls
+		if(isNaN(point.y) || (!point.y && point.y !== 0)) {
+			if(showNulls) {
+				point.y = 0;
+				point.wasNull = true;
+			} else {
+				continue;
+			}
+		}
+		// check for NaN 
 		if(isNaN(point.y)) {
 			point.y = 0;
+			point.wasNull = true;
 		}
 		// additonal keys
 		if(additionalDataKeys && $.isArray(additionalDataKeys)) {
@@ -1088,8 +1107,10 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
  *        where the 'this' scope would be the data point object (with keys series, x, y, and additional data 
  *        keys, if supplied).
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
+ *        undefined/null y-values are not added.
  */
-SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis) {
+SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, showNulls) {
 	if(!data || data.length === 0) {
 		return;
 	}
@@ -1106,8 +1127,13 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis) 
 			y2: y2Axis ? true : false, 
 			pointsize: size
 		};
-		if(isNaN(p.y)) {
-			p.y = 0;
+		if(isNaN(p.y) || (!p.y && p.y !== 0)) {
+			if(showNulls) {
+				p.y = 0;
+				p.wasNull = true;
+			} else {
+				continue;
+			}
 		}
 		this.points.push(p);
 	}
@@ -1595,7 +1621,14 @@ SimpleGraph.prototype.drawPoints = function() {
 		.attr("transform", function(d) {
 			return "rotate(45," + xScale(d.x) + "," + (d.y2 ? y2Scale : yScale)(d.y) + ")";
 		})
-		.style("fill", function(d) { return self.getColorBySeriesName(d.series, true); });
+		.style("fill", function(d) {
+			if(d.wasNull) { return "none"; }
+			return self.getColorBySeriesName(d.series, true);
+		})
+		.style("stroke", function(d) {
+			if(!d.wasNull) { return null; }
+			return self.getColorBySeriesName(d.series, true);
+		});
 };
 
 /**
@@ -1935,7 +1968,7 @@ SimpleGraph.prototype.getLineSegmentsFromFunction = function(lineFunction, resol
 		if(xRange[1] > this.x.max) { xRange[0] = this.x.max; }
 	}
 	if(!resolution || typeof resolution !== "number") {
-		resolution = Math.floor((xRange[1]- xRange[0])*(this.width - this.margins.left - this.margins.right) / 20);
+		resolution = Math.floor((this.width - this.margins.left - this.margins.right) / 10);
 	}
 	if(resolution < 2) {
 		resolution = 2;
@@ -2259,19 +2292,20 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 			}
 		})
 		.on('mousemove', function(d, i) {
-			if(!tooltipDiv) { return; }
-			// Move tooltip
-			var absMousePos = d3.mouse(d3Body.node());
-			tooltipDiv.style({
-				'left': (absMousePos[0] + 20)+'px',
-				'top': (absMousePos[1])+'px'
-			});
-			var tooltipText = (textFunction) ? textFunction(d, d3.mouse(svg.node()), selection[0], i) : null;
-			// If no text, remove tooltip
-			if(!tooltipText) {
-				tooltipDiv.remove();
-			} else {
-				tooltipDiv.html(tooltipText);
+			if(tooltipDiv) {
+				// Move tooltip
+				var absMousePos = d3.mouse(d3Body.node());
+				tooltipDiv.style({
+					'left': (absMousePos[0] + 20)+'px',
+					'top': (absMousePos[1])+'px'
+				});
+				var tooltipText = (textFunction) ? textFunction(d, d3.mouse(svg.node()), selection[0], i) : null;
+				// If no text, remove tooltip
+				if(!tooltipText) {
+					tooltipDiv.remove();
+				} else {
+					tooltipDiv.html(tooltipText);
+				}
 			}
 		})
 		.on("mouseout", function(d, i) {
@@ -2305,7 +2339,9 @@ SimpleGraph.prototype.highlightPoints = function(series, validationCallback, siz
 		if(!validationCallback(d)) { return false; }
 		var xScale = self.x.scale;
 		var yScale = d.y2 ? self.y2.scale : self.y.scale;
-		var fill = fill ? fill : self.getColorBySeriesName(d.series, true);
+		if(!fill) {
+			fill = d.wasNull ? "none" : self.getColorBySeriesName(d.series, true);
+		};
 		var rect = self.svgGraph.append("rect")
 			.attr("class", "scatterplot-point-highlight")
 			.attr("width", size)
