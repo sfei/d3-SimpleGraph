@@ -208,6 +208,8 @@ function SimpleGraph(options) {
 		.attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
 	
 	this.resetAxisOptions(options.axis);
+	
+	return this;
 };
 
 /**
@@ -380,6 +382,8 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 	// draw axes but also clear any drawn lines/points/areas as they'd now be off
 	this.removeAll();
 	this.drawAxes();
+	
+	return this;
 };
 
 
@@ -407,6 +411,7 @@ SimpleGraph.prototype.getSvgGraphic = function() {
  */
 SimpleGraph.prototype.remove = function() {
 	this.svg.remove();
+	return this;
 };
 
 /**
@@ -637,6 +642,8 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 			.style("font-weight", "bolder")
 			.text(this.y2.label);
 	}
+	
+	return this;
 };
 
 /**
@@ -663,6 +670,8 @@ SimpleGraph.prototype.drawGrid = function(style) {
 		.style("stroke", stroke)
 		.style("stroke-width", strokeWidth)
 		.call(this.y.gridAxis.tickSize(-this.width).tickFormat(""));
+	
+	return this;
 };
 
 /**
@@ -670,6 +679,7 @@ SimpleGraph.prototype.drawGrid = function(style) {
  */
 SimpleGraph.prototype.removeGrid = function() {
 	this.svgGraph.selectAll(".scatterplot-grid").remove();
+	return this;
 };
 
 /**
@@ -921,6 +931,8 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
 		position.x -= legendBox.width;
 	}
 	legend.attr("transform", "translate(" + position.x + "," + position.y + ")");
+	
+	return this;
 };
 
 
@@ -992,6 +1004,7 @@ SimpleGraph.prototype.resetColorScale = function(colorScale) {
 	} else {
 		this.color.domain([]);
 	}
+	return this;
 };
 
 SimpleGraph.prototype.setSeriesColor = function(series, color) {
@@ -1002,6 +1015,7 @@ SimpleGraph.prototype.removeSeriesColor = function(series) {
 	if(this.customColors[series]) {
 		delete this.customColors[series];
 	};
+	return this;
 };
 
 
@@ -1035,10 +1049,12 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis
 			p.y = 0;
 			p.wasNull = true;
 		} else {
-			return;
+			return this;
 		}
 	}
 	this.points.push(p);
+	
+	return this;
 };
 
 /**
@@ -1061,7 +1077,7 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis
  */
 SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size, y2Axis, showNulls) {
 	if(!data || data.length === 0) {
-		return;
+		return this;
 	}
 	if(!this.points) { this.points = []; }
 	if(!size || size <= 0) { size = 10; }
@@ -1113,6 +1129,8 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
 		}
 		this.points.push(point);
 	}
+	
+	return this;
 };
 
 /**
@@ -1128,7 +1146,7 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
  */
 SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, showNulls) {
 	if(!data || data.length === 0) {
-		return;
+		return this;
 	}
 	if(!size || (typeof size !== "number" && typeof size != "function")) { size = 10; }
 	if(!this.points) { this.points = []; }
@@ -1153,6 +1171,8 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, 
 		}
 		this.points.push(p);
 	}
+	
+	return this;
 };
 
 /**
@@ -1165,7 +1185,9 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, 
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  */
 SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation, y2Axis) {
-	if(!lineCoordinates || lineCoordinates.length === 0) { return; }
+	if(!lineCoordinates || lineCoordinates.length === 0) {
+		return this;
+	}
 	if(!this.lines) {
 		this.lines = [];
 	}
@@ -1188,6 +1210,8 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
 		style: style, 
 		interpolate: interpolation
 	});
+	
+	return this;
 };
 
 /**
@@ -1205,7 +1229,7 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
  */
 SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style, resolution, interpolation, xRange, y2Axis) {
 	if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
-		return;
+		return this;
 	}
 	// default styles
 	if(!style) {
@@ -1230,6 +1254,8 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 		style: style, 
 		interpolate: interpolation
 	});
+	
+	return this;
 };
 
 /**
@@ -1244,7 +1270,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
 SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, handleOverlap) {
 	if(!this.points || this.points.length === 0) {
 		this.pointLines = null;
-		return;
+		return this;
 	}
 	if(!handleOverlap) {
 		handleOverlap = 'average';
@@ -1349,6 +1375,8 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
 			});
 		}
 	}
+	
+	return this;
 };
 
 /**
@@ -1367,10 +1395,10 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
  */
 SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, style, resolution, interpolation, xRange, y2Axis) {
 	if(!lineFunctionTop || typeof lineFunctionTop !== "function") {
-		return;
+		return this;
 	}
 	if(!lineFunctionBottom || typeof lineFunctionBottom !== "function") {
-		return;
+		return this;
 	}
 	// default styles
 	if(!style) {
@@ -1392,6 +1420,8 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
 		style: style, 
 		interpolate: interpolation
 	});
+	
+	return this;
 };
 
 /**
@@ -1405,7 +1435,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
  */
 SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, interpolation, y2Axis) {
 	if(!areaCoordinates || !Array.isArray(areaCoordinates) || areaCoordinates.length < 2) {
-		return;
+		return this;
 	}
 	// default styles
 	if(!style) {
@@ -1425,6 +1455,8 @@ SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, sty
 		style: style, 
 		interpolate: interpolation
 	});
+	
+	return this;
 };
 
 
@@ -1436,6 +1468,7 @@ SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, sty
  */
 SimpleGraph.prototype.clearPointsData = function() {
 	this.points = null;
+	return this;
 };
 
 /**
@@ -1444,6 +1477,7 @@ SimpleGraph.prototype.clearPointsData = function() {
 SimpleGraph.prototype.clearLinesData = function() {
 	this.lines = null;
 	this.pointLines = null;
+	return this;
 };
 
 /**
@@ -1451,6 +1485,7 @@ SimpleGraph.prototype.clearLinesData = function() {
  */
 SimpleGraph.prototype.clearAreasData = function() {
 	this.areas = null;
+	return this;
 };
 
 /**
@@ -1460,6 +1495,7 @@ SimpleGraph.prototype.clearAllData = function() {
 	this.clearPointsData();
 	this.clearLinesData();
 	this.clearAreasData();
+	return this;
 };
 
 
@@ -1593,7 +1629,7 @@ SimpleGraph.prototype.drawPoints = function() {
 	this.removePoints();
 
 	if(!this.points || this.points.length === 0) {
-		return;
+		return this;
 	}
 
 	// for 'this' references
@@ -1619,11 +1655,11 @@ SimpleGraph.prototype.drawPoints = function() {
 		}
 	}
 
-	var points = this.svgGraph.selectAll(".scatterplot-point")
+	var points = this.svgGraph.selectAll(".sg-scatterplot-point")
 		.data(drawPointsData)
 	  .enter().append("rect")
 		.attr("series", function(d) { return d.series; })
-		.attr("class", "scatterplot-point")
+		.attr("class", "sg-scatterplot-point")
 		.attr("width", function(d) { return (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize; })
 		.attr("height", function(d) { return (typeof d.pointsize === "function") ? d.pointsize() : d.pointsize; })
 		.attr("x", function(d) {
@@ -1645,6 +1681,8 @@ SimpleGraph.prototype.drawPoints = function() {
 			if(!d.wasNull) { return null; }
 			return self.getColorBySeriesName(d.series, true);
 		});
+		
+	return this;
 };
 
 /**
@@ -1662,10 +1700,10 @@ SimpleGraph.prototype.drawLines = function() {
 	// local function for adding lines to graph as it may be used multiple times per loop
 	function addLine(lineData, lineCoords, className) {
 		if(lineCoords.length < 2) {
-			return;
+			return this;
 		}
 		var yScale = lineData.y2 ? self.y2.scale : self.y.scale;
-		var addedLine = svgGraph.selectAll(".temporary-line")
+		var addedLine = svgGraph.selectAll(".sg-temporary-line")
 			.data([lineCoords])
 		  .enter().append("path")
 			.attr("series", lineData.series)
@@ -1693,11 +1731,11 @@ SimpleGraph.prototype.drawLines = function() {
 		for(var l = 0; l < this.pointLines.length; l++) {
 			var line = this.pointLines[l];
 			if(this.allowDrawBeyondGraph) {
-				addLine(line, line.coords, "scatterplot-line");
+				addLine(line, line.coords, "sg-scatterplot-line");
 			} else {
-				var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2);
+				var lineSegments = this._getLineSegmentsFromCoordinates(line.coords, line.y2);
 				for(var s = 0; s < lineSegments.length; s++) {
-					addLine(line, lineSegments[s], "scatterplot-line");
+					addLine(line, lineSegments[s], "sg-scatterplot-line");
 				}
 			}
 		}
@@ -1709,7 +1747,7 @@ SimpleGraph.prototype.drawLines = function() {
 			var line = this.lines[l];
 			// lines added as functions
 			if(line.lineFunction) {
-				var lineSegments = this.getLineSegmentsFromFunction(
+				var lineSegments = this._getLineSegmentsFromFunction(
 					line.lineFunction, 
 					line.resolution, 
 					line.xRange, 
@@ -1717,21 +1755,23 @@ SimpleGraph.prototype.drawLines = function() {
 					!this.allowDrawBeyondGraph
 				);
 				for(var s = 0; s < lineSegments.length; s++) {
-					addLine(line, lineSegments[s], "plotted-line");
+					addLine(line, lineSegments[s], "sg-plotted-line");
 				}
 			// lines added as coordinates
 			} else {
 				if(this.allowDrawBeyondGraph) {
-					addLine(line.coords, "plotted-line");
+					addLine(line.coords, "sg-plotted-line");
 				} else {
-					var lineSegments = this.getLineSegmentsFromCoordinates(line.coords, line.y2);
+					var lineSegments = this._getLineSegmentsFromCoordinates(line.coords, line.y2);
 					for(var s = 0; s < lineSegments.length; s++) {
-						addLine(line, lineSegments[s], "plotted-line");
+						addLine(line, lineSegments[s], "sg-plotted-line");
 					}
 				}
 			}
 		}
 	}
+	
+	return this;
 };
 
 /**
@@ -1747,10 +1787,10 @@ SimpleGraph.prototype.drawAreas = function() {
 	// local function for adding areas to graph as it may be used multiple times per loop
 	function addArea(areaData, areaCoords, className) {
 		if(areaCoords.length < 2 || areaCoords[0].length < 2 || areaCoords[1].length < 2) {
-			return;
+			return this;
 		}
 		var yScale = areaData.y2 ? self.y2.scale : self.y.scale;
-		var addedArea = self.svgGraph.selectAll(".temporary-area")
+		var addedArea = self.svgGraph.selectAll(".sg-temporary-area")
 			.data([areaCoords])
 		  .enter().append("path")
 			.attr("series", areaData.series)
@@ -1777,7 +1817,7 @@ SimpleGraph.prototype.drawAreas = function() {
 			var area = this.areas[a];
 			// areas added as functions
 			if(area.areaFunctions) {
-				var areaPolys = this.getAreasPolysFromFunctions(
+				var areaPolys = this._getAreasPolysFromFunctions(
 					area.areaFunctions[0], 
 					area.areaFunctions[1], 
 					area.resolution, 
@@ -1786,28 +1826,30 @@ SimpleGraph.prototype.drawAreas = function() {
 					!this.allowDrawBeyondGraph
 				);
 				for(var p = 0; p < areaPolys.length; p++) {
-					addArea(area, areaPolys[p], "plotted-area");
+					addArea(area, areaPolys[p], "sg-plotted-area");
 				}
 			// areas added as coordinates
 			} else {
 				if(this.allowDrawBeyondGraph) {
-					addArea(area.coords, "plotted-area");
+					addArea(area.coords, "sg-plotted-area");
 				} else {
-					var areaPolys = this.getAreaPolysFromCoordinates(area.coords, area.y2);
+					var areaPolys = this._getAreaPolysFromCoordinates(area.coords, area.y2);
 					for(var p = 0; p < areaPolys.length; p++) {
-						addArea(area, areaPolys[p], "plotted-area");
+						addArea(area, areaPolys[p], "sg-plotted-area");
 					}
 				}
 			}
 		}
 	}
+	
+	return this;
 };
 
 
 //************************************************************************************************************
 // Mostly "private" functions for creating line coordinates from function
 //************************************************************************************************************
-SimpleGraph.prototype.findIntercept = function(f, x1, x2, y2Axis) {
+SimpleGraph.prototype._findIntercept = function(f, x1, x2, y2Axis) {
 	var y1 = f(x1), y2 = f(x2);
 	var breakValue, increasing;
 	var yAxis = y2Axis ? this.y2 : this.y;
@@ -1857,7 +1899,7 @@ SimpleGraph.prototype.findIntercept = function(f, x1, x2, y2Axis) {
 	return null;
 };
 
-SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Axis) {
+SimpleGraph.prototype._getLineSegmentsFromCoordinates = function(lineCoords, y2Axis) {
 	var yAxis = y2Axis ? this.y2 : this.y;
 	var lineSegments = [];
 	var segment = [];
@@ -1974,7 +2016,7 @@ SimpleGraph.prototype.getLineSegmentsFromCoordinates = function(lineCoords, y2Ax
 	return lineSegments;
 };
 
-SimpleGraph.prototype.getLineSegmentsFromFunction = function(lineFunction, resolution, xRange, y2Axis, limitToGraphRange) {
+SimpleGraph.prototype._getLineSegmentsFromFunction = function(lineFunction, resolution, xRange, y2Axis, limitToGraphRange) {
 	var yAxis = y2Axis ? this.y2 : this.y;
 
 	if(!xRange) {
@@ -2034,7 +2076,7 @@ SimpleGraph.prototype.getLineSegmentsFromFunction = function(lineFunction, resol
 			// case: first point of new segment
 			if(segment.length === 0 && x > xRange[0]) {
 				// get y-intercept
-				var intercept = this.findIntercept(lineFunction, lastX, x, y2Axis);
+				var intercept = this._findIntercept(lineFunction, lastX, x, y2Axis);
 				if(intercept) {
 					segment.push(intercept);
 				}
@@ -2045,7 +2087,7 @@ SimpleGraph.prototype.getLineSegmentsFromFunction = function(lineFunction, resol
 			// case: ending segment with last point outside of range
 			if(segment.length > 0) {
 				// yet y-intercept
-				var intercept = this.findIntercept(lineFunction, lastX, x, y2Axis);
+				var intercept = this._findIntercept(lineFunction, lastX, x, y2Axis);
 				if(intercept) {
 					segment.push(intercept);
 				}
@@ -2070,33 +2112,33 @@ SimpleGraph.prototype.getLineSegmentsFromFunction = function(lineFunction, resol
 	return lineSegments;
 };
 
-SimpleGraph.prototype.getAreaPolysFromCoordinates = function(areaCoordinates, y2Axis) {
+SimpleGraph.prototype._getAreaPolysFromCoordinates = function(areaCoordinates, y2Axis) {
 	var lineA = [];
 	var lineB = [];
 	for(var i = 0; i < areaCoordinates.length; i++) {
 		lineA.push([areaCoordinates[i][0], areaCoordinates[i][1]]);
 		lineB.push([areaCoordinates[i][0], areaCoordinates[i][2]]);
 	}
-	return this.getAreaPolysFromLineCrosswalk(
-		this.getLineSegmentsFromCoordinates(lineA, y2Axis), 
-		this.getLineSegmentsFromCoordinates(lineB, y2Axis), 
+	return this._getAreaPolysFromLineCrosswalk(
+		this._getLineSegmentsFromCoordinates(lineA, y2Axis), 
+		this._getLineSegmentsFromCoordinates(lineB, y2Axis), 
 		y2Axis
 	);
 };
 
-SimpleGraph.prototype.getAreasPolysFromFunctions = function(funcA, funcB, resolution, xRange, y2Axis, limitToGraphRange) {
+SimpleGraph.prototype._getAreasPolysFromFunctions = function(funcA, funcB, resolution, xRange, y2Axis, limitToGraphRange) {
 	var lines = [
-		this.getLineSegmentsFromFunction(funcA, resolution, xRange, y2Axis, limitToGraphRange), 
-		this.getLineSegmentsFromFunction(funcB, resolution, xRange, y2Axis, limitToGraphRange)
+		this._getLineSegmentsFromFunction(funcA, resolution, xRange, y2Axis, limitToGraphRange), 
+		this._getLineSegmentsFromFunction(funcB, resolution, xRange, y2Axis, limitToGraphRange)
 	];
-	return this.getAreaPolysFromLineCrosswalk(
-		this.getLineSegmentsFromFunction(funcA, resolution, xRange, y2Axis, limitToGraphRange), 
-		this.getLineSegmentsFromFunction(funcB, resolution, xRange, y2Axis, limitToGraphRange), 
+	return this._getAreaPolysFromLineCrosswalk(
+		this._getLineSegmentsFromFunction(funcA, resolution, xRange, y2Axis, limitToGraphRange), 
+		this._getLineSegmentsFromFunction(funcB, resolution, xRange, y2Axis, limitToGraphRange), 
 		y2Axis
 	);
 };
 
-SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2Axis) {
+SimpleGraph.prototype._getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2Axis) {
 	var areas = [];
 	var areaCoords = [];
 	var li = [0, 0];
@@ -2184,28 +2226,32 @@ SimpleGraph.prototype.getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2A
  * Remove all points on graph.
  */
 SimpleGraph.prototype.removePoints = function() {
-	this.svgGraph.selectAll(".scatterplot-dot, .scatterplot-point").remove();
+	this.svgGraph.selectAll(".sg-scatterplot-dot, .sg-scatterplot-point").remove();
+	return this;
 };
 
 /**
  * Remove lines from graph.
  */
 SimpleGraph.prototype.removeLines = function() {
-	this.svgGraph.selectAll(".scatterplot-line, .plotted-line").remove();
+	this.svgGraph.selectAll(".sg-scatterplot-line, .sg-plotted-line").remove();
+	return this;
 };
 
 /**
  * Remove areas from graph.
  */
 SimpleGraph.prototype.removeAreas = function() {
-	this.svgGraph.selectAll(".plotted-area").remove();
+	this.svgGraph.selectAll(".sg-plotted-area").remove();
+	return this;
 };
 
 /**
  * Remove everything from graph.
  */
 SimpleGraph.prototype.removeAll = function() {
-	this.svgGraph.selectAll(".scatterplot-dot, .scatterplot-point, .scatterplot-line, .plotted-line, .plotted-area").remove();
+	this.removePoints().removeLines().removeAreas();
+	return this;
 };
 
 
@@ -2227,7 +2273,8 @@ SimpleGraph.prototype.removeAll = function() {
  */
 SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
 	this.svgGraph.selectAll(".scatterplot-point")
-		.call(this.addTooltipFunctionality(tooltipFunction, options));
+		.call(this._constructTooltipFunctionality(tooltipFunction, options));
+	return this;
 };
 
 /**
@@ -2242,7 +2289,8 @@ SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
  */
 SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
 	this.svgGraph.selectAll(".scatterplot-line, .plotted-line")
-		.call(this.addTooltipFunctionality(tooltipFunction, options));
+		.call(this._constructTooltipFunctionality(tooltipFunction, options));
+	return this;
 };
 
 /**
@@ -2257,7 +2305,8 @@ SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
  */
 SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
 	this.svgGraph.selectAll(".plotted-area")
-		.call(this.addTooltipFunctionality(tooltipFunction, options));
+		.call(this._constructTooltipFunctionality(tooltipFunction, options));
+	return this;
 };
 
 /**
@@ -2272,10 +2321,10 @@ SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
  * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
  *        div's CSS style (optional).
  */
-SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) {
+SimpleGraph.prototype._constructTooltipFunctionality = function(textFunction, options) {
 	var svg = this.svg;
 	return function(selection) {
-		if(!selection) { return; }
+		if(!selection) { return null; }
 		if(!options) { options = {}; }
 		var d3Body = d3.select('body');
 		var tooltipDiv;
@@ -2287,10 +2336,10 @@ SimpleGraph.prototype.addTooltipFunctionality = function(textFunction, options) 
 			var styles = {};
 			if(!tooltipDiv) {
 				// Clean up lost tooltips
-				d3Body.selectAll('.d3-tooltip').remove();
+				d3Body.selectAll('.sg-tooltip').remove();
 				// Append tooltip 
 				tooltipDiv = d3Body.append('div');
-				tooltipDiv.attr('class', 'd3-tooltip');
+				tooltipDiv.attr('class', 'sg-tooltip');
 				// full styles
 				styles = {
 					'position': 'absolute', 
@@ -2390,14 +2439,17 @@ SimpleGraph.prototype.highlightPoints = function(series, validationCallback, siz
 			}
 		}
 	});
+	return this;
 };
 
 SimpleGraph.prototype.removeHighlightPoints = function() {
 	this.svgGraph.selectAll(".scatterplot-point-highlight").remove();
+	return this;
 };
 
 SimpleGraph.prototype.removeHighlights = function() {
 	this.removeHighlightPoints();
+	return this;
 };
 
 
@@ -2426,7 +2478,7 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
 	canvas.height = this.containerHeight;
 	
 	// because internet explorer, this is only way around the security error (requires canvg library which is 
-	// not explicitly requires, assumed loaded somewhere on the page)
+	// not explicitly required, assumed loaded somewhere on the page globally)
 	if(navigator.msSaveBlob && canvg) {
 		// have to manually replace the width/height in cases of bottom-buffer IE hack for resizable graphs
 		svgHtml = svgHtml.replace("style=\"width: 100%; height: 1px;", "style=\"width:" + this.containerWidth + "px; height:" + this.containerHeight + "px;");
@@ -2436,7 +2488,7 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
 			new Blob([canvas.msToBlob()], {type:"image/png"}), 
 			pngName
 		);
-		return;
+		return this;
 	}
 	
 	var a = document.createElement("a");
