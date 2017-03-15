@@ -19,3 +19,5 @@ Import common.js and common.css for the base commons modules. Import common.tabl
 Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or simply regular instantiation.
 
 D3 v4 is required for this library to work.
+
+See readme.html for tutorials on its use.
