@@ -20,4 +20,4 @@ Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based
 
 D3 v4 is required for this library to work.
 
-See readme.html for tutorials on its use.
+See example.html for tutorials on its use.
