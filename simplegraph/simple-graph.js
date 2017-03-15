@@ -3,7 +3,7 @@
  *
  * @author Lawrence Sim
  * @copyright 2016 - San Francisco Estuary Institute
- 
+ * 
  * @license
  * Copyright (c) 2016 - San Francisco Estuary Institute
  * 
@@ -2272,7 +2272,7 @@ SimpleGraph.prototype.removeAll = function() {
  *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
-	this.svgGraph.selectAll(".scatterplot-point")
+	this.svgGraph.selectAll(".sg-scatterplot-point")
 		.call(this._constructTooltipFunctionality(tooltipFunction, options));
 	return this;
 };
@@ -2288,7 +2288,7 @@ SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
  *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
-	this.svgGraph.selectAll(".scatterplot-line, .plotted-line")
+	this.svgGraph.selectAll(".sg-scatterplot-line, .sg-plotted-line")
 		.call(this._constructTooltipFunctionality(tooltipFunction, options));
 	return this;
 };
@@ -2304,7 +2304,7 @@ SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
  *        div's CSS style (optional).
  */
 SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
-	this.svgGraph.selectAll(".plotted-area")
+	this.svgGraph.selectAll(".sg-plotted-area")
 		.call(this._constructTooltipFunctionality(tooltipFunction, options));
 	return this;
 };
