@@ -313,9 +313,12 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 			.range(a === "x" ? [0, this.width] : [this.height, 0]);
 	
 		// create axes
+		var applySecondAxes = false;
 		if(a === "x") {
-			// note axis will be reconstructed at drawing since top/bottom specified there
+			// create both versions of the axes as we need to apply tick formatting to both here
+			applySecondAxes = true;
 			this[a].axis = d3.axisBottom(this[a].scale);
+			this[a].axisTwo = d3.axisTop(this[a].scale);
 			this[a].gridAxis = d3.axisBottom(this[a].scale);
 		} else {
 			if(a === "y2") {
@@ -336,6 +339,18 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 				this[a].axis.ticks(this[a].format);
 				if(axisOptions[a].tickValues) {
 					this[a].axis.tickValues(axisOptions[a].tickValues);
+				}
+			}
+			// repeat on second axis if needed
+			if(applySecondAxes) {
+				this[a].axisTwo.tickFormat(this[a].format);
+				if(axisOptions[a].ticks) {
+					this[a].axisTwo.ticks(axisOptions[a].ticks, this[a].format);
+				} else {
+					this[a].axisTwo.ticks(this[a].format);
+					if(axisOptions[a].tickValues) {
+						this[a].axisTwo.tickValues(axisOptions[a].tickValues);
+					}
 				}
 			}
 		} else {
@@ -362,6 +377,19 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 					this[a].gridAxis.ticks(axisOptions[a].grid.ticks[0], axisOptions[a].grid.ticks[1]);
 				} else {
 					this[a].gridAxis.ticks(axisOptions[a].grid.ticks);
+				}
+			}
+			// repeat on second axis if needed
+			if(applySecondAxes) {
+				this[a].axisTwo.tickFormat(this[a].format);
+				if(axisOptions[a].tickValues) {
+					this[a].axisTwo.tickValues(axisOptions[a].tickValues);
+				} else if(axisOptions[a].ticks || axisOptions[a].ticks === 0) {
+					if(Array.isArray(axisOptions[a].ticks)) {
+						this[a].axisTwo.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
+					} else {
+						this[a].axisTwo.ticks(axisOptions[a].ticks);
+					}
 				}
 			}
 		}
@@ -459,12 +487,13 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 		xAxisPosition = xAxisPosition.toLowerCase().trim();
 		if(xAxisPosition !== "top") { xAxisPosition = "bottom"; }
 	}
+	var xAxis;
 	var xAxisPosY = 0;
-	if(xAxisPosition === "top") {
-		this.x.axis = d3.axisTop(this.x.scale);
-	} else {
-		this.x.axis = d3.axisBottom(this.x.scale);
+	if(xAxisPosition !== "top") {
+		xAxis = this.x.axis;
 		xAxisPosY = this.height;
+	} else {
+		xAxis = this.x.axisTwo;
 	}
 	if(!axisLabelMargin) { axisLabelMargin = 0; }
 	
@@ -473,7 +502,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	var xAxisG = this.svgGraph.append("g")
 		.attr("class", "scatterplot-xaxis")
 		.attr("transform", "translate(0," + xAxisPosY + ")")
-		.call(this.x.axis);
+		.call(xAxis);
 	var yAxisG = this.svgGraph.append("g")
 		.attr("class", "scatterplot-yaxis")
 		.call(this.y.axis);
