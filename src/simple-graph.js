@@ -308,9 +308,27 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 		if(scaleIsLog) {
 			this[a].scale.base(axisOptions[a].logBase);
 		}
-		this[a].scale
-			.domain([this[a].min, this[a].max])
-			.range(a === "x" ? [0, this.width] : [this.height, 0]);
+		var domain, range;
+		if(axisOptions[a].break) {
+			this[a].break = axisOptions[a].break;
+			domain = [
+				this[a].min, 
+				this[a].break.domain[0], 
+				this[a].break.domain[1], 
+				this[a].max
+			];
+			var domain2 = !scaleIsTime ? domain : domain.map(function(x) { return x.getTime(); });
+			var span = a === "x" ? this.width : this.height;
+			range = a === "x" ? [0, 0, 0, span] : [span, 0, 0, 0];
+			var validspan = span - this[a].break.rangegap;
+			var rangePerDomain = validspan / (domain2[1] - domain2[0] + domain2[3] - domain2[2]);
+			range[1] = rangePerDomain*(domain2[1] - domain2[0]);
+			range[2] = range[1] + this[a].break.rangegap;
+		} else {
+			domain = [this[a].min, this[a].max];
+			range = a === "x" ? [0, this.width] : [this.height, 0];
+		}
+		this[a].scale.domain(domain).range(range);
 	
 		// create axes
 		var applySecondAxes = false;
@@ -1686,6 +1704,18 @@ SimpleGraph.prototype.drawPoints = function() {
 			addPoint = addPoint && this.points[i].x <= this.x.max;
 			addPoint = addPoint && this.points[i].y >= yAxis.min;
 			addPoint = addPoint && this.points[i].y <= yAxis.max;
+			if(this.x.break) {
+				addPoint = addPoint && (
+					this.points[i].x <= this.x.break.domain[0]
+					|| this.points[i].x >= this.x.break.domain[0]
+				);
+			}
+			if(yAxis.break) {
+				addPoint = addPoint && (
+					this.points[i].y <= yAxis.break.domain[0]
+					|| this.points[i].y >= yAxis.break.domain[0]
+				);
+			}
 			if(addPoint) { drawPointsData.push(this.points[i]); }
 		}
 	}
@@ -1734,10 +1764,10 @@ SimpleGraph.prototype.drawLines = function() {
 	
 	// local function for adding lines to graph as it may be used multiple times per loop
 	function addLine(lineData, lineCoords, className) {
+		var yAxis = lineData.y2 ? self.y2 : self.y;
 		if(lineCoords.length < 2) {
 			return this;
 		}
-		var yScale = lineData.y2 ? self.y2.scale : self.y.scale;
 		var addedLine = svgGraph.selectAll(".sg-temporary-line")
 			.data([lineCoords])
 		  .enter().append("path")
@@ -1747,7 +1777,7 @@ SimpleGraph.prototype.drawLines = function() {
 			.attr("d",
 				d3.line()
 					.x(function(c) { return xScale(c[0]); })
-					.y(function(c) { return yScale(c[1]); })
+					.y(function(c) { return yAxis.scale(c[1]); })
 					.curve(lineData.interpolate)
 			);
 		// add styles
