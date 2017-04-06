@@ -502,13 +502,19 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	var xAxisG = this.svgGraph.append("g")
 		.attr("class", "sg-xaxis")
 		.attr("transform", "translate(0," + xAxisPosY + ")")
+		.style("font-size", 14)
+		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
 		.call(xAxis);
 	var yAxisG = this.svgGraph.append("g")
 		.attr("class", "sg-yaxis")
+		.style("font-size", 14)
+		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
 		.call(this.y.axis);
 	var y2AxisG = !this.y2 ? null : this.svgGraph.append("g")
 		.attr("class", "sg-y2axis")
 		.attr("transform", "translate(" + this.width + ",0)")
+		.style("font-size", 14)
+		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
 		.call(this.y2.axis);
 	// for some reason ticks are by default invisible
 	this.svgGraph.selectAll(".tick line").style("stroke", "#000");
