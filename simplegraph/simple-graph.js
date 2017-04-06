@@ -2,10 +2,10 @@
  * SimpleGraph
  *
  * @author Lawrence Sim
- * @copyright 2016 - San Francisco Estuary Institute
+ * @copyright 2017 - San Francisco Estuary Institute
  * 
  * @license
- * Copyright (c) 2016 - San Francisco Estuary Institute
+ * Copyright (c) 2017 - San Francisco Estuary Institute
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
  * associated documentation files (the "Software"), to deal in the Software without restriction, including 
