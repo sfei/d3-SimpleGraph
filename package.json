@@ -1,0 +1,7 @@
+{
+    "name": "d3-simplegraph",
+    "main": "d3.simplegraph.min.js",
+    "dependencies": {
+        "node-minify": "~2.0.0"
+    }
+}
