@@ -170,13 +170,16 @@
  *        as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be 
  *        cut off where they extend past the x/y-axis ranges.
  * @param {Object} [options.axis] - Optional dictionary of axis options. See resetAxisOptions() for details.
+ * @param {Object} [options.styles] - Optional styles applied to SVG element.
  */
 function SimpleGraph(options) {
-	// otherwise reaching too deep will cause errors
+	// default options
 	if(!options)             { options = {}; }
 	if(!options.container)   { options.container = "body"; }
 	if(!options.margins)     { options.margins = {}; }
 	if(!options.axis)        { options.axis = {}; }
+	if(!options.styles)      { options.styles = {}; }
+	if(!options.styles["font-size"]) { options.styles["font-size"] = "1.0em"; }
 	
 	// Option to allow drawing outside graph range.
 	this.allowDrawBeyondGraph = options.allowDrawBeyondGraph;
@@ -202,10 +205,14 @@ function SimpleGraph(options) {
 		.attr("width", this.containerWidth)
 		.attr("height", this.containerHeight)
 		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
-		.style('font-size', '14px')
 		.style('overflow', 'visible');
 	this.svgGraph = this.svg.append("g")
 		.attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
+	
+	// append styles, save to instance the default text-size
+	for(var style in options.styles) {
+		this.svg.style(style, options.styles[style]);
+	}
 	
 	this.resetAxisOptions(options.axis);
 	
@@ -253,8 +260,8 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 	if(!this.axisStyles.fill) {
 		this.axisStyles.fill = "none";
 	}
-	if(!this.axisStyles['stroke-width']) {
-		this.axisStyles['stroke-width'] = 0.5;
+	if(!this.axisStyles["stroke-width"]) {
+		this.axisStyles["stroke-width"] = 0.5;
 	}
 	if(!this.axisStyles.stroke) {
 		this.axisStyles.stroke = "black";
@@ -520,20 +527,21 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 	var xAxisG = this.svgGraph.append("g")
 		.attr("class", "sg-xaxis")
 		.attr("transform", "translate(0," + xAxisPosY + ")")
-		.style("font-size", 14)
-		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
-		.call(xAxis);
+		.call(xAxis)
+		// annoyingly d3 adds these after axis call so remove so they don't override svg style
+		.attr("font-size", null)
+		.attr("font-family", null);
 	var yAxisG = this.svgGraph.append("g")
 		.attr("class", "sg-yaxis")
-		.style("font-size", 14)
-		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
-		.call(this.y.axis);
+		.call(this.y.axis)
+		.attr("font-size", null)
+		.attr("font-family", null);
 	var y2AxisG = !this.y2 ? null : this.svgGraph.append("g")
 		.attr("class", "sg-y2axis")
 		.attr("transform", "translate(" + this.width + ",0)")
-		.style("font-size", 14)
-		.style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
-		.call(this.y2.axis);
+		.call(this.y2.axis)
+		.attr("font-size", null)
+		.attr("font-family", null);
 	// for some reason ticks are by default invisible
 	this.svgGraph.selectAll(".tick line").style("stroke", "#000");
 	// add styles

@@ -4,7 +4,7 @@
     <title>D3 SimpleGraph Introduction</title>
     <meta charset="UTF-8">
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="../src/simple-graph.js"></script>
+    <script src="../d3.simplegraph.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <style>
       body {
@@ -138,7 +138,8 @@
             <p class='param'>@param {Object} [options.margins={top:20,right:20,bottom:40,left:40}] - Margins for graph within overarching SVG (e.g. with all default values, the width of the actual graph will be 540px in a 600px wide SVG element).</p>
             <p class='param'>@param {d3.scale} [options.colorScale=d3.scaleOrdinal(d3.schemeCategory10)] - Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale.</p>
             <p class='param'>@param {boolean} [allowDrawBeyondGraph=false] - Allow drawing beyond graph. If true, all data will be drawn as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut off where they extend past the x/y-axis ranges.</p>
-            <p class='param'>@param {Object} [options.axis] - Optional dictionary of styles axes. There are further nested parameters which are not truncated for length considerations, but available in the full documentation.</p>" 
+            <p class='param'>@param {Object} [options.axis] - Optional dictionary of styles axes. There are further nested parameters which are not truncated for length considerations, but available in the full documentation.</p>
+            <p class='param'>@param {Object} [options.styles] - Optional styles applied to SVG element.</p>"
           sampleCode="var graph = new SimpleGraph({
   container: '#simple-chart',
   width: 850,
