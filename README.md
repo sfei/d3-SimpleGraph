@@ -14,10 +14,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Use ##
 
-Import simple-graph.js
+Import d3.simplegraph.min.js
 
 Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or simply regular instantiation.
 
 D3 v4 is required for this library to work.
 
-See example.html for tutorials on its use.
+See [tutorials](./tutorials/TUTORIALS.md) for details on using D3 Simple Graph.
