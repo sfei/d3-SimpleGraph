@@ -2036,7 +2036,7 @@ SimpleGraph.prototype._getLineSegmentsFromCoordinates = function(lineCoords, y2A
         if(coords[1] >= yAxis.min && coords[1] <= yAxis.max) {
             // case: first point of new segment
             if(segment.length === 0 && lastCoords) {
-                if(slope === 0) {
+                if(slope !== 0) {
                     // get y-intercept
                     var yTarget = slope > 0 ? yAxis.min : yAxis.max;
                     var lastX = this.x.isDate ? lastCoords[0].getTime() : lastCoords[0];
@@ -2057,7 +2057,7 @@ SimpleGraph.prototype._getLineSegmentsFromCoordinates = function(lineCoords, y2A
             // case: ending segment with last point outside of range
             if(segment.length > 0) {
                 // yet y-intercept
-                var yTarget = slope > 0 ? yAxis.min : yAxis.max;
+                var yTarget = slope > 0 ? yAxis.max : yAxis.min;
                 var lastX = this.x.isDate ? lastCoords[0].getTime() : lastCoords[0];
                 coords = [
                     lastX + (yTarget - lastCoords[1])/slope, 
