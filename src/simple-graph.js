@@ -1,26 +1,8 @@
 /*************************************************************************************************************
- * SimpleGraph
- *
+ * D3-Simple-Graph
  * @author Lawrence Sim
- * @copyright 2017 - San Francisco Estuary Institute
- * 
- * @license
- * Copyright (c) 2017 - San Francisco Estuary Institute
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
- * associated documentation files (the "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the 
- * following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all copies or substantial 
- * portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT 
- * LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO 
- * EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER 
- * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR 
- * THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * @copyright 2018 - San Francisco Estuary Institute
+ * @license This project is licensed under the GNU Lesser General Public License.
  ************************************************************************************************************/
 
 // START IIFE (Immediately-Invoked Function Expression) Constructor
@@ -220,7 +202,7 @@ function SimpleGraph(options) {
 };
 
 /**
- * Set axes. As calling this will invalidating anything drawn on the graph, all data is cleared from the graph
+ * Set axes. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph
  * on calling this.
  * @param {Object} [axisOptions] -Dictionary of axis options per axes (keys being x, y, and optionally, y2).
  * @param {Object} [axisOptions.style={fill:"none",'stroke-width':0.5,stroke:'black'}] - Shared styles for 
@@ -1096,7 +1078,7 @@ SimpleGraph.prototype.removeSeriesColor = function(series) {
  *        undefined/null y-values are not added.
  */
 SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis, showNulls) {
-    if(!this.points) { this.points = []; }    
+    if(!this.points) { this.points = []; }
     if(!size || size <= 0) { size = 10; }
     var p = {
         series: name, 
@@ -2530,7 +2512,9 @@ SimpleGraph.prototype.removeHighlights = function() {
 // Save graph function
 //************************************************************************************************************
 /**
- * Save graph as a PNG.
+ * Save graph as a PNG. Note, in IE, canvg library is required due to security error. This library is not 
+ * packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, 
+ * function will simply error on IE.
  * @param {string} [pngName] - Default name to save png.
  */
 SimpleGraph.prototype.saveAsPng = function(pngName) {
