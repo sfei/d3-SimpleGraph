@@ -56,15 +56,15 @@ Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based
 * `options` - Key-value object of initialization options.
 
 <style>
-table { border-collapse: collapse; font-size: 0.9em; }
-th { text-align: left; }
-td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
-td table { font-size: 1em; margin: 0.2em; }
-td table th { background-color: #eee; border-color: #ddd; }
-td table td { background-color: #fff; border-color: #ddd; }
+  table { border-collapse: collapse; font-size: 0.9em; margin-left: 2.5em; }
+  th { text-align: left; background-color: #bbb; }
+  td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
+  td table { font-size: 1em; margin: 0.2em; width: 100%; }
+  td table th { background-color: #d6d6d6; border-color: #ddd; }
+  td table td { background-color: #fff; border-color: #ddd; }
 </style>
 
-<table style="margin-left:60px;">
+<table>
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -123,16 +123,29 @@ td table td { background-color: #fff; border-color: #ddd; }
         <table>
           <tbody>
             <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
+              <th>Name</th><th>Description</th>
             </tr>
             <tr>
-              <td>x</td><td>object</td><td>X-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
+              <td>x</td><td>X-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
             </tr>
             <tr>
-              <td>y</td><td>object</td><td>Y-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
+              <td>y</td><td>Y-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
             </tr>
             <tr>
-              <td>y2</td><td>object</td><td>Y2-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
+              <td>y2</td><td>Y2-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
+            </tr>
+            <tr>
+              <td>styles</td>
+              <td>
+                Optional key-value object of shared axis styles. Values filled in by default below:
+                <h5>Properties</h5>
+                <table>
+                  <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+                  <tr><td>fill</td><td>string</td><td>Defaults to "none".</td></tr>
+                  <tr><td>stroke-width</td><td>number</td><td>Defaults to 0.5.</td></tr>
+                  <tr><td>stroke</td><td>string</td><td>Defaults to "black".</td></tr>
+                </table>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -205,25 +218,44 @@ Removes and destroys SVG and this object. Irreversible.
 
 Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
 
-* `styles` - Optional key-value object of shared axis styles. Values filled in by default below:
-
-<table style="margin-left:60px;border-collapse:collapse;font-size:0.9em;">
-  <tr><th>Name</th><th>Description</th></tr>
-  <tr><td>fill</td><td>Defaults to "none".</td></tr>
-  <tr><td>stroke-width</td><td>Defaults to 0.5.</td></tr>
-  <tr><td>stroke</td><td>Defaults to "black".</td></tr>
+<table>
+  <tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>axisOptions</td>
+      <td>object</td>
+      <td>
+        Axis properties.
+        <h5>Properties</h5>
+        <table>
+          <tr><th>Name</th><th>Description</th></tr>
+          <tr><td>x</td><td>Literal of x-Axis options (see below).</td></tr>
+          <tr><td>y</td><td>Literal of y-Axis options (see below).</td></tr>
+          <tr><td>y2</td><td>Optional literal of y2-Axis options (see below).</td></tr>
+          <tr>
+            <td>styles</td>
+            <td>
+              Optional key-value object of shared axis styles. Values filled in by default below:
+              <h5>Properties</h5>
+              <table>
+                <tr><th>Name</th><th>Type</th><th>Description</th></tr>
+                <tr><td>fill</td><td>string</td><td>Defaults to "none".</td></tr>
+                <tr><td>stroke-width</td><td>number</td><td>Defaults to 0.5.</td></tr>
+                <tr><td>stroke</td><td>string</td><td>Defaults to "black".</td></tr>
+              </table>
+            </td>
+          </tr>
+        </table>   
+      </td>
+    </tr>
+  </tbody>
 </table>
 
-* `axisOptions` - Set of key-value objects for axis properties.
+Available axis options are as follows:
 
-<table style="margin-left:60px;border-collapse:collapse;font-size:0.9em;">
-  <tr><th>Name</th><th>Description</th></tr>
-  <tr><td>x</td><td>Literal of x-Axis options (see below).</td></tr>
-  <tr><td>y</td><td>Literal of y-Axis options (see below).</td></tr>
-  <tr><td>y2</td><td>Optional literal of y2-Axis options (see below).</td></tr>
-</table>
-
-<table style="margin-left:60px;border-collapse:collapse;font-size:0.9em;">
+<table>
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -274,7 +306,6 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
       </td>
     </tr>
     <tr>
-    <tr>
       <td>label</td><td>string</td><td>Axis name/label.</td>
     </tr>
     <tr>
@@ -303,9 +334,22 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
 
 Redraws the axes on the graph.
 
-* `labelPosition` - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of "center top" would first center both labels, then move the y-axis label to the top. Defaults to "outside center".
-* `xAxisPosition` - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to "bottom".
-* `axisLabelMargin` - Labels are automatically placed at a margin determined not to overlap  with the tick marks. However you may specify and additional margin here.
+<table>
+  <tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>labelPosition</td><td>string</td><td>Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of "center top" would first center both labels, then move the y-axis label to the top. Defaults to "outside center".</td>
+    </tr>
+    <tr>
+      <td>xAxisPosition</td><td>string</td><td>Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to "bottom".</td>
+    </tr>
+    <tr>
+      <td>axisLabelMargin</td><td>number</td><td>Labels are automatically placed at a margin determined not to overlap  with the tick marks. However you may specify and additional margin here.</td>
+    </tr>
+  </tbody>
+</table>
 
 ### <span style="font-weight:normal">SimpleGraph.</span>drawGrid<span style="font-weight:normal">(style)</span> ###
 <a name="api-sg-drawGrid"></a>
