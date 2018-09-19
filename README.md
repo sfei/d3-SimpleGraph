@@ -17,7 +17,7 @@ This project is licensed under the GNU Lesser General Public License. See LICENS
 
 D3 v4 is required for this library to work. [https://d3js.org](https://d3js.org)
 
-Simply (copy and) import `d3.simplegraph.min.js` to your application.
+Simply import `d3.simplegraph.min.js` to your application.
 
 Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or simply regular instantiation.
 
@@ -55,7 +55,16 @@ Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based
 
 * `options` - Key-value object of initialization options.
 
-<table style="margin-left:60px;border-collapse:collapse;font-size:0.9em;">
+<style>
+table { border-collapse: collapse; font-size: 0.9em; }
+th { text-align: left; }
+td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
+td table { font-size: 1em; margin: 0.2em; }
+td table th { background-color: #eee; border-color: #ddd; }
+td table td { background-color: #fff; border-color: #ddd; }
+</style>
+
+<table style="margin-left:60px;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -65,13 +74,28 @@ Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based
     </tr>
     <tr>
       <td>margins</td>
-      <td colspan=2 style="padding:0;border:none;">
-        <table style="width:100%;border-collapse:collapse;margin:0;font-size:1em;">
-          <tr><th>Name</th><th>Type</th><th>Description</th></tr>
-          <tr><td>left</td><td>number</td><td>Left margin. Defaults to 40.</td></tr>
-          <tr><td>right</td><td>number</td><td>Right margin. Defaults to 40.</td></tr>
-          <tr><td>top</td><td>number</td><td>Top margin. Defaults to 20.</td></tr>
-          <tr><td>bottom</td><td>number</td><td>Bottom margin. Defaults to 20.</td></tr>
+      <td>object</td>
+      <td>
+        Optional custom margins.
+        <h5>Properties</h5>
+        <table>
+          <tbody>
+            <tr>
+              <th>Name</th><th>Type</th><th>Description</th>
+            </tr>
+            <tr>
+              <td>left</td><td>number</td><td>Left margin. Defaults to 40.</td>
+            </tr>
+            <tr>
+              <td>right</td><td>number</td><td>Right margin. Defaults to 40.</td>
+            </tr>
+            <tr>
+              <td>top</td><td>number</td><td>Top margin. Defaults to 20.</td>
+            </tr>
+            <tr>
+              <td>bottom</td><td>number</td><td>Bottom margin. Defaults to 20.</td>
+            </tr>
+          </tbody>
         </table>
       </td>
     </tr>
@@ -88,16 +112,29 @@ Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based
       <td>colorScale</td><td>d3.scale</td><td> Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale. Defaults to d3.scaleOrdinal(d3.schemeCategory10).</td>
     </tr>
     <tr>
-      <td>styles</td><td></td><td>Key-value pairs of additional CSS styles to apply to SVG.</td>
+      <td>styles</td><td>object</td><td>Key-value pairs of additional CSS styles to apply to SVG.</td>
     </tr>
     <tr>
       <td>axis</td>
-      <td colspan=2 style="padding:0;border:none;">
-        <table style="width:100%;border-collapse:collapse;margin:0;font-size:1em;">
-          <tr><th>Name</th><th>Description</th></tr>
-          <tr><td>x</td><td>X-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td></tr>
-          <tr><td>y</td><td>Y-Axis options.</td></tr>
-          <tr><td>y2</td><td>Y2-Axis options.</td></tr>
+      <td>object</td>
+      <td>
+        Axis properties.
+        <h5>Properties</h5>
+        <table>
+          <tbody>
+            <tr>
+              <th>Name</th><th>Type</th><th>Description</th>
+            </tr>
+            <tr>
+              <td>x</td><td>object</td><td>X-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
+            </tr>
+            <tr>
+              <td>y</td><td>object</td><td>Y-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
+            </tr>
+            <tr>
+              <td>y2</td><td>object</td><td>Y2-Axis options. See <a href="#api-sg-resetAxisOptions">SimpleGraph.resetAxisOptions</a> for axis options.</td>
+            </tr>
+          </tbody>
         </table>
       </td>
     </tr>
@@ -193,11 +230,22 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
     </tr>
     <tr>
       <td>break</td>
-      <td colspan=2 style="padding:0;border:none;">
-        <table style="width:100%;border-collapse:collapse;margin:0;font-size:1em;">
-          <tr><th>Name</th><th>Type</th><th>Description</th></tr>
-          <tr><td>domain</td><td>number[]</td><td>Optional. Places an axis break across this range.</td></tr>
-          <tr><td>rangegap</td><td>number</td><td>Optional. The pixel width to draw for this axis break.</td></tr>
+      <td>object</td>
+      <td>
+        Optional. Places an x-axis break.
+        <h5>Properties</h5>
+        <table>
+          <tbody>
+            <tr>
+              <th>Name</th><th>Type</th><th>Description</th>
+            </tr>
+            <tr>
+              <td>domain</td><td>number[]</td><td>Places an axis break across this range.</td>
+            </tr>
+            <tr>
+              <td>rangegap</td><td>number</td><td>The pixel width to draw for this axis break.</td>
+            </tr>
+          </tbody>
         </table>
       </td>
     </tr>
@@ -206,14 +254,26 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
     </tr>
     <tr>
       <td>grid</td>
-      <td colspan=2 style="padding:0;border:none;">
-        <table style="width:100%;border-collapse:collapse;margin:0;font-size:1em;">
-          <tr><th>Name</th><th>Description</th></tr>
-          <tr><td>ticks</td><td>Optional. If grid is using different tick intervals from axis. (See ticks).</td></tr>
-          <tr><td>tickValues</td><td>Optional. If grid is using different tick intervals from axis. (See tickValues).</td></tr>
+      <td>object</td>
+      <td>
+        Optional. Specify ticks for grid differently than axis bar/label.
+        <h5>Properties</h5>
+        <table>
+          <tbody>
+            <tr>
+              <th>Name</th><th>Type</th><th>Description</th>
+            </tr>
+            <tr>
+              <td>ticks</td><td>number</td><td>Tick intervals for grid. (See ticks).</td>
+            </tr>
+            <tr>
+              <td>tickValues</td><td>number[]</td><td>Tick values for grid. (See tickValues).</td>
+            </tr>
+          </tbody>
         </table>
       </td>
     </tr>
+    <tr>
     <tr>
       <td>label</td><td>string</td><td>Axis name/label.</td>
     </tr>

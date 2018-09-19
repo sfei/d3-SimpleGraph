@@ -133,7 +133,9 @@
         root.SimpleGraph = factory(root.d3);
     }
     
-}(this, function(d3) {
+}
+/** @class SimpleGraph */
+(this, function(d3) {
 
 /**
  * Create a SimpleGraph instance and draw an empty graph.
@@ -153,6 +155,7 @@
  *        cut off where they extend past the x/y-axis ranges.
  * @param {Object} [options.axis] - Optional dictionary of axis options. See resetAxisOptions() for details.
  * @param {Object} [options.styles] - Optional styles applied to SVG element.
+ * @constructor
  */
 function SimpleGraph(options) {
     // default options
@@ -227,6 +230,7 @@ function SimpleGraph(options) {
  *        (this will take priority over axisOptions.x.grid.ticks if both are supplied).
  * @param {number} [axisOptions.x.grid.ticks] - Number of evenly spaced tick intervals on x-axis grid to 
  *        create (due to nature of axis, may not always create exactly this amount but will attempt to).
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
     if(!axisOptions)        { axisOptions = {}; }
@@ -428,6 +432,7 @@ SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
 /**
  * Get the SVG element
  * @returns {object} the D3 SVG element
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.getSvgElement = function() {    
     return this.svg;
@@ -436,6 +441,7 @@ SimpleGraph.prototype.getSvgElement = function() {
 /**
  * Get the SVG 'g' (graphic) element
  * @returns {object} the D3 SVG element
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.getSvgGraphic = function() {    
     return this.svgGraph;
@@ -443,6 +449,7 @@ SimpleGraph.prototype.getSvgGraphic = function() {
 
 /**
  * Remove the SVG graph from its container, but preserve the object.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.remove = function() {
     this.svg.remove();
@@ -451,6 +458,7 @@ SimpleGraph.prototype.remove = function() {
 
 /**
  * Remove and destroy this object.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.destroy = function() {
     this.svg.remove();
@@ -486,6 +494,7 @@ SimpleGraph.prototype.destroy = function() {
  *        line and labels on top or bottom.
  * @param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap
  *        with the tick marks. However you may specify and additional margin here.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabelMargin) {
     if(!xAxisPosition) { 
@@ -692,6 +701,7 @@ SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabe
 /**
  * Add grid over graph.
  * @param {Object} [style={opacity:0.4,stroke:"#555",'stroke-width':0.3}]
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.drawGrid = function(style) {
     this.svgGraph.selectAll(".sg-grid").remove();
@@ -719,6 +729,7 @@ SimpleGraph.prototype.drawGrid = function(style) {
 
 /**
  * Remove grid, if it exists.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.removeGrid = function() {
     this.svgGraph.selectAll(".sg-grid").remove();
@@ -737,6 +748,7 @@ SimpleGraph.prototype.removeGrid = function() {
  *        will result.
  * @param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in 
  *        legend (the second which is currently uncustomizable) so use care if decreasing row height.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight, exclude) {
     this.svg.selectAll(".sg-legend").remove();
@@ -988,6 +1000,7 @@ SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerC
  * but haven't been drawn yet may not return a color.
  * @param {string} name - name of the point or line series (case sensitive).
  * @returns {string} color information
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
     if(!name) { return null; }
@@ -1040,6 +1053,7 @@ SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
 /**
  * Reset domain on color scale, or replace with provided.
  * @param {d3.scale} colorScale - Color scale to replace with or null.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.resetColorScale = function(colorScale) {
     if(colorScale) {
@@ -1076,6 +1090,7 @@ SimpleGraph.prototype.removeSeriesColor = function(series) {
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
  *        undefined/null y-values are not added.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis, showNulls) {
     if(!this.points) { this.points = []; }
@@ -1117,6 +1132,7 @@ SimpleGraph.prototype.addPointData = function(name, xValue, yValue, size, y2Axis
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
  *        undefined/null y-values are not added.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, additionalDataKeys, size, y2Axis, showNulls) {
     if(!data || data.length === 0) {
@@ -1186,6 +1202,7 @@ SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, 
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
  * @param {boolean} [showNulls=false] - If true, converts undefined/null y-values to 0. If false, 
  *        undefined/null y-values are not added.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, showNulls) {
     if(!data || data.length === 0) {
@@ -1226,6 +1243,7 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, 
  *        the resulting SVG element's CSS style.
  * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation, y2Axis) {
     if(!lineCoordinates || lineCoordinates.length === 0) {
@@ -1269,6 +1287,7 @@ SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates,
  * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
  *        will still be truncated to the min-max of the graph if it extends past.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style, resolution, interpolation, xRange, y2Axis) {
     if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
@@ -1309,6 +1328,7 @@ SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style
  * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {string} [handleOverlap="average"] - If there are 2 or more points overlapped for a given x-value, 
  *        how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, handleOverlap) {
     if(!this.points || this.points.length === 0) {
@@ -1435,6 +1455,7 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
  * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
  *        will still be truncated to the min-max of the graph if it extends past.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, style, resolution, interpolation, xRange, y2Axis) {
     if(!lineFunctionTop || typeof lineFunctionTop !== "function") {
@@ -1475,6 +1496,7 @@ SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom
  *        element's CSS style.
  * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
  * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, style, interpolation, y2Axis) {
     if(!areaCoordinates || !Array.isArray(areaCoordinates) || areaCoordinates.length < 2) {
@@ -1508,6 +1530,7 @@ SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, sty
 //************************************************************************************************************
 /**
  * Clear all points data.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.clearPointsData = function() {
     this.points = null;
@@ -1516,6 +1539,7 @@ SimpleGraph.prototype.clearPointsData = function() {
 
 /**
  * Clear all lines data.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.clearLinesData = function() {
     this.lines = null;
@@ -1525,6 +1549,7 @@ SimpleGraph.prototype.clearLinesData = function() {
 
 /**
  * Clear areas data.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.clearAreasData = function() {
     this.areas = null;
@@ -1533,6 +1558,7 @@ SimpleGraph.prototype.clearAreasData = function() {
 
 /**
  * Clear all data.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.clearAllData = function() {
     this.clearPointsData();
@@ -1553,11 +1579,13 @@ SimpleGraph.prototype.clearAllData = function() {
  * @property {number} y - The y-value.
  * @property {boolean} y2 - If true, the y-value correlates to the y2 axis.
  * @property {number|callback} pointsize - The symbol size. May be a number, a callback function, or null.
+ * @memberof SimpleGraph 
  */
 /**
  * Grab all point data by series names.
  * @param {string} seriesName - Name of the series for which you want to grab data.
  * @returns {PointData[]} Array of points data.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.getPointsDataBySeries = function(seriesName) {
     var pointData = [];
@@ -1575,6 +1603,7 @@ SimpleGraph.prototype.getPointsDataBySeries = function(seriesName) {
  * Retrieve all point coordinates for a given series name.
  * @param {string} seriesName - Name of the series for which you want to grab the point coordiantes.
  * @returns {Number[][]} Array of x,y coordinate pairs.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.getPointCoordinatesBySeries = function(seriesName) {
     var coordList = [];
@@ -1613,6 +1642,7 @@ SimpleGraph.prototype.getPointCoordinatesBySeries = function(seriesName) {
  * Grab all line data by series names.
  * @param {string} seriesName - Name of the series for which you want to grab data.
  * @returns {LineData[]} Array of line data.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.getLinesDataBySeries = function(seriesName) {
     var lineData = [];
@@ -1647,6 +1677,7 @@ SimpleGraph.prototype.getLinesDataBySeries = function(seriesName) {
  * Grab all area data by series names.
  * @param {string} seriesName - Name of the series for which you want to grab data.
  * @returns {AreaData[]} Array of area data.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.getAreasDataBySeries = function(seriesName) {
     var areaData = [];
@@ -1743,6 +1774,7 @@ SimpleGraph.prototype.drawPoints = function() {
 /**
  * Draw lines on graph. If lines exist already, will remove and redraw them. Lines will have class 
  * ".sg-line" or ".sg-plotted-line".
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.drawLines = function() {
     this.removeLines();
@@ -1831,6 +1863,7 @@ SimpleGraph.prototype.drawLines = function() {
 
 /**
  * Draw areas onto graph. Areas will have class ".plotted-areas".
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.drawAreas = function() {
     this.removeAreas();
@@ -2279,6 +2312,7 @@ SimpleGraph.prototype._getAreaPolysFromLineCrosswalk = function(lineA, lineB, y2
 //************************************************************************************************************
 /**
  * Remove all points on graph.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.removePoints = function() {
     this.svgGraph.selectAll(".sg-dot, .sg-point").remove();
@@ -2287,6 +2321,7 @@ SimpleGraph.prototype.removePoints = function() {
 
 /**
  * Remove lines from graph.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.removeLines = function() {
     this.svgGraph.selectAll(".sg-line, .sg-plotted-line").remove();
@@ -2295,6 +2330,7 @@ SimpleGraph.prototype.removeLines = function() {
 
 /**
  * Remove areas from graph.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.removeAreas = function() {
     this.svgGraph.selectAll(".sg-plotted-area").remove();
@@ -2303,6 +2339,7 @@ SimpleGraph.prototype.removeAreas = function() {
 
 /**
  * Remove everything from graph.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.removeAll = function() {
     this.removePoints().removeLines().removeAreas();
@@ -2325,6 +2362,7 @@ SimpleGraph.prototype.removeAll = function() {
  *        the tooltip to the bottom right of the cursor).
  * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
  *        div's CSS style (optional).
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
     this.svgGraph.selectAll(".sg-point")
@@ -2341,6 +2379,7 @@ SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
  *        the tooltip to the bottom right of the cursor).
  * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
  *        div's CSS style (optional).
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
     this.svgGraph.selectAll(".sg-line, .sg-plotted-line")
@@ -2357,6 +2396,7 @@ SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
  *        the tooltip to the bottom right of the cursor).
  * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
  *        div's CSS style (optional).
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
     this.svgGraph.selectAll(".sg-plotted-area")
@@ -2375,6 +2415,7 @@ SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
  *        the tooltip to the bottom right of the cursor).
  * @param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip 
  *        div's CSS style (optional).
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype._constructTooltipFunctionality = function(textFunction, options) {
     var svg = this.svg;
@@ -2516,6 +2557,7 @@ SimpleGraph.prototype.removeHighlights = function() {
  * packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, 
  * function will simply error on IE.
  * @param {string} [pngName] - Default name to save png.
+ * @memberof SimpleGraph 
  */
 SimpleGraph.prototype.saveAsPng = function(pngName) {
     if(!pngName) { pngName = "graph.png"; }
