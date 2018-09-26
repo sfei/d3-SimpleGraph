@@ -26,6 +26,7 @@
 **`new SimpleGraph(options)`**
 
 #### Options ####
+
 <table>
   <tbody>
     <tr>
@@ -170,6 +171,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-resetAxisOptions"></a>
 **`SimpleGraph.resetAxisOptions(axisOptions)`** : Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
+
 <table>
   <tbody>
     <tr>
@@ -197,10 +199,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-drawAxes"></a>
 **`SimpleGraph.drawAxes([labelPosition[, xAxisPosition[, axisLabelMargin]]])`** : Redraws the axes on the graph.
+
 <table>
   <tbody>
     <tr>
@@ -217,10 +221,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-drawGrid"></a>
 **`SimpleGraph.drawGrid([style])`** : Draw grid. If grid already exists, redraws it.
+
 <table>
   <tbody>
     <tr>
@@ -231,6 +237,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-removeGrid"></a>
@@ -240,6 +247,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-drawLegend"></a>
 **`SimpleGraph.drawLegend(position[, anchor[, bgstyle[, itemsPerColumn[, rowHeight[, exclude]]]]])`** : Draw the legend onto the graph. If legend already exists, will redraw it.
+
 <table>
   <tbody>
     <tr>
@@ -262,6 +270,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
@@ -270,6 +279,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-getColorBySeriesName"></a>
 **`SimpleGraph.getColorBySeriesName(name, create)`** : Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
+
 <table>
   </tbody>
     <tr>
@@ -283,10 +293,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Color value, or null.
 
 <a name="api-sg-resetColorScale"></a>
 **`SimpleGraph.resetColorScale(colorScale)`** : Reset domain on color scale, or replace with provided.
+
 <table>
   </tbody>
     <tr>
@@ -297,10 +309,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-setSeriesColor"></a>
 **`SimpleGraph.setSeriesColor(series, color)`** : Sets a custom color (overriding the color scale) for a given series name.
+
 <table>
   </tbody>
     <tr>
@@ -314,10 +328,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-removeSeriesColor"></a>
 **`SimpleGraph.removeSeriesColor(series)`** : Remove custom color for series name.
+
 <table>
   </tbody>
     <tr>
@@ -328,6 +344,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
@@ -336,6 +353,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-addPointData"></a>
 **`SimpleGraph.addPointData(name, xValue, yValue[, size[, y2Axis[, showNulls]]])`** : Add single point data.
+
 <table>
   </tbody>
     <tr>
@@ -361,10 +379,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addPointsData"></a>
 **`SimpleGraph.addPointsData(data, dataPointName, xValueName, yValueName[, additionalDataKeys[, size[, y2Axis[, showNulls]]]])`** : Add multiple point data from an array of object literals.
+
 <table>
   </tbody>
     <tr>
@@ -396,10 +416,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addPointsDataAsArray"></a>
 **`SimpleGraph.addPointsDataAsArray(name, data[, size[, y2Axis[, showNulls]]])`** : Add multiple point data from an array of x,y coordinates.
+
 <table>
   </tbody>
     <tr>
@@ -422,10 +444,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addLineDataAsCoordinates"></a>
 **`SimpleGraph.addLineDataAsCoordinates(name, lineCoordinates[, style[, interpolation[, y2Axis]]])`** : Add line data as an array of coordinates.
+
 <table>
   </tbody>
     <tr>
@@ -448,10 +472,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addLineDataAsFunction"></a>
 **`SimpleGraph.addLineDataAsFunction(name, lineFunction[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add line data as a function.
+
 <table>
   </tbody>
     <tr>
@@ -480,10 +506,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addLinesDataFromPoints"></a>
 **`SimpleGraph.addLinesDataFromPoints([style[, interpolation[, handleOverlap]]])`** : Add line data from coordinates.
+
 <table>
   </tbody>
     <tr>
@@ -500,10 +528,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addAreaBetweenTwoLines"></a>
 **`SimpleGraph.addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add area data series with function pair defining bottom and top bounds of area.
+
 <table>
   </tbody>
     <tr>
@@ -535,10 +565,13 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addAreaAsCoordinates"></a>
+
 **`SimpleGraph.addAreaAsCoordinates(name, areaCoordinates[, style[, interpolation[, y2Axis]]])`** : Add area data series as array of area coordinates.
+
 <table>
   </tbody>
     <tr>
@@ -561,6 +594,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
@@ -593,6 +627,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-getPointsDataBySeries"></a>
 **`SimpleGraph.getPointsDataBySeries(seriesName)`** : Get point data series by name.
+
 <table>
   </tbody>
     <tr>
@@ -603,10 +638,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](#api-sg-defs-pointdata).
 
 <a name="api-sg-getPointCoordinatesBySeries"></a>
 **`SimpleGraph.getPointCoordinatesBySeries(seriesName)`** : Get point coordinates by data series name.
+
 <table>
   </tbody>
     <tr>
@@ -617,10 +654,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `number[][]` - Array of point coordinates.
 
 <a name="api-sg-getLinesDataBySeries"></a>
 **`SimpleGraph.getLinesDataBySeries(seriesName)`** : Get line data series by name.
+
 <table>
   </tbody>
     <tr>
@@ -631,11 +670,13 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](#api-sg-defs-linedata).
 
 
 <a name="api-sg-getAreasDataBySeries"></a>
 **`SimpleGraph.getAreasDataBySeries(seriesName)`** : Get area data series by name.
+
 <table>
   </tbody>
     <tr>
@@ -646,6 +687,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](#api-sg-defs-areadata).
 
 
@@ -697,6 +739,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-addTooltipToPoints"></a>
 **`SimpleGraph.addTooltipToPoints(tooltipFunction[, options])`** : Add tooltip function to the points on the graph. Does not add tooltips to the lines connecting points, if they were added. That is handled by addTooltipToLines(). You can check the series name in the callback's returned SVG element or the class to determine type, regular lines are `.sg-plotted-line` and lines drawn from connecting points are `.sg-line`.
+
 <table>
   <tbody>
     <tr>
@@ -728,10 +771,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addTooltipToLines"></a>
 **`SimpleGraph.addTooltipToLines(tooltipFunction[, options])`** : Add tooltip function to the lines on the graph.
+
 <table>
   <tbody>
     <tr>
@@ -763,10 +808,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addTooltipToAreas"></a>
 **`SimpleGraph.addTooltipToAreas(tooltipFunction[, options])`** : Add tooltip function to the areas on the graph.
+
 <table>
   <tbody>
     <tr>
@@ -797,6 +844,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-functions-highlight"></a>
@@ -804,6 +852,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-highlightPoints"></a>
 **`SimpleGraph.highlightPoints(series[, validationCallback[, size[, fill[, stylesDict]]]])`** : Highlights points by drawing new SVG over points. Highlights a given data series, using optional `validationCallback` to filter points within data series. Note that while `size`, `fill`, and `stylesDict` are all optional, if none are supplied, the highlight will look exactly like the point and no difference will be noticeable.
+
 <table>
   <tbody>
     <tr>
