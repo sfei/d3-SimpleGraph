@@ -1431,7 +1431,10 @@ SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, ha
         if(lineCoords.length >= 2) {
             this.pointLines.push({
                 series: series, 
+                lineFunction: null, 
+                resolution: null, 
                 coords: lineCoords, 
+                xRange: null, 
                 y2: pointsBySeries[series].y2, 
                 interpolate: interpolation, 
                 style: style
@@ -1516,6 +1519,8 @@ SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, sty
         series: name, 
         areaFunctions: null, 
         coords: areaCoordinates, 
+        resolution: null, 
+        xRange: null, 
         y2: y2Axis ? true : false, 
         style: style, 
         interpolate: interpolation
@@ -2515,18 +2520,22 @@ SimpleGraph.prototype.highlightPoints = function(series, validationCallback, siz
     if(series) { selectQuery += "[series='" + series + "']"; }
     var self = this;
     this.svgGraph.selectAll(selectQuery).each(function(d, i, s) {
-        if(!validationCallback(d)) { return false; }
-        var xScale = self.x.scale;
-        var yScale = d.y2 ? self.y2.scale : self.y.scale;
+        if(validationCallback && !validationCallback(d)) return;
+        var xScale = self.x.scale, 
+            yScale = d.y2 ? self.y2.scale : self.y.scale;
         if(!fill) {
             fill = d.wasNull ? "none" : self.getColorBySeriesName(d.series, true);
         };
+        var realSize = size ? size : d.pointsize;
+        if(typeof realSize === "function") {
+            realSize = realSize.call(d);
+        }
         var rect = self.svgGraph.append("rect")
             .attr("class", "sg-point-highlight")
-            .attr("width", size)
-            .attr("height", size)
-            .attr("x", xScale(d.x)-size/2.0)
-            .attr("y", yScale(d.y)-size/2.0)
+            .attr("width", realSize)
+            .attr("height", realSize)
+            .attr("x", xScale(d.x)-realSize/2.0)
+            .attr("y", yScale(d.y)-realSize/2.0)
             .attr("transform", "rotate(45," + xScale(d.x) + "," + yScale(d.y) + ")")
             .style("fill", fill);
         if(stylesDict) {
