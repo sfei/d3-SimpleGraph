@@ -894,6 +894,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-saveAsPng"></a>
 **`SimpleGraph.saveAsPng(pngName)`** : Save graph as a PNG. Note, in non-Edge Internet Explorer, the [canvg library](https://github.com/canvg/canvg) is required due to security error. This library is not  packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, function will simply error on IE.
+
 <table>
   <tbody>
     <tr>
@@ -904,6 +905,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
@@ -912,6 +914,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-defs-axisoptions"></a>
 #### Axis Options ####
+
 <table>
   <tbody>
     <tr>
@@ -988,6 +991,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-defs-pointdata"></a>
 #### Point Data ####
+
 <table>
   <tbody>
     <tr>
@@ -1013,6 +1017,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-defs-linedata"></a>
 #### Line Data ####
+
 <table>
   <tbody>
     <tr>
@@ -1048,6 +1053,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 <a name="api-sg-defs-areadata"></a>
 #### Area Data ####
+
 <table>
   <tbody>
     <tr>
