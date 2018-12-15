@@ -16,7 +16,7 @@ This project is licensed under the GNU Lesser General Public License. See LICENS
 ## Usage ##
 
 * [API](./API.md)
-* [Tutorials](./tutorials/TUTORIALS.md)
+* [Tutorials](./TUTORIALS.md)
 
 
 D3 v4 is required for this library to work. [https://d3js.org](https://d3js.org)
