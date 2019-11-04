@@ -72,7 +72,7 @@ Removes and destroys SVG and this object. Irreversible.
 
 ## Axis, Grid, and Legend Functions ##
 
-<a name="sg-axis-options" href="#sg-axis-options">#</a> *sg*.**resetAxisOptions**([*options*])
+<a name="sg-reset-axis-options" href="#sg-reset-axis-options">#</a> *sg*.**resetAxisOptions**([*options*])
 
 Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
 
