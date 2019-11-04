@@ -1,33 +1,4 @@
-----------
-
 # API #
-
-----------
-
-**[Constructor](#constructor)**  
-**[Properties](#properties)**  
-**[Misc. Functions](#misc-functions)**  
-&nbsp; &nbsp; *[getSvgElement](#sg-get-svg-element)*  
-&nbsp; &nbsp; *[getSvgGraphic](#sg-get-svg-graphic)*  
-&nbsp; &nbsp; *[remove](#sg-remove)*  
-&nbsp; &nbsp; *[destroy](#sg-destroy)*  
-**[Axis, Grid, and Legend Functions](axis-grid-and-legend-functions)**  
-**[Color and Category Functions](#color-and-category-functions)**  
-**[Add Data Functions](#add-data-functions)**  
-**[Remove Data Functions]("#remove-data-functions)**  
-**[Additional Data Functions](#additional-data-functions)**  
-**[Draw Data Functions](#draw-data-functions)**  
-**[Remove From Graph Functions](#remove-from-graph-functions)**  
-**[Tooltip Functions](#tooltip-functions)**  
-**[Highlight Functions](#highlight-functions)**  
-**[Save Graph Functions](#save-graph-functions)**  
-**[Definitions](#definitions)**  
-&nbsp; &nbsp; [Axis options](#axis-options)  
-&nbsp; &nbsp; [Point data](#point-data)  
-&nbsp; &nbsp; [Line data](#line-data)  
-&nbsp; &nbsp; [Area data](#area-data)  
-&nbsp; &nbsp; [Tooltip text function](#tooltip-text-function)  
-
 
 ## Constructor ##
 
@@ -59,7 +30,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
 * `y` - The y-axis (See below for details)
 * `y2` - The second y-axis (See below for details), if it exists
 
-#### Axis ####
+#### Axis Properties ####
 
 * `[x|y|y2].axis` - The main D3 axis object for this axis
 * `x.axisTwo` - For the x-axis, the D3 axis object in case the x-axis is desired to be drawn on top of the graph
@@ -152,12 +123,14 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
 
 ## Color/Category Functions ##
 
-<a name="sg-get-color-series-by-name" href="#sg-get-color-series-by-name">#</a> *sg*.**getColorBySeriesName**(*name*, *create*)
+Color schemas/scales are build on top of a [d3.scaleOrdinal](https://github.com/d3/d3-scale#ordinal-scales), tying the data series name to a color value. The data series name does not discriminate by data type (e.g. a point data series or line data series with the same name should have the same color). Additionally, SimpleGraph maintains a dictionary of color overrides which can be set or removed via **setSeriesColor()** or **removeSeriesColor()**.
+
+<a name="sg-get-color-series-by-name" href="#sg-get-color-series-by-name">#</a> *sg*.**getColorBySeriesName**(*name*[, *create*])
 
 Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
 
 * `series` (*string*) The series name.
-* `create` (*boolean*) If true, creates color in colorScale if color is not yet assigned. If false or left undefined, color is only returned if one has been assigned to the data series name.
+* `create` (*boolean*) If true, creates color if color is not yet assigned. If false or left undefined, color is only returned if one has been assigned to the data series name.
 
 &nbsp; &nbsp;**Returns:** Color value, or null.
 
@@ -165,7 +138,7 @@ Get the color or style related to a data series. Attempts to return the style fi
 
 Reset domain on color scale, or replace with provided.
 
-* `colorScale` (*d3.colorScale*) Color scale to replace with or null.
+* `colorScale` (*[d3.scaleOrdinal](https://github.com/d3/d3-scale#ordinal-scales)*) Color scale to replace with or null. See [d3.scale.chromoatic](https://github.com/d3/d3-scale-chromatic) for preset options.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
@@ -189,540 +162,276 @@ Remove custom color for series name.
 
 ## Add Data Functions ##
 
-<a name="api-sg-addPointData"></a>
-**`SimpleGraph.addPointData(name, xValue, yValue[, size[, y2Axis[, showNulls]]])`** : Add single point data.
+Data series are separately defined and stores as points, lines, or areas. All functions are additive -- that is, they never replace an existing data series, only add to it.
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series this point belongs to.</td>
-    </tr>
-    <tr>
-      <td>xValue</td><td>number</td><td>The x-value.</td>
-    </tr>
-    <tr>
-      <td>yValue</td><td>number</td><td>The y-value.</td>
-    </tr>
-    <tr>
-      <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
-    </tr>
-    <tr>
-      <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
-    </tr>
-  </tbody>
-</table>
+<a name="sg-add-point-data" href="#sg-add-point-data">#</a> *sg*.**addPointData**(*name*, *xValue*, *yValue*[, *size*[, *y2Axis*[, *showNulls*]]])
+
+Add a single point data.
+
+* `name` (*number*) The name of the data series this point belongs to.
+* `xValue` (*number*) The x-value.
+* `yValue` (*number*) The y-value.
+* `size` (*number*|*callback*) The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.
+* `y2Axis` (*boolean*) If true, point is assigned to y2 axis.
+* `showNulls` (*boolean*) If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addPointsData"></a>
-**`SimpleGraph.addPointsData(data, dataPointName, xValueName, yValueName[, additionalDataKeys[, size[, y2Axis[, showNulls]]]])`** : Add multiple point data from an array of object literals.
+<a name="sg-add-points-data" href="#sg-add-points-data">#</a> *sg*.**addPointsData**(*data*, *dataPointName*, *xValueName*, *yValueName*[, *additionalDataKeys*[, *size*[, *y2Axis*[, *showNulls*]]]])
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>data</td><td>object[]</td><td>The plot data as an array of objects. Use the dataPointName, xValueName, and yValueName parameters to tell the function how to parse the data.</td>
-    </tr>
-    <tr>
-      <td>dataPointName</td><td>string</td><td>The key name in each data object to retrieve the data point or data series name and label. If it cannot find the given key in the data object, assumes the given string is the series name for all points. If it is null or undefined, uses the index position (thus all points will be of unique series).</td>
-    </tr>
-    <tr>
-      <td>xValueName</td><td>string</td><td>The key name in each data object to retrieve the x-value.</td>
-    </tr>
-    <tr>
-      <td>yValueName</td><td>string</td><td>The key name in each data object to retrieve the y-value.</td>
-    </tr>
-    <tr>
-      <td>additionalDataKeys</td><td>string[]</td><td>Additional keys for data you want to store for each point.</td>
-    </tr>
-    <tr>
-      <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
-    </tr>
-    <tr>
-      <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
-    </tr>
-  </tbody>
-</table>
+Add multiple point data from an array of object literals. Use of *dataPointName* means the data series name for each point can be determined at each point, meaning you can add points to multiple, different data series at once with this function.
+
+* `data` (*object[]*) The plot data as an array of objects. Use the dataPointName, xValueName, and yValueName parameters to tell the function how to parse the data.
+* `dataPointName` (*string*) The key name in each data object to retrieve the data point or data series name and label. If it cannot find the given key in the data object, assumes the given string is the series name for all points. If it is null or undefined, uses the index position (thus all points will be of unique series).
+* `xValueName` (*string*) The key name in each data object to retrieve the x-value.
+* `yValueName` (*string*) The key name in each data object to retrieve the y-value.
+* `additionalDataKeys` (*string[]*) Additional keys for data you want to store for each point.
+* `size` (*number|callback*) The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.
+* `y2Axis` (*boolean*) If true, point is assigned to y2 axis.
+* `showNulls` (*boolean*) If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addPointsDataAsArray"></a>
-**`SimpleGraph.addPointsDataAsArray(name, data[, size[, y2Axis[, showNulls]]])`** : Add multiple point data from an array of x,y coordinates.
+<a name="sg-add-points-data-as-array" href="#sg-add-points-data-as-array">#</a> *sg*.**addPointsDataAsArray**(*name*, *data*[, *size*[, *y2Axis*[, *showNulls*]]])
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
-      <td>data</td><td>number[][]</td><td>The plot data as an array of [x,y] arrays.</td>
-    </tr>
-    <tr>
-      <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
-    </tr>
-    <tr>
-      <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
-    </tr>
-  </tbody>
-</table>
+Add multiple point data from an array of x,y coordinates.
+
+* `name` (*number*) The name of the data series.
+* `data` (number[][]) The plot data as an array of [x,y] pairs.
+* `size` (*number*|*callback*) The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.
+* `y2Axis` (*boolean*) If true, point is assigned to y2 axis.
+* `showNulls` (*boolean*) If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addLineDataAsCoordinates"></a>
-**`SimpleGraph.addLineDataAsCoordinates(name, lineCoordinates[, style[, interpolation[, y2Axis]]])`** : Add line data as an array of coordinates.
+<a name="sg-add-line-data-as-coordinates" href="#sg-add-line-data-as-coordinates">#</a> *sg*.**addLineDataAsCoordinates**(*name*, *lineCoordinates*[, *style*[, *interpolation*[, *y2Axis*]]])
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
-      <td>lineCoordinates</td><td>number[][]</td><td>Array of x,y coordinates.</td>
-    </tr>
-    <tr>
-      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
-    </tr>
-    <tr>
-      <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
-    </tr>
-  </tbody>
-</table>
+Add line data as an array of coordinates.
+
+* `name` (*string*) The name of the data series.
+* `lineCoordinates` (*number[][]*)  Array of x,y coordinates.
+* `style` (*object*) Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to `{'stroke-width': 1.5}`.
+* `interpolation` (*[d3.curve](https://github.com/d3/d3-shape#curves)*) Type of interpolation for line curve.
+* `y2Axis` (*boolean*) Whether coordinates are for 2nd y-axis.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addLineDataAsFunction"></a>
-**`SimpleGraph.addLineDataAsFunction(name, lineFunction[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add line data as a function.
+<a name="sg-add-line-data-as-function" href="#sg-add-line-data-as-function">#</a> *sg*.**addLineDataAsFunction**(*name*, *lineFunction*[, *style*[, *resolution*[, *interpolation*[, *xRange*[, *y2Axis*]]]]])
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
-      <td>lineFunction</td><td>function</td><td>Callback function such that function(x) returns y.</td>
-    </tr>
-    <tr>
-      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
-    </tr>
-    <tr>
-      <td>resolution</td><td>number</td><td>How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</td>
-    </tr>
-    <tr>
-      <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-    </tr>
-    <tr>
-      <td>xRange</td><td>number</td><td>The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
-    </tr>
-  </tbody>
-</table>
+Add line data as a function.
+
+* `name` (*string*) The name of the data series.
+* `lineFunction` (*callback*) Callback function such that `lineFunction(x)` returns y value.
+* `style` (*object*) Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to `{'stroke-width': 1.5}`.
+* `resolution` (*number*) Resolution of the curve (that is, how spaced out on x-axis each caluclated vertex is), given as pixel width. Defaults to every 20 pixels of x-width and enforced minimum of 2.
+* `interpolation` (*[d3.curve](https://github.com/d3/d3-shape#curves)*) Type of interpolation for line curve.</a>
+* `xRange` (*number[]*|*Date[]*) 
+* `y2Axis` (*boolean*) Whether coordinates are for 2nd y-axis.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addLinesDataFromPoints"></a>
-**`SimpleGraph.addLinesDataFromPoints([style[, interpolation[, handleOverlap]]])`** : Add line data from coordinates.
+<a name="sg-" href="#sg-">#</a> *sg*.**addLinesDataFromPoints**([*style*[, *interpolation*[, *handleOverlap*]]])
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
-    </tr>
-    <tr>
-      <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-    </tr>
-    <tr>
-      <td>handleOverlap</td><td>string</td><td>If there are 2 or more points overlapped for a given x-value, how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".</td>
-    </tr>
-  </tbody>
-</table>
+Create line data from coordinates in all currently existing point series.
+
+* `style` (*object*) Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to `{'stroke-width': 1.5}`.
+* `interpolation` (*[d3.curve](https://github.com/d3/d3-shape#curves)*) Type of interpolation for line curve.
+* `handleOverlap` (*string*) If there are 2 or more points overlapped for a given x-value, how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addAreaBetweenTwoLines"></a>
-**`SimpleGraph.addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add area data series with function pair defining bottom and top bounds of area.
+<a name="sg-" href="#sg-">#</a> *sg*.**addAreaBetweenTwoLines**(*name*, *lineFunctionBottom*, *lineFunctionTop*[, *style*[, *resolution*[, *interpolation*[, *xRange*[, *y2Axis*]]]]])
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
-      <td>lineFunctionBottom</td><td>function</td><td>Callback function for bottom border of the area such that function(x) returns y0.</td>
-    </tr>
-    <tr>
-      <td>lineFunctionTop</td><td>function</td><td>Callback function for top border of the area such that function(x) returns y1.</td>
-    </tr>
-    <tr>
-      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to fill="#ccc".</td>
-    </tr>
-    <tr>
-      <td>resolution</td><td>number</td><td>How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</td>
-    </tr>
-    <tr>
-      <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-    </tr>
-    <tr>
-      <td>xRange</td><td>number[]|Date[]</td><td>The [min, max] x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
-    </tr>
-  </tbody>
-</table>
+Add area data series with function pair defining bottom and top bounds of area.
+
+* `name` (*string*) The name of the data series.
+* `lineFunctionBottom` (*callback*) Callback function for bottom border of the area such that `lineFunctionBottom(x)` returns y0 value.
+* `lineFunctionTop` (*callback*) Callback function for top border of the area such that `lineFunctionTop(x)` returns y1 value.
+* `style` (*object*) Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to `{fill: "#ccc"}`.
+* `resolution` (*number*) Resolution of the curve (that is, how spaced out on x-axis each caluclated vertex is), given as pixel width. Defaults to every 20 pixels of x-width and enforced minimum of 2.
+* `interpolation` (*[d3.curve](https://github.com/d3/d3-shape#curves)*) Type of interpolation for line curve.
+* `xRange` (*number[]*|*Date[]*)  The [min, max] x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.
+* `y2Axis` (*boolean*) Whether coordinates are for 2nd y-axis.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addAreaAsCoordinates"></a>
+<a name="sg-" href="#sg-">#</a> *sg*.**addAreaAsCoordinates**(*name*, *areaCoordinates*[, *style*[, *resolution*[, *interpolation*[, *y2Axis*]]]])
 
-**`SimpleGraph.addAreaAsCoordinates(name, areaCoordinates[, style[, interpolation[, y2Axis]]])`** : Add area data series as array of area coordinates.
-
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
-      <td>areaCoordinates</td><td>number[][]</td><td>Array of area coordinate triplets (i.e. [x, y0, y1]).</td>
-    </tr>
-    <tr>
-      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to fill="#ccc".</td>
-    </tr>
-    <tr>
-      <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
-    </tr>
-  </tbody>
-</table>
+* `name` (*string*) The name of the data series.
+* `areaCoordinates` (*number[][]*)  Array of area coordinate triplets (i.e. [x, y0, y1]).
+* `style` (*object*) Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to `{fill: "#ccc"}`.
+* `interpolation` (*[d3.curve](https://github.com/d3/d3-shape#curves)*) Type of interpolation for line curve.
+* `xRange` (*number[]*|*Date[]*)  The [min, max] x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.
+* `y2Axis` (*boolean*) Whether coordinates are for 2nd y-axis.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-remove-data"></a>
 ## Remove Data Functions ##
 
-<a name="api-sg-clearPointsData"></a>
-**`SimpleGraph.clearPointsData()`** : Remove all points data.
+<a name="sg-clear-points-data" href="#sg-clear-points-data">#</a> *sg*.**clearPointsData**()
+
+Remove all points data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-clearLinesData"></a>
-**`SimpleGraph.clearLinesData()`** : Remove all lines data.
+<a name="sg-clear-lines-data" href="#sg-clear-lines-data">#</a> *sg*.**clearLinesData**()
+
+Remove all lines data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-clearAreasData"></a>
-**`SimpleGraph.clearAreasData()`** : Remove all areas data.
+<a name="sg-clear-areas-data" href="#sg-clear-areas-data">#</a> *sg*.**clearAreasData**()
+
+Remove all areas data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-clearAllData"></a>
-**`SimpleGraph.clearAllData()`** : Remove all data.
+<a name="sg-clear-all-data" href="#sg-clear-all-data">#</a> *sg*.**clearAllData**()
+
+Remove all data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-additional-data"></a>
 ## Additional Data Functions ##
 
-<a name="api-sg-getPointsDataBySeries"></a>
-**`SimpleGraph.getPointsDataBySeries(seriesName)`** : Get point data series by name.
+<a name="sg-get-points-data-by-series" href="#sg-get-points-data-by-series">#</a> *sg*.**getPointsDataBySeries**(*seriesName*)
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>seriesName</td><td>string</td><td>Name of the data series to retrieve.</td>
-    </tr>
-  </tbody>
-</table>
+* `seriesName` (*string*) Name of the data series to retrieve.
 
 &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](#api-sg-defs-pointdata).
 
-<a name="api-sg-getPointCoordinatesBySeries"></a>
-**`SimpleGraph.getPointCoordinatesBySeries(seriesName)`** : Get point coordinates by data series name.
+<a name="sg-get-point-coordinates-by-series" href="#sg-get-point-coordinates-by-series">#</a> *sg*.**getPointCoordinatesBySeries**(*seriesName*)
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>seriesName</td><td>string</td><td>Name of the data series to retrieve.</td>
-    </tr>
-  </tbody>
-</table>
+* `seriesName` (*string*) Name of the data series to retrieve.
 
 &nbsp; &nbsp;**Returns:** `number[][]` - Array of point coordinates.
 
-<a name="api-sg-getLinesDataBySeries"></a>
-**`SimpleGraph.getLinesDataBySeries(seriesName)`** : Get line data series by name.
+<a name="sg-get-line-data-by-series" href="#sg-get-line-data-by-series">#</a> *sg*.**getLinesDataBySeries**(*seriesName*)
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>seriesName</td><td>string</td><td>Name of the data series to retrieve.</td>
-    </tr>
-  </tbody>
-</table>
+* `seriesName` (*string*) Name of the data series to retrieve.
 
 &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](#api-sg-defs-linedata).
 
+<a name="sg-get-area-data-by-series" href="#sg-get-area-data-by-series">#</a> *sg*.**getAreasDataBySeries**(*seriesName*)
 
-<a name="api-sg-getAreasDataBySeries"></a>
-**`SimpleGraph.getAreasDataBySeries(seriesName)`** : Get area data series by name.
-
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>seriesName</td><td>string</td><td>Name of the data series to retrieve.</td>
-    </tr>
-  </tbody>
-</table>
+* `seriesName` (*string*) Name of the data series to retrieve.
 
 &nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](#api-sg-defs-areadata).
 
 
-<a name="api-sg-functions-draw-data"></a>
 ## Draw Data Functions ##
 
-<a name="api-sg-drawPoints"></a>
-**`SimpleGraph.drawPoints()`** : (Re)draw all points data on graph. Points will have class `.sg-point`.
+Added data is not drawn until one of the applicable draw functions below is called for it.
+
+<a name="sg-draw-points" href="#sg-draw-points">#</a> *sg*.**drawPoints**()
+
+(Re)draw all points data on graph. Points will have class `.sg-point`.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-drawLines"></a>
-**`SimpleGraph.drawLines()`** : (Re)draw all points data on graph. Lines will have class `.sg-line` or `.sg-plotted-line`.
+<a name="sg-draw-lines" href="#sg-draw-lines">#</a> *sg*.**drawLines**()
+
+(Re)draw all points data on graph. Lines will have class `.sg-line` or `.sg-plotted-line`.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-drawAreas"></a>
-**`SimpleGraph.drawAreas()`** : (Re)draw all area data on graph. Areas will have class `.plotted-areas`.
+<a name="sg-draw-areas" href="#sg-draw-areas">#</a> *sg*.**drawAreas**()
+
+(Re)draw all area data on graph. Areas will have class `.plotted-areas`.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-remove-graph"></a>
 ## Remove From Graph Functions ##
 
-<a name="api-sg-removePoints"></a>
-**`SimpleGraph.removePoints()`** : Remove all drawn points on graph. Does not remove the underlying data.
+<a name="sg-remove-points" href="#sg-remove-points">#</a> *sg*.**removePoints**()
+
+Remove all drawn points on graph. Does not remove the underlying data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeLines"></a>
-**`SimpleGraph.removeLines()`** : Remove all drawn lines on graph. Does not remove the underlying data.
+<a name="sg-remove-lines" href="#sg-remove-lines">#</a> *sg*.**removeLines**()
+
+Remove all drawn lines on graph. Does not remove the underlying data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeAreas"></a>
-**`SimpleGraph.removeAreas()`** : Remove all drawn areas on graph. Does not remove the underlying data.
+<a name="sg-remove-areas" href="#sg-remove-areas">#</a> *sg*.**removeAreas**()
+
+Remove all drawn areas on graph. Does not remove the underlying data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeAll"></a>
-**`SimpleGraph.removeAll()`** : Remove all drawn data series on graph. Does not remove the underlying data.
+<a name="sg-remove-all" href="#sg-remove-all">#</a> *sg*.**removeAll**()
+
+Remove all drawn data series on graph. Does not remove the underlying data.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-tooltip"></a>
 ## Tooltip Functions ##
 
-<a name="api-sg-addTooltipToPoints"></a>
-**`SimpleGraph.addTooltipToPoints(tooltipFunction[, options])`** : Add tooltip function to the points on the graph. Does not add tooltips to the lines connecting points, if they were added. That is handled by addTooltipToLines(). You can check the series name in the callback's returned SVG element or the class to determine type, regular lines are `.sg-plotted-line` and lines drawn from connecting points are `.sg-line`.
+Tooltips are added as mouse event listeners on the SVG objects. Which means that tooltip functionality is only added to those items which are currently drawn, and removing from graph or redrawing will remove the tooltip functionality to the affected items. This means, removing tooltip functionality is simply a matter of redrawing and that tooltip functionality has to be readded on redraw (or simply add tooltip functionality last).
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>tooltipFunction</td><td><a href="#api-sg-defs-tooltip">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
-    </tr>
-    <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).</td>
-            </tr>
-            <tr>
-              <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<a name="sg-add-tooltip-to-points" href="#sg-add-tooltip-to-points">#</a> *sg*.**addTooltipToPoints**(*tooltipTextFunction*[, *options*])
+
+Add tooltip function to the points on the graph. Does not add tooltips to the lines connecting points, if they were added. That is handled by addTooltipToLines(). You can check the series name in the callback's returned SVG element or the class to determine type, regular lines are `.sg-plotted-line` and lines drawn from connecting points are `.sg-line`.
+
+* `tooltipFunction` (*[tooltipTextFunction](#tooltip-text-function)*) Callback function that handles the dynamic text appearing in the tooltip.
+* `options` (*object*) 
+* `options.offset` (*number[]*) The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).
+* `options.style` (*object*) Object literal of key-value pairs that will be applied as the tooltip div's CSS style.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addTooltipToLines"></a>
-**`SimpleGraph.addTooltipToLines(tooltipFunction[, options])`** : Add tooltip function to the lines on the graph.
+<a name="sg-add-tooltip-to-lines" href="#sg-add-tooltip-to-lines">#</a> *sg*.**addTooltipToLines**(*tooltipTextFunction*[, *options*])
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>tooltipFunction</td><td><a href="#api-sg-defs-tooltip">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
-    </tr>
-    <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).</td>
-            </tr>
-            <tr>
-              <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-      </td>
-    </tr>
-  </tbody>
-</table>
+Add tooltip function to the lines on the graph.
+
+* `tooltipFunction` (*[tooltipTextFunction](#tooltip-text-function)*) Callback function that handles the dynamic text appearing in the tooltip.
+* `options` (*object*) 
+* `options.offset` (*number[]*) The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).
+* `options.style` (*object*) Object literal of key-value pairs that will be applied as the tooltip div's CSS style.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addTooltipToAreas"></a>
-**`SimpleGraph.addTooltipToAreas(tooltipFunction[, options])`** : Add tooltip function to the areas on the graph.
+<a name="sg-add-tooltip-to-areas" href="#sg-add-tooltip-to-areas">#</a> *sg*.**addTooltipToAreas**(*tooltipTextFunction*[, *options*])
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>tooltipFunction</td><td><a href="#api-sg-defs-tooltip">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
-    </tr>
-    <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).</td>
-            </tr>
-            <tr>
-              <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-    </tr>
-  </tbody>
-</table>
+Add tooltip function to the areas on the graph.
+
+* `tooltipFunction` (*[tooltipTextFunction](#tooltip-text-function)*) Callback function that handles the dynamic text appearing in the tooltip.
+* `options` (*object*) 
+* `options.offset` (*number[]*) The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).
+* `options.style` (*object*) Object literal of key-value pairs that will be applied as the tooltip div's CSS style.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-functions-highlight"></a>
+
 ## Highlight Functions ##
 
-<a name="api-sg-highlightPoints"></a>
-**`SimpleGraph.highlightPoints(series[, validationCallback[, size[, fill[, stylesDict]]]])`** : Highlights points by drawing new SVG over points. Highlights a given data series, using optional `validationCallback` to filter points within data series. Note that while `size`, `fill`, and `stylesDict` are all optional, if none are supplied, the highlight will look exactly like the point and no difference will be noticeable.
+<a name="sg-highlight-points" href="#sg-highlight-points">#</a> *sg*.**highlightPoints**(*series*[, *validationCallback*[, *size*[, *fill*[, *stylesDict*]]]])
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>series</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
-      <td>validationCallback</td><td>function</td><td>The callback function to validate whether to highlight given point. Passed argument of <a href="#api-sg-defs-pointdata">point data</a> for given point. Return true to include point. If callback is null, assumes all points to be included.</td>
-    </tr>
-    <tr>
-      <td>size</td><td>number|function</td><td>Point size or callback function to determine point size. Called in scope such that `this` will refer to the <a href="#api-sg-defs-pointdata">point data</a>. If null, uses assigned `pointsize` for point data.</td>
-    </tr>
-    <tr>
-      <td>fill</td><td>string</td><td>Fill value. If null, uses same as for data series.</td>
-    </tr>
-    <tr>
-      <td>stylesDict</td><td>object</td><td>Optional key-value dictionary of styles to apply to SVG.</td>
-    </tr>
-  </tbody>
-</table>
+Highlights points by drawing new SVG over points. Highlights a given data series, using optional `validationCallback` to filter points within data series. Note that while `size`, `fill`, and `stylesDict` are all optional, if none are supplied, the highlight will look exactly like the point and no difference will be noticeable.
+
+* `series` (*string*) The name of the data series.
+* `validationCallback` (*callback*) The callback function to validate whether to highlight given point. Passed argument of [point data](#point-data) for given point. Return true to include point. If callback is null, assumes all points to be included.
+* `size` (*number*|*callback*) Point size or callback function to determine point size. Called in scope such that `this` will refer to the [point data](#point-data). If null, uses assigned `pointsize` for point data.
+* `fill` (*string*) Fill value. If null, uses same as for data series.
+* `stylesDict` (*object*) Optional key-value dictionary of styles to apply to SVG.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeHighlightPoints"></a>
-**`SimpleGraph.removeHighlightPoints()`** : Remove any highlights on points.
+<a name="sg-remove-highlight-points" href="#sg-remove-highlight-points">#</a> *sg*.**removeHighlightPoints**()
+
+Remove any highlights on points.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeHighlights"></a>
-**`SimpleGraph.removeHighlights()`** : Remove all highlights.
+<a name="sg-remove-highlights" href="#sg-remove-highlights">#</a> *sg*.**removeHighlights**()
+
+Remove all highlights.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
@@ -730,18 +439,12 @@ Remove custom color for series name.
 <a name="api-sg-functions-save-graph"></a>
 ## Save Graph Functions ##
 
-<a name="api-sg-saveAsPng"></a>
-**`SimpleGraph.saveAsPng(pngName)`** : Save graph as a PNG. Note, in non-Edge Internet Explorer, the [canvg library](https://github.com/canvg/canvg) is required due to security error. This library is not  packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, function will simply error on IE.
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>pngName</td><td>string</td><td>Default name to save png (".png" automatically appended if not already).</td>
-    </tr>
-  </tbody>
-</table>
+<a name="sg-save-as-png" href="#sg-save-as-png">#</a> *sg*.**saveAsPng**(*pngName*)
+
+Save graph as a PNG. Note, in non-Edge Internet Explorer, the [canvg library](https://github.com/canvg/canvg) is required due to security error. This library is not  packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, function will simply error on IE.
+
+* `pngName` (*string*) Default name to save png (".png" automatically appended if not already).
+
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
