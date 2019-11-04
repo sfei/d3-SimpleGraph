@@ -4,351 +4,189 @@
 
 ----------
 
-* <a href="#api-sg">Constructor</a>
-* <a href="#api-sg-properties">Properties</a>
-* <a href="#api-sg-functions-misc">Misc. Functions</a>
-* <a href="#api-sg-functions-axis-grid-legend">Axis, Grid, and Legend Functions</a>
-* <a href="#api-sg-functions-color-category">Color and Category Functions</a>
-* <a href="#api-sg-functions-add-data">Add Data Functions</a>
-* <a href="#api-sg-functions-remove-data">Remove Data Functions</a>
-* <a href="#api-sg-functions-additional-data">Additional Data Functions</a>
-* <a href="#api-sg-functions-draw-data">Draw Data Functions</a>
-* <a href="#api-sg-functions-remove-graph">Remove From Graph Functions</a>
-* <a href="#api-sg-functions-tooltips">Tooltip Functions</a>
-* <a href="#api-sg-functions-highlights">Highlight Functions</a>
-* <a href="#api-sg-functions-save-graph">Save Graph Functions</a>
-* <a href="#api-sg-defs">Definitions</a>
+**[Constructor](#constructor)**  
+**[Properties](#properties)**  
+**[Misc. Functions](#misc-functions)**  
+&nbsp; &nbsp; *[getSvgElement](#sg-get-svg-element)*  
+&nbsp; &nbsp; *[getSvgGraphic](#sg-get-svg-graphic)*  
+&nbsp; &nbsp; *[remove](#sg-remove)*  
+&nbsp; &nbsp; *[destroy](#sg-destroy)*  
+**[Axis, Grid, and Legend Functions](axis-grid-and-legend-functions)**  
+**[Color and Category Functions](#color-and-category-functions)**  
+**[Add Data Functions](#add-data-functions)**  
+**[Remove Data Functions]("#remove-data-functions)**  
+**[Additional Data Functions](#additional-data-functions)**  
+**[Draw Data Functions](#draw-data-functions)**  
+**[Remove From Graph Functions](#remove-from-graph-functions)**  
+**[Tooltip Functions](#tooltip-functions)**  
+**[Highlight Functions](#highlight-functions)**  
+**[Save Graph Functions](#save-graph-functions)**  
+**[Definitions](#definitions)**  
+&nbsp; &nbsp; [Axis options](#axis-options)  
+&nbsp; &nbsp; [Point data](#point-data)  
+&nbsp; &nbsp; [Line data](#line-data)  
+&nbsp; &nbsp; [Area data](#area-data)  
+&nbsp; &nbsp; [Tooltip text function](#tooltip-text-function)  
 
 
-<a name="api-sg"></a>
 ## Constructor ##
 
-**`new SimpleGraph(options)`**
+<a name="new-simplegraph" href="#new-simplegraph">#</a> new **SimpleGraph**(*options*)
 
-#### Options ####
+Construct SimpleGraph instance. *Options* are all completely optional, but recognized parameters include:
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>container</td><td>string</td><td>The DOM element query/selector to the element to append the graph to. Defaults to "body".</td>
-    </tr>
-    <tr>
-      <td>margins</td>
-      <td>object</td>
-      <td>
-        Optional custom margins.
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>left</td><td>number</td><td>Left margin. Defaults to 40.</td>
-            </tr>
-            <tr>
-              <td>right</td><td>number</td><td>Right margin. Defaults to 40.</td>
-            </tr>
-            <tr>
-              <td>top</td><td>number</td><td>Top margin. Defaults to 20.</td>
-            </tr>
-            <tr>
-              <td>bottom</td><td>number</td><td>Bottom margin. Defaults to 20.</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-    </tr>
-    <tr>
-      <td>width</td><td>number</td><td>Total graph width (including margins). Defaults to 600.</td>
-    </tr>
-    <tr>
-      <td>height</td><td>number</td><td>Total graph height (including margins). Defaults to 400.</td>
-    </tr>
-    <tr>
-      <td>allowDrawBeyondGraph</td><td>boolean</td><td>Allow drawing beyond graph. If true, all data will be drawn  as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut off where they extend past the x/y-axis ranges.</td>
-    </tr>
-    <tr>
-      <td>colorScale</td><td>d3.scale</td><td> Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale. Defaults to d3.scaleOrdinal(d3.schemeCategory10).</td>
-    </tr>
-    <tr>
-      <td>styles</td><td>object</td><td>Key-value pairs of additional CSS styles to apply to SVG.</td>
-    </tr>
-    <tr>
-      <td>axis</td>
-      <td>object</td>
-      <td>
-        Axis properties.
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>x</td><td>X-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td>
-            </tr>
-            <tr>
-              <td>y</td><td>Y-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td>
-            </tr>
-            <tr>
-              <td>y2</td><td>Y2-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td>
-            </tr>
-            <tr>
-              <td>styles</td>
-              <td>
-                Optional key-value object of shared axis styles. Values filled in by default below:
-                <table>
-                  <tr><th>Property</th><th>Default Value</th></tr>
-                  <tr><td>fill</td><td>"none"</td></tr>
-                  <tr><td>stroke-width</td><td>0.5</td></tr>
-                  <tr><td>stroke</td><td>"black"</td></tr>
-                </table>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-    </tr>
-  </tbody>
-</table>
+* `container` (*string*) The DOM element query/selector to the element to append the graph to. Defaults to "body".
+* `margins` (*object*) Custom margins. Given with keys of *top*, *left*, *bottom*, and/or *right* and values being the numeric pixel size. Defaults to top/bottom margins of 20 and left/right margins of 40.
+* `width` (*number*) Total graph width (including margins). Defaults to 600.
+* `height` (*number*) Total graph height (including margins). Defaults to 400.
+* `allowDrawBeyondGraph` (*boolean*) Allow drawing beyond graph. If true, all data will be drawn as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut off where they extend past the x/y-axis ranges.
+* `colorScale` (*d3.scale*) Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale. Defaults to d3.scaleOrdinal(d3.schemeCategory10).
+* `styles` (*object*) Key-value pairs of additional CSS styles to apply to SVG.
+* `axis` (*object*)
+* `axis.x` (*object*) X-axis properties (see [Axis Options](#axis-options)).
+* `axis.y` (*object*) Y-axis properties (see [Axis Options](#axis-options)).
+* `axis.y2` (*object*) Y2-axis properties (see [Axis Options](#axis-options)).
+* `axis.styles` (*object*) Optional key-value object of shared axis styles. Defaults to `{fill: 'none', 'stroke-width': 0.5, stroke: 'black'}`
 
 
-<a name="api-sg-properties"></a>
 ## Properties ##
 
 A few (but not comprehensive) list of the important variables in an initialized SimpleGraph object are below:
 
 * `svg` - The D3 wrapper for the SVG node
-* `svgGraph` - The D3 wrapper for the <g\> node in the SVG
+* `svgGraph` - The D3 wrapper for the `<g>` node in the SVG
 * `x` - The x-axis (See below for details)
 * `y` - The y-axis (See below for details)
 * `y2` - The second y-axis (See below for details), if it exists
 
-<a name="api-axis"></a>
 #### Axis ####
 
-* `axis` - The main D3 axis object for this axis
-* `axisTwo` - For the x-axis, the D3 axis object in case the x-axis is desired to be drawn on top of the graph
-* `break` - The axis breaks, if they exist
-* `format` - The D3 format object for this axis's tick values
-* `gridAxis` - The D3 axis object for the gridlines (as they may be drawn with different tick intervals than the axis itself)
-* `isDate` - True if date values
-* `isLog` - True if log-scale 
-* `label` - The axis name/label
-* `min` - The axis min value
-* `max` - The axis max value
-* `scale` - The D3 scale object for this axis
+* `[x|y|y2].axis` - The main D3 axis object for this axis
+* `x.axisTwo` - For the x-axis, the D3 axis object in case the x-axis is desired to be drawn on top of the graph
+* `[x|y|y2].break` - The axis breaks, if they exist
+* `[x|y|y2].format` - The D3 format object for this axis's tick values
+* `[x|y|y2].gridAxis` - The D3 axis object for the gridlines (as they may be drawn with different tick intervals than the axis itself)
+* `[x|y|y2].isDate` - True if date values
+* `[x|y|y2].isLog` - True if log-scale 
+* `[x|y|y2].label` - The axis name/label
+* `[x|y|y2].min` - The axis min value
+* `[x|y|y2].max` - The axis max value
+* `[x|y|y2].scale` - The D3 scale object for this axis
 
 
-<a name="api-sg-functions-misc"></a>
 ## Misc. Functions ##
 
-<a name="api-sg-getSvgElement"></a>
-**`SimpleGraph.getSvgElement()`** : Returns D3 wrapper for SVG node.
+<a name="sg-get-svg-element" href="#sg-get-svg-element">#</a> *sg*.**getSvgElement**()
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `SimpleGraph.svg`
+Returns D3 wrapper for SVG node.
 
-<a name="api-sg-getSvgGraphic"></a>
-**`SimpleGraph.getSvgGraphic()`** : Returns D3 wrapper for graphic node in SVG node.
+&nbsp; &nbsp;**Returns:** `sg.svg`
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `SimpleGraph.svgGraph`
+<a name="sg-get-svg-graphic" href="#sg-get-svg-graphic">#</a> *sg*.**getSvgGraphic**()
 
-<a name="api-sg-remove"></a>
-**`SimpleGraph.remove()`** : Removes SVG node from container.
+Returns D3 wrapper for graphic node in SVG node.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** `sg.svgGraph`
 
-<a name="api-sg-destory"></a>
-**`SimpleGraph.destroy()`** : Removes and destroys SVG and this object. Irreversible.
+<a name="sg-remove" href="#sg-remove">#</a> *sg*.**remove**()
+
+Removes SVG node from container.
+
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="sg-destroy" href="#sg-destroy">#</a> *sg*.**destroy**()
+
+Removes and destroys SVG and this object. Irreversible.
 
 
-<a name="api-sg-functions-axis-grid-legend"></a>
 ## Axis, Grid, and Legend Functions ##
 
-<a name="api-sg-resetAxisOptions"></a>
-**`SimpleGraph.resetAxisOptions(axisOptions)`** : Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
+<a name="sg-axis-options" href="#sg-axis-options">#</a> *sg*.**resetAxisOptions**([*options*])
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>axisOptions</td>
-      <td>object</td>
-      <td>
-        Map of axis options by axis name.
-        <h5>Properties</h5>
-        <table>
-          <tr><th>Name</th><th>Description</th></tr>
-          <tr><td>x</td><td>Literal of x-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td></tr>
-          <tr><td>y</td><td>Literal of y-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td></tr>
-          <tr><td>y2</td><td>Optional literal of y2-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td></tr>
-          <tr>
-            <td>styles</td>
-            <td>
-              Optional key-value object of shared axis styles. Defaults to fill="none", stroke="black", and stroke-width=0.5.
-            </td>
-          </tr>
-        </table>   
-      </td>
-    </tr>
-  </tbody>
-</table>
+Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+* `options.x` (*object*) X-axis properties (see [Axis Options](#axis-options)).
+* `options.y` (*object*) Y-axis properties (see [Axis Options](#axis-options)).
+* `options.y2` (*object*) Y2-axis properties (see [Axis Options](#axis-options)).
+* `options.styles` (*object*) Optional key-value object of shared axis styles. Defaults to `{fill: 'none', 'stroke-width': 0.5, stroke: 'black'}`
 
-<a name="api-sg-drawAxes"></a>
-**`SimpleGraph.drawAxes([labelPosition[, xAxisPosition[, axisLabelMargin]]])`** : Redraws the axes on the graph.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>labelPosition</td><td>string</td><td>Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of "center top" would first center both labels, then move the y-axis label to the top. Defaults to "outside center".</td>
-    </tr>
-    <tr>
-      <td>xAxisPosition</td><td>string</td><td>Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to "bottom".</td>
-    </tr>
-    <tr>
-      <td>axisLabelMargin</td><td>number</td><td>Labels are automatically placed at a margin determined not to overlap  with the tick marks. However you may specify and additional margin here.</td>
-    </tr>
-  </tbody>
-</table>
+<a name="sg-draw-axes" href="#sg-draw-axes">#</a> *sg*.**drawAxes**([*labelPosition*[, *xAxisPosition*[, *axisLabelMargin*]]])
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+Redraws the axes on the graph.
 
-<a name="api-sg-drawGrid"></a>
-**`SimpleGraph.drawGrid([style])`** : Draw grid. If grid already exists, redraws it.
+* `labelPosition` (*string*) Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of "center top" would first center both labels, then move the y-axis label to the top. Defaults to "outside center".
+* `xAxisPosition` (*string*) Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to "bottom".
+* `axisLabelMargin` (*number*) Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>style</td><td>object</td><td>Optional key-value object of grid styles. Defaults to opacity=0.4, stroke="#555", and stroke-width=0.3.</td>
-    </tr>
-  </tbody>
-</table>
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+<a name="sg-" href="#sg-">#</a> *sg*.**drawGrid**(**)
 
-<a name="api-sg-removeGrid"></a>
-**`SimpleGraph.removeGrid()`** : Remove grid.
+Draw grid. If grid already exists, redraws it.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+* `style` (*object*) Optional key-value object of grid styles. Defaults to `{opacity: 0.4, stroke: "#555", 'stroke-width': 0.3}`.
 
-<a name="api-sg-drawLegend"></a>
-**`SimpleGraph.drawLegend(position[, anchor[, bgstyle[, itemsPerColumn[, rowHeight[, exclude]]]]])`** : Draw the legend onto the graph. If legend already exists, will redraw it.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<table>
-  <tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>position</td><td>number[]</td><td>x,y coordinate position from top-left corner of SVG.</td>
-    </tr>
-    <tr>
-      <td>anchor</td><td>string</td><td>Optional anchor for the coordinate x-position (left, middle, or right). Defaults "left".</td>
-    </tr>
-    <tr>
-      <td>bgstyle</td><td>object</td><td>Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</td>
-    </tr>
-    <tr>
-      <td>itemsPerColumn</td><td>number</td><td>Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.</td>
-    </tr>
-    <tr>
-      <td>rowHeight</td><td>number</td><td>The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
-    </tr>
-  </tbody>
-</table>
+<a name="sg-remove-grid" href="#sg-remove-grid">#</a> *sg*.**removeGrid**()
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+Removes grid.
+
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="sg-draw-legend" href="#sg-draw-legend">#</a> *sg*.**drawLegend**(*position*[, *anchor*[, *bgstyle*[, *itemsPerColumn*[, *rowHeight*[, *exclude*]]]]])
+
+Draw the legend onto the graph. If legend already exists, will redraw it.
+
+* `position` (*number[]*) X-y coordinate position from top-left corner of SVG.
+* `anchor` (*string*) Optional anchor for the coordinate x-position (left, middle, or right). Defaults "left".
+* `bgstyle` (*number*) Optional styles for the legend. These are SVG style attributes with the exception of support for padding.
+* `itemsPerColumn` (*object*) Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.
+* `rowHeight` (*number*) The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.
+* `exclude` (*number*) The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.
+
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-color-category"></a>
 ## Color/Category Functions ##
 
-<a name="api-sg-getColorBySeriesName"></a>
-**`SimpleGraph.getColorBySeriesName(name, create)`** : Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
+<a name="sg-get-color-series-by-name" href="#sg-get-color-series-by-name">#</a> *sg*.**getColorBySeriesName**(*name*, *create*)
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>series</td><td>string</td><td>The series name.</td>
-    </tr>
-    <tr>
-      <td>create</td><td>boolean</td><td>If true, creates color in colorScale if color is not yet assigned. If false or left undefined, color is only returned if one has been assigned to the data series name.</td>
-    </tr>
-  </tbody>
-</table>
+Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Color value, or null.
+* `series` (*string*) The series name.
+* `create` (*boolean*) If true, creates color in colorScale if color is not yet assigned. If false or left undefined, color is only returned if one has been assigned to the data series name.
 
-<a name="api-sg-resetColorScale"></a>
-**`SimpleGraph.resetColorScale(colorScale)`** : Reset domain on color scale, or replace with provided.
+&nbsp; &nbsp;**Returns:** Color value, or null.
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>colorScale</td><td>d3.colorScale</td><td>olor scale to replace with or null.</td>
-    </tr>
-  </tbody>
-</table>
+<a name="sg-reset-color-scale" href="#sg-reset-color-scale">#</a> *sg*.**resetColorScale**(*colorScale*)
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+Reset domain on color scale, or replace with provided.
 
-<a name="api-sg-setSeriesColor"></a>
-**`SimpleGraph.setSeriesColor(series, color)`** : Sets a custom color (overriding the color scale) for a given series name.
+* `colorScale` (*d3.colorScale*) Color scale to replace with or null.
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>series</td><td>string</td><td>The series name.</td>
-    </tr>
-    <tr>
-      <td>color</td><td>string</td><td>The color value.</td>
-    </tr>
-  </tbody>
-</table>
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+<a name="sg-set-series-color" href="#sg-set-series-color">#</a> *sg*.**setSeriesColor**(*series*, *color*)
 
-<a name="api-sg-removeSeriesColor"></a>
-**`SimpleGraph.removeSeriesColor(series)`** : Remove custom color for series name.
+Sets a custom color (overriding the color scale) for a given series name.
 
-<table>
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>series</td><td>string</td><td>The series name.</td>
-    </tr>
-  </tbody>
-</table>
+* `series` (*string*) The series name.
+* `color` (*string*) The color value.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="sg-set-remove-color" href="#sg-remove-series-color">#</a> *sg*.**removeSeriesColor**(*series*)
+
+Remove custom color for series name.
+
+* `series` (*string*) The series name.
+
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-add-data"></a>
 ## Add Data Functions ##
 
 <a name="api-sg-addPointData"></a>
@@ -380,7 +218,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addPointsData"></a>
 **`SimpleGraph.addPointsData(data, dataPointName, xValueName, yValueName[, additionalDataKeys[, size[, y2Axis[, showNulls]]]])`** : Add multiple point data from an array of object literals.
@@ -417,7 +255,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addPointsDataAsArray"></a>
 **`SimpleGraph.addPointsDataAsArray(name, data[, size[, y2Axis[, showNulls]]])`** : Add multiple point data from an array of x,y coordinates.
@@ -445,7 +283,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addLineDataAsCoordinates"></a>
 **`SimpleGraph.addLineDataAsCoordinates(name, lineCoordinates[, style[, interpolation[, y2Axis]]])`** : Add line data as an array of coordinates.
@@ -473,7 +311,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addLineDataAsFunction"></a>
 **`SimpleGraph.addLineDataAsFunction(name, lineFunction[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add line data as a function.
@@ -507,7 +345,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addLinesDataFromPoints"></a>
 **`SimpleGraph.addLinesDataFromPoints([style[, interpolation[, handleOverlap]]])`** : Add line data from coordinates.
@@ -529,7 +367,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addAreaBetweenTwoLines"></a>
 **`SimpleGraph.addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add area data series with function pair defining bottom and top bounds of area.
@@ -566,7 +404,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addAreaAsCoordinates"></a>
 
@@ -595,7 +433,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
 <a name="api-sg-functions-remove-data"></a>
@@ -604,22 +442,22 @@ A few (but not comprehensive) list of the important variables in an initialized 
 <a name="api-sg-clearPointsData"></a>
 **`SimpleGraph.clearPointsData()`** : Remove all points data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-clearLinesData"></a>
 **`SimpleGraph.clearLinesData()`** : Remove all lines data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-clearAreasData"></a>
 **`SimpleGraph.clearAreasData()`** : Remove all areas data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-clearAllData"></a>
 **`SimpleGraph.clearAllData()`** : Remove all data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
 <a name="api-sg-functions-additional-data"></a>
@@ -639,7 +477,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](#api-sg-defs-pointdata).
+&nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](#api-sg-defs-pointdata).
 
 <a name="api-sg-getPointCoordinatesBySeries"></a>
 **`SimpleGraph.getPointCoordinatesBySeries(seriesName)`** : Get point coordinates by data series name.
@@ -655,7 +493,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `number[][]` - Array of point coordinates.
+&nbsp; &nbsp;**Returns:** `number[][]` - Array of point coordinates.
 
 <a name="api-sg-getLinesDataBySeries"></a>
 **`SimpleGraph.getLinesDataBySeries(seriesName)`** : Get line data series by name.
@@ -671,7 +509,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](#api-sg-defs-linedata).
+&nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](#api-sg-defs-linedata).
 
 
 <a name="api-sg-getAreasDataBySeries"></a>
@@ -688,7 +526,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](#api-sg-defs-areadata).
+&nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](#api-sg-defs-areadata).
 
 
 <a name="api-sg-functions-draw-data"></a>
@@ -697,17 +535,17 @@ A few (but not comprehensive) list of the important variables in an initialized 
 <a name="api-sg-drawPoints"></a>
 **`SimpleGraph.drawPoints()`** : (Re)draw all points data on graph. Points will have class `.sg-point`.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-drawLines"></a>
 **`SimpleGraph.drawLines()`** : (Re)draw all points data on graph. Lines will have class `.sg-line` or `.sg-plotted-line`.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-drawAreas"></a>
 **`SimpleGraph.drawAreas()`** : (Re)draw all area data on graph. Areas will have class `.plotted-areas`.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
 <a name="api-sg-functions-remove-graph"></a>
@@ -716,22 +554,22 @@ A few (but not comprehensive) list of the important variables in an initialized 
 <a name="api-sg-removePoints"></a>
 **`SimpleGraph.removePoints()`** : Remove all drawn points on graph. Does not remove the underlying data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-removeLines"></a>
 **`SimpleGraph.removeLines()`** : Remove all drawn lines on graph. Does not remove the underlying data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-removeAreas"></a>
 **`SimpleGraph.removeAreas()`** : Remove all drawn areas on graph. Does not remove the underlying data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-removeAll"></a>
 **`SimpleGraph.removeAll()`** : Remove all drawn data series on graph. Does not remove the underlying data.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
 <a name="api-sg-functions-tooltip"></a>
@@ -772,7 +610,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addTooltipToLines"></a>
 **`SimpleGraph.addTooltipToLines(tooltipFunction[, options])`** : Add tooltip function to the lines on the graph.
@@ -809,7 +647,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-addTooltipToAreas"></a>
 **`SimpleGraph.addTooltipToAreas(tooltipFunction[, options])`** : Add tooltip function to the areas on the graph.
@@ -845,7 +683,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-functions-highlight"></a>
 ## Highlight Functions ##
@@ -876,17 +714,17 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-removeHighlightPoints"></a>
 **`SimpleGraph.removeHighlightPoints()`** : Remove any highlights on points.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 <a name="api-sg-removeHighlights"></a>
 **`SimpleGraph.removeHighlights()`** : Remove all highlights.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
 <a name="api-sg-functions-save-graph"></a>
@@ -904,14 +742,12 @@ A few (but not comprehensive) list of the important variables in an initialized 
     </tr>
   </tbody>
 </table>
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+&nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-defs"></a>
 ## Definitions ##
 
-<a name="api-sg-defs-axisoptions"></a>
-#### Axis Options ####
+#### Axis options ####
 <table>
   <tbody>
     <tr>
@@ -986,8 +822,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-<a name="api-sg-defs-pointdata"></a>
-#### Point Data ####
+#### Point data ####
 <table>
   <tbody>
     <tr>
@@ -1011,8 +846,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-<a name="api-sg-defs-linedata"></a>
-#### Line Data ####
+#### Line data ####
 <table>
   <tbody>
     <tr>
@@ -1045,9 +879,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-
-<a name="api-sg-defs-areadata"></a>
-#### Area Data ####
+#### Area data ####
 <table>
   <tbody>
     <tr>
@@ -1080,8 +912,7 @@ A few (but not comprehensive) list of the important variables in an initialized 
   </tbody>
 </table>
 
-<a name="api-sg-defs-tooltip"></a>
-#### Tooltip Text Function ####
+#### Tooltip text function ####
 Handles the text appearing in the tooltip. Expected to return text/html. The following parameters are passed to provided to pull relevant data. 
 <table>
   <tbody>
@@ -1102,14 +933,3 @@ Handles the text appearing in the tooltip. Expected to return text/html. The fol
     </tr>
   </tbody>
 </table>
-
-
-
-<style>
-  table { border-collapse: collapse; font-size: 0.9em; margin-left: 2.5em; }
-  th { text-align: left; background-color: #bbb; }
-  td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
-  td table { font-size: 1em; margin: 0.2em; width: 100%; }
-  td table th { background-color: #d6d6d6; border-color: #ddd; }
-  td table td { background-color: #fff; border-color: #ddd; }
-</style>
