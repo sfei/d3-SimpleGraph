@@ -1,12 +1,5 @@
 export default function(SimpleGraph) {
-    /**
-     * Get the color or style related to a data series. Attempts to return the style first, but failing that will
-     * return the color string. Note that colors will not be assigned until drawn, thus data series that do exist 
-     * but haven't been drawn yet may not return a color.
-     * @param {string} name - name of the point or line series (case sensitive).
-     * @returns {string} color information
-     * @memberof SimpleGraph 
-     */
+
     SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
         if(!name) { return null; }
         if(name in this.customColors) {
@@ -55,11 +48,6 @@ export default function(SimpleGraph) {
         if(create) { return this.color(name); }
     };
 
-    /**
-     * Reset domain on color scale, or replace with provided.
-     * @param {d3.scale} colorScale - Color scale to replace with or null.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.resetColorScale = function(colorScale) {
         if(colorScale) {
             this.color = colorScale;

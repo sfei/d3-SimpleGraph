@@ -1,10 +1,7 @@
 import shapes from "./sg.point.shapes";
 
 export default function(SimpleGraph, d3) {
-    /**
-     * Draw points data onto the graph. If points already exist will remove and redraw. Points will have class 
-     * ".sg-point".
-     */
+
     SimpleGraph.prototype.drawPoints = function() {
         this.removePoints();
 
@@ -173,11 +170,6 @@ export default function(SimpleGraph, d3) {
             ));
     };
 
-    /**
-     * Draw lines on graph. If lines exist already, will remove and redraw them. Lines will have class 
-     * ".sg-line" or ".sg-plotted-line".
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.drawLines = function() {
         this.removeLines();
         // for this references
@@ -262,10 +254,6 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    /**
-     * Draw areas onto graph. Areas will have class ".plotted-areas".
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.drawAreas = function() {
         this.removeAreas();
         // for this references
@@ -333,39 +321,24 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    /**
-     * Remove all points on graph.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.removePoints = function() {
         this.svgGraph.selectAll(".sg-dot, .sg-point").remove();
         return this;
     };
 
-    /**
-     * Remove lines from graph.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.removeLines = function() {
         this.svgGraph.selectAll(".sg-line, .sg-plotted-line").remove();
         return this;
     };
 
-    /**
-     * Remove areas from graph.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.removeAreas = function() {
         this.svgGraph.selectAll(".sg-plotted-area").remove();
         return this;
     };
 
-    /**
-     * Remove everything from graph.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.removeAll = function() {
         this.removePoints().removeLines().removeAreas();
         return this;
     };
+    
 }

@@ -1,11 +1,7 @@
  import shapes from "./sg.point.shapes";
 
  export default function(SimpleGraph) {
-    /**
-     * Add grid over graph.
-     * @param {Object} [style={opacity:0.4,stroke:"#555",'stroke-width':0.3}]
-     * @memberof SimpleGraph 
-     */
+
     SimpleGraph.prototype.drawGrid = function(style) {
         this.svgGraph.selectAll(".sg-grid").remove();
         // default styles
@@ -30,29 +26,11 @@
         return this;
     };
 
-    /**
-     * Remove grid, if it exists.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.removeGrid = function() {
         this.svgGraph.selectAll(".sg-grid").remove();
         return this;
     };
-
-    /**
-     * Draw the legend onto the graph. If legend already exists, will redraw it.
-     * @param {number[]} position - x,y coordinate position from top-left corner of SVG.
-     * @param {string} [anchor="left"] - Optional anchor for the coordinate x-position (left, middle, or right).
-     * @param {Object} [bgstyle] - Optional styles for the legend. These are SVG style attributes with the 
-     *        exception of support for padding.
-     * @param {number} [itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new 
-     *        column will be started to the right. If set to 0 or less, infinite (that is, all will be put in 
-     *        single column). Note that if the next column exceeds the right margin of the graph, placement errors
-     *        will result.
-     * @param {number} [rowHeight=24] - The height per row. Default is set to best fit size of text and icons in 
-     *        legend (the second which is currently uncustomizable) so use care if decreasing row height.
-     * @memberof SimpleGraph 
-     */
+    
     SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight, exclude) {
         this.svg.selectAll(".sg-legend").remove();
         

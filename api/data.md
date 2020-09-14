@@ -1,10 +1,12 @@
-<a name="api-sg-functions-add-data"></a>
-## Add Data Functions ##
+## Adding and manipulating data ##
 
-<a name="api-sg-addPointData"></a>
-**`SimpleGraph.addPointData(name, xValue, yValue[, size[, y2Axis[, showNulls]]])`** : Add single point data.
+#### Adding points ####
 
-<table>
+<a name="addPointData">#</a> *sg*.**addPointData**(*name*, *xValue*, *yValue*[, *options*])
+
+Add single point data.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -18,24 +20,38 @@
     <tr>
       <td>yValue</td><td>number</td><td>The y-value.</td>
     </tr>
-    <tr>
-      <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
     </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
-    </tr>
-    <tr>
-      <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
+      <td>options</td>
+      <td>object</td>
+      <td>
+        Additional options defining the point data.
+        <h5>Properties</h5>
+        <table>
+          <tr>
+            <td>shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name).For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
+          </tr>
+          <tr>
+            <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
+          </tr>
+          <tr>
+            <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
+          </tr>
+          <tr>
+            <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
+          </tr>
+        </table>
+      </td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addPointsData"></a>
-**`SimpleGraph.addPointsData(data, dataPointName, xValueName, yValueName[, additionalDataKeys[, size[, y2Axis[, showNulls]]]])`** : Add multiple point data from an array of object literals.
+<a name="addPointsData">#</a> *sg*.**addPointsData**(*data*, *dataPointName*, *xValueName*, *yValueName*[, *options*])
 
-<table>
+Add multiple point data from an array of object literals.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -52,27 +68,40 @@
     <tr>
       <td>yValueName</td><td>string</td><td>The key name in each data object to retrieve the y-value.</td>
     </tr>
-    <tr>
-      <td>additionalDataKeys</td><td>string[]</td><td>Additional keys for data you want to store for each point.</td>
-    </tr>
-    <tr>
-      <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
-    </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
-    </tr>
-    <tr>
-      <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
+      <td>options</td>
+      <td>object</td>
+      <td>
+        Additional options defining the point data.
+        <h5>Properties</h5>
+        <table>
+          <tr>
+            <td>shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name).For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
+          </tr>
+          <tr>
+            <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
+          </tr>
+          <tr>
+            <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
+          </tr>
+          <tr>
+            <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
+          </tr>
+          <tr>
+            <td>additionalDataKeys</td><td>string[]</td><td>Additional keys for data you want to store for each point.</td>
+          </tr>
+        </table>
+      </td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addPointsDataAsArray"></a>
-**`SimpleGraph.addPointsDataAsArray(name, data[, size[, y2Axis[, showNulls]]])`** : Add multiple point data from an array of x,y coordinates.
+<a name="addPointsDataAsArray">#</a> *sg*.**addPointsDataAsArray**(*name*, *data*[, *options*]]])
 
-<table>
+Add multiple point data from an array of x,y coordinates.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -83,24 +112,80 @@
     <tr>
       <td>data</td><td>number[][]</td><td>The plot data as an array of [x,y] arrays.</td>
     </tr>
-    <tr>
-      <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
     </tr>
-    <tr>
-      <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
-    </tr>
-    <tr>
-      <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
+      <td>options</td>
+      <td>object</td>
+      <td>
+        Additional options defining the point data.
+        <h5>Properties</h5>
+        <table>
+          <tr>
+            <td>shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name).For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
+          </tr>
+          <tr>
+            <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
+          </tr>
+          <tr>
+            <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
+          </tr>
+          <tr>
+            <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not added.</td>
+          </tr>
+        </table>
+      </td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addLineDataAsCoordinates"></a>
-**`SimpleGraph.addLineDataAsCoordinates(name, lineCoordinates[, style[, interpolation[, y2Axis]]])`** : Add line data as an array of coordinates.
+#### Assigning and getting point shape ####
 
-<table>
+<a name="setPointSeriesShape">#</a> *sg*.**setPointSeriesShape**(*name*, *shape*)
+
+Assign a shape to point data series by name. If null or invalid shape is supplied, at current, the drawing function defaults to 'diamond'.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>name</td><td>string</td><td>The name of the data series.</td>
+    </tr>
+    <tr>
+      <td>shape</td><td>string</td><td>The name of the shape. Currently supported shapes are 'square', 'diamond', 'circle', 'triangle', 'triangle-up', and 'triangle-down'.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="getPointSeriesShape">#</a> *sg*.**getPointSeriesShape**(*name*)
+
+Get the shape assigned to a data series.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>name</td><td>string</td><td>The name of the data series.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** The name of the shape assigned, or null, if no shape has been assigned.
+
+
+#### Adding line data ####
+
+<a name="addLineDataAsCoordinates">#</a> *sg*.**addLineDataAsCoordinates**(*name*, *lineCoordinates*[, *style*[, *interpolation*[, *y2Axis*]]])
+
+Add line data as an array of coordinates.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -125,10 +210,11 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addLineDataAsFunction"></a>
-**`SimpleGraph.addLineDataAsFunction(name, lineFunction[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add line data as a function.
+<a name="addLineDataAsFunction">#</a> *sg*.**addLineDataAsFunction**(*name*, *lineFunction*[, *style*[, *resolution*[, *interpolation*[, *xRange*[, *y2Axis*]]]]])
 
-<table>
+Add line data as a function.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -159,10 +245,11 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addLinesDataFromPoints"></a>
-**`SimpleGraph.addLinesDataFromPoints([style[, interpolation[, handleOverlap]]])`** : Add line data from coordinates.
+<a name="addLinesDataFromPoints">#</a> *sg*.**addLinesDataFromPoints**([*style*[, *interpolation*[, *handleOverlap*]]])
 
-<table>
+Add line data from coordinates.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -181,10 +268,13 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addAreaBetweenTwoLines"></a>
-**`SimpleGraph.addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop[, style[, resolution[, interpolation[, xRange[, y2Axis]]]]])`** : Add area data series with function pair defining bottom and top bounds of area.
+#### Adding area data ####
 
-<table>
+<a name="addAreaBetweenTwoLines">#</a> *sg*.**addAreaBetweenTwoLines**(*name*, *lineFunctionBottom*, *lineFunctionTop*[, *style*[, *resolution*[, *interpolation*[, *xRange*[, *y2Axis*]]]]])
+
+Add area data series with function pair defining bottom and top bounds of area.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -218,11 +308,11 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-addAreaAsCoordinates"></a>
+<a name="addAreaAsCoordinates">#</a> *sg*.**addAreaAsCoordinates**(*name*, *areaCoordinates*[, *style*[, *interpolation*[, *y2Axis*]]])
 
-**`SimpleGraph.addAreaAsCoordinates(name, areaCoordinates[, style[, interpolation[, y2Axis]]])`** : Add area data series as array of area coordinates.
+Add area data series as array of area coordinates.
 
-<table>
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -248,37 +338,40 @@
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-remove-data"></a>
-## Remove Data Functions ##
+## Removing data ##
 
-<a name="api-sg-clearPointsData"></a>
-**`SimpleGraph.clearPointsData()`** : Remove all points data.
+<a name="clearPointsData">#</a> *sg*.**clearPointsData**()
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="api-sg-clearLinesData"></a>
-**`SimpleGraph.clearLinesData()`** : Remove all lines data.
+Remove all points data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-clearAreasData"></a>
-**`SimpleGraph.clearAreasData()`** : Remove all areas data.
+<a name="clearLinesData">#</a> *sg*.**clearLinesData**()
+
+Remove all lines data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-clearAllData"></a>
-**`SimpleGraph.clearAllData()`** : Remove all data.
+<a name="clearAreasData">#</a> *sg*.**clearAreasData**()
+
+Remove all areas data.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="clearAllData">#</a> *sg*.**clearAllData**()
+
+Remove all data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-<a name="api-sg-functions-additional-data"></a>
-## Additional Data Functions ##
+## Get data functions ##
 
-<a name="api-sg-getPointsDataBySeries"></a>
-**`SimpleGraph.getPointsDataBySeries(seriesName)`** : Get point data series by name.
+<a name="getPointsDataBySeries">#</a> *sg*.**getPointsDataBySeries**(*seriesName*)
 
-<table>
+Get point data series by name.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -289,12 +382,13 @@
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](./defs.md#api-sg-defs-pointdata).
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](./defs.md#defs-pointdata).
 
-<a name="api-sg-getPointCoordinatesBySeries"></a>
-**`SimpleGraph.getPointCoordinatesBySeries(seriesName)`** : Get point coordinates by data series name.
+<a name="getPointCoordinatesBySeries">#</a> *sg*.**getPointCoordinatesBySeries**(*seriesName*)
 
-<table>
+Get point coordinates by data series name.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -307,10 +401,11 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `number[][]` - Array of point coordinates.
 
-<a name="api-sg-getLinesDataBySeries"></a>
-**`SimpleGraph.getLinesDataBySeries(seriesName)`** : Get line data series by name.
+<a name="getLinesDataBySeries">#</a> *sg*.**getLinesDataBySeries**(*seriesName*)
 
-<table>
+Get line data series by name.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -321,13 +416,12 @@
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](./defs.md#api-sg-defs-linedata).
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](./defs.md#defs-linedata).
 
 
-<a name="api-sg-getAreasDataBySeries"></a>
-**`SimpleGraph.getAreasDataBySeries(seriesName)`** : Get area data series by name.
+<a name="getAreasDataBySeries">#</a> *sg*.**getAreasDataBySeries**(*seriesName*) Get area data series by name.
 
-<table>
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -338,14 +432,4 @@
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](./defs.md#api-sg-defs-areadata).
-
-
-<style>
-  table { border-collapse: collapse; font-size: 0.9em; margin-left: 2.5em; }
-  th { text-align: left; background-color: #bbb; }
-  td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
-  td table { font-size: 1em; margin: 0.2em; width: 100%; }
-  td table th { background-color: #d6d6d6; border-color: #ddd; }
-  td table td { background-color: #fff; border-color: #ddd; }
-</style>
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](./defs.md#defs-areadata).

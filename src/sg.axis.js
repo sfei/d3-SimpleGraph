@@ -1,32 +1,5 @@
 export default function(SimpleGraph) {
-    /**
-     * Set axes. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph
-     * on calling this.
-     * @param {Object} [axisOptions] -Dictionary of axis options per axes (keys being x, y, and optionally, y2).
-     * @param {Object} [axisOptions.style={fill:"none",'stroke-width':0.5,stroke:'black'}] - Shared styles for 
-     *        both axes stored as key-value pairs where each key is the name of an appropriate style.
-     * @param {Object} [axisOptions.x] - X-axis options object (further expanded below).
-     * @param {Object} [axisOptions.y] - Y-axis options object (same as expanded x-axis options below, so not 
-     *        duplicated).
-     * @param {Object} [axisOptions.y2] - Second y-axis options object (same as expanded x-axis options below, so 
-     *        not duplicated).
-     * @param {string} [axisOptions.x.format=".0f"] - Number format for tick labels.
-     * @param {number} [axisOptions.x.min=0] - Minimum value on axis 
-     * @param {number} [axisOptions.x.max=100] - Maximum value on axis.
-     * @param {string} [axisOptions.x.label="x-value"] - Axis label.
-     * @param {Object} [axisOptions.x.scale=d3.scaleLinear] - Optional class for scale type. Must be d3 scale.
-     * @param {Object} [axisOptions.x.logBase=10] - Optional base number if using logarithmic scale.
-     * @param {number[]} [axisOptions.x.tickValues] - Specific values on x-axis to create tick marks on (this 
-     *        will take priority over axisOptions.x.ticks if both are supplied).
-     * @param {number} [axisOptions.x.ticks] - Number of evenly spaced tick intervals on x-axis to create (due 
-     *        to nature of axis, may not always create exactly this amount but will attempt to).
-     * @param {Object} [axisOptions.x.grid] - Optional dictionary of axis-grid options.
-     * @param {number[]} [axisOptions.x.grid.tickValues] - Specific values on x-axis grid to create tick marks on
-     *        (this will take priority over axisOptions.x.grid.ticks if both are supplied).
-     * @param {number} [axisOptions.x.grid.ticks] - Number of evenly spaced tick intervals on x-axis grid to 
-     *        create (due to nature of axis, may not always create exactly this amount but will attempt to).
-     * @memberof SimpleGraph 
-     */
+
     SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
         if(!axisOptions)        { axisOptions = {}; }
         if(!axisOptions.x)      { axisOptions.x = {}; }
@@ -34,19 +7,11 @@ export default function(SimpleGraph) {
         if(!axisOptions.styles) { axisOptions.styles = {}; }
         
         // default axis styles
-        this.axisStyles = axisOptions.style;
-        if(!this.axisStyles) {
-            this.axisStyles = {};
-        }
-        if(!this.axisStyles.fill) {
-            this.axisStyles.fill = "none";
-        }
-        if(!this.axisStyles["stroke-width"]) {
-            this.axisStyles["stroke-width"] = 0.5;
-        }
-        if(!this.axisStyles.stroke) {
-            this.axisStyles.stroke = "black";
-        }
+        this.axisStyles                 = axisOptions.style;
+        this.axisStyles                 = this.axisStyles || {};
+        this.axisStyles.fill            = this.axisStyles.fill || "none";
+        this.axisStyles["stroke-width"] = this.axisStyles["stroke-width"] || 0.5;
+        this.axisStyles.stroke          = this.axisStyles.stroke || "black";
         
         // loop per axis to remove redundancies
         var axes = ["x", "y", "y2"];
@@ -55,7 +20,7 @@ export default function(SimpleGraph) {
             var a = axes[i];
             if(!axisOptions[a]) {
                 // if no second y-axis, just skip
-                if(a === "y2") { continue; }
+                if(a === "y2") continue;
                 axisOptions[a] = {};
             }
             if(!axisOptions[a].scale) {
@@ -220,20 +185,6 @@ export default function(SimpleGraph) {
         return this;
     };
 
-    /**
-     * (Re)draw axes on graph.
-     * @param {string} [labelPosition="outside center"] - Keywords for the label positions on each axis. Keywords 
-     *        include 'inside' or 'outside' for the position of both axis labels either inside or outside of the 
-     *        axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right'
-     *        to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement
-     *        of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call 
-     *        of "center top" would first center both labels, then move the y-axis label to the top.
-     * @param {string} [xAxisPosition="bottom"] - Placement option of the x-axis, allowing you to draw the x-axis 
-     *        line and labels on top or bottom.
-     * @param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap
-     *        with the tick marks. However you may specify and additional margin here.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.drawAxes = function(labelPosition, xAxisPosition, axisLabelMargin) {
         if(!xAxisPosition) { 
             xAxisPosition = "bottom"; 

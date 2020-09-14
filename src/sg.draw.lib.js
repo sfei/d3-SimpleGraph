@@ -1,4 +1,5 @@
 export default function(SimpleGraph) {
+    
     SimpleGraph.prototype._findIntercept = function(f, x1, x2, y2Axis) {
         var y1 = f(x1), y2 = f(x2);
         var breakValue, increasing;

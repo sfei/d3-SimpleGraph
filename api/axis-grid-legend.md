@@ -1,10 +1,14 @@
-<a name="api-sg-functions-axis-grid-legend"></a>
-## Axis, Grid, and Legend Functions ##
+## Axis, grid, and legend functions ##
 
-<a name="api-sg-resetAxisOptions"></a>
-**`SimpleGraph.resetAxisOptions(axisOptions)`** : Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
+#### Axis and grid ####
 
-<table>
+There are three fixed axes available: the mandatory x and y axes, and an optional y2 axis. Axes are handled as a dictionary of [axis options](./defs.md#axis-options), to be enacted once drawing the axis.
+
+<a name="resetAxisOptions">#</a> *sg*.**resetAxisOptions**(*axisOptions*)
+
+Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
+
+<table style="font-size:0.9em;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -17,13 +21,13 @@
         <h5>Properties</h5>
         <table>
           <tr><th>Name</th><th>Description</th></tr>
-          <tr><td>x</td><td>Literal of x-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td></tr>
-          <tr><td>y</td><td>Literal of y-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td></tr>
-          <tr><td>y2</td><td>Optional literal of y2-Axis options (see <a href="#api-sg-defs-axisoptions">Axis Options</a>).</td></tr>
+          <tr><td>x</td><td>Literal of x-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td></tr>
+          <tr><td>y</td><td>Literal of y-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td></tr>
+          <tr><td>y2</td><td>Optional literal of y2-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td></tr>
           <tr>
             <td>styles</td>
             <td>
-              Optional key-value object of shared axis styles. Defaults to fill="none", stroke="black", and stroke-width=0.5.
+              Optional key-value object of shared axis styles. Defaults to `fill="none"`, `stroke="black"`, and `'stroke-width'=0.5`.
             </td>
           </tr>
         </table>   
@@ -34,8 +38,9 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-drawAxes"></a>
-**`SimpleGraph.drawAxes([labelPosition[, xAxisPosition[, axisLabelMargin]]])`** : Redraws the axes on the graph.
+<a name="drawAxes">#</a> *sg*.**drawAxes**([*labelPosition*[, *xAxisPosition*[, *axisLabelMargin*]]])
+
+Redraws the axes on the graph.
 
 <table>
   <tbody>
@@ -56,8 +61,9 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-drawGrid"></a>
-**`SimpleGraph.drawGrid([style])`** : Draw grid. If grid already exists, redraws it.
+<a name="drawGrid">#</a> *sg*.**drawGrid**([*style*])
+
+Draw grid. If grid already exists, redraws it.
 
 <table>
   <tbody>
@@ -72,13 +78,17 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeGrid"></a>
-**`SimpleGraph.removeGrid()`** : Remove grid.
+<a name="removeGrid">#</a> *sg*.**removeGrid**()
+
+Removes grid.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-drawLegend"></a>
-**`SimpleGraph.drawLegend(position[, anchor[, bgstyle[, itemsPerColumn[, rowHeight[, exclude]]]]])`** : Draw the legend onto the graph. If legend already exists, will redraw it.
+#### Legend ####
+
+<a name="drawLegend">#</a> *sg*.**drawLegend**(*position*[, *anchor*[, *bgstyle*[, *itemsPerColumn*[, *rowHeight*[, *exclude*]]]]])`**
+
+Draw the legend onto the graph. If legend already exists, will redraw it.
 
 <table>
   <tbody>
@@ -104,13 +114,3 @@
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-
-<style>
-  table { border-collapse: collapse; font-size: 0.9em; margin-left: 2.5em; }
-  th { text-align: left; background-color: #bbb; }
-  td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
-  td table { font-size: 1em; margin: 0.2em; width: 100%; }
-  td table th { background-color: #d6d6d6; border-color: #ddd; }
-  td table td { background-color: #fff; border-color: #ddd; }
-</style>

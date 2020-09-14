@@ -1,10 +1,14 @@
-<a name="api-sg-functions-color-category"></a>
-## Color/Category Functions ##
+## Color category functions ##
 
-<a name="api-sg-getColorBySeriesName"></a>
-**`SimpleGraph.getColorBySeriesName(name, create)`** : Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
+Color handling is handled via two layers. At the bottom (the default), the a [D3 color scale](https://github.com/d3/d3-scale-chromatic) (created in constructor, defaulting to `d3.scaleOrdinal(d3.schemeCategory10)`). You can manipulate this directly via the member variable `sg.color`. Above this, you may set overriding values via [setSeriesColor](#setSeriesColor)().
 
-<table>
+Colors are based on series names, which must be provided with all data added to the SimpleGraph instance (see [adding and manipulating data](./data.md)).
+
+<a name="getColorBySeriesName">#</a> *sg*.**getColorBySeriesName**(*name*, *create*)
+
+Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -20,10 +24,11 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Color value, or null.
 
-<a name="api-sg-resetColorScale"></a>
-**`SimpleGraph.resetColorScale(colorScale)`** : Reset domain on color scale, or replace with provided.
+<a name="resetColorScale">#</a> *sg*.**resetColorScale**(*colorScale*)
 
-<table>
+Reset domain on color scale, or replace with provided.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -36,10 +41,11 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-setSeriesColor"></a>
-**`SimpleGraph.setSeriesColor(series, color)`** : Sets a custom color (overriding the color scale) for a given series name.
+<a name="setSeriesColor">#</a> *sg*.**setSeriesColor**(*series*, *color*)
 
-<table>
+Sets a custom color (overriding the color scale) for a given series name.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -55,10 +61,11 @@
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeSeriesColor"></a>
-**`SimpleGraph.removeSeriesColor(series)`** : Remove custom color for series name.
+<a name="removeSeriesColor">#</a> *sg*.**removeSeriesColor**(*series*)
 
-<table>
+Remove custom color for series name.
+
+<table style="font-size:0.9em;">
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>

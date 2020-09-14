@@ -6,26 +6,6 @@
  ************************************************************************************************************/
 import * as d3 from 'd3';
 
-/**
- * Create a SimpleGraph instance and draw an empty graph.
- * @param {Object} [options] - Object literal of options (all optional).
- * @param {string} [options.container='body'] - The DOM element query/selector to the element to append the 
- *        graph to.
- * @param {number} [options.width=600] - Width value.
- * @param {number} [options.height=600] - Height value).
- * @param {Object} [options.margins={top:20,right:20,bottom:40,left:40}] - Margins for graph within 
- *        overarching SVG (e.g. with all default values, the width of the actual graph will be 540px in a 
- *        600px wide SVG element).
- * @param {d3.scale} [options.colorScale=d3.scaleOrdinal(d3.schemeCategory10)] - Optional color scale to use 
- *        with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal 
- *        scale.
- * @param {boolean} [allowDrawBeyondGraph=false] - Allow drawing beyond graph. If true, all data will be drawn 
- *        as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be 
- *        cut off where they extend past the x/y-axis ranges.
- * @param {Object} [options.axis] - Optional dictionary of axis options. See resetAxisOptions() for details.
- * @param {Object} [options.styles] - Optional styles applied to SVG element.
- * @constructor
- */
 function SimpleGraph(options) {
     // default options
     if(!options)             { options = {}; }
@@ -76,37 +56,19 @@ function SimpleGraph(options) {
 //************************************************************************************************************
 // Basic Functions
 //************************************************************************************************************
-/**
- * Get the SVG element
- * @returns {object} the D3 SVG element
- * @memberof SimpleGraph 
- */
 SimpleGraph.prototype.getSvgElement = function() {    
     return this.svg;
 };
 
-/**
- * Get the SVG 'g' (graphic) element
- * @returns {object} the D3 SVG element
- * @memberof SimpleGraph 
- */
 SimpleGraph.prototype.getSvgGraphic = function() {    
     return this.svgGraph;
 };
 
-/**
- * Remove the SVG graph from its container, but preserve the object.
- * @memberof SimpleGraph 
- */
 SimpleGraph.prototype.remove = function() {
     this.svg.remove();
     return this;
 };
 
-/**
- * Remove and destroy this object.
- * @memberof SimpleGraph 
- */
 SimpleGraph.prototype.destroy = function() {
     this.svg.remove();
     this.svg = null;
@@ -149,17 +111,15 @@ import sgDrawLib from "./sg.draw.lib";
 import sgDraw from "./sg.draw";
 sgDrawLib(SimpleGraph, d3);
 sgDraw(SimpleGraph, d3);
-// Tooltip functions
+// Interactivity functions
 import sgTooltip from "./sg.tooltip";
+import sgHighlight from "./sg.higlight";
 sgTooltip(SimpleGraph, d3);
+sgHighlight(SimpleGraph, d3);
 
 //************************************************************************************************************
 // Misc Functions
 //************************************************************************************************************
-/**
- * Clear all data.
- * @memberof SimpleGraph 
- */
 SimpleGraph.prototype.clearAllData = function() {
     this.clearPointsData();
     this.clearLinesData();
@@ -167,59 +127,6 @@ SimpleGraph.prototype.clearAllData = function() {
     return this;
 };
 
-// Highlight functions (Currently only implemented for points)
-SimpleGraph.prototype.highlightPoints = function(series, validationCallback, size, fill, stylesDict) {
-    var selectQuery = ".sg-point";
-    if(series) { selectQuery += "[series='" + series + "']"; }
-    var self = this;
-    this.svgGraph.selectAll(selectQuery).each(function(d, i, s) {
-        if(validationCallback && !validationCallback(d)) return;
-        var xScale = self.x.scale, 
-            yScale = d.y2 ? self.y2.scale : self.y.scale;
-        if(!size) {
-            size = d.wasNull ? 0 : (typeof d.pointsize === "function" ? d.pointsize() : d.pointsize);
-        };
-        if(!fill) {
-            fill = d.wasNull ? "none" : self.getColorBySeriesName(d.series, true);
-        };
-        var realSize = size ? size : d.pointsize;
-        if(typeof realSize === "function") {
-            realSize = realSize.call(d);
-        }
-        var rect = self.svgGraph.append("rect")
-            .attr("class", "sg-point-highlight")
-            .attr("width", realSize)
-            .attr("height", realSize)
-            .attr("x", xScale(d.x)-realSize/2.0)
-            .attr("y", yScale(d.y)-realSize/2.0)
-            .attr("transform", "rotate(45," + xScale(d.x) + "," + yScale(d.y) + ")")
-            .style("fill", fill);
-        if(stylesDict) {
-            for(var sKey in stylesDict) {
-                rect.style(sKey, stylesDict[sKey]);
-            }
-        }
-    });
-    return this;
-};
-
-SimpleGraph.prototype.removeHighlightPoints = function() {
-    this.svgGraph.selectAll(".sg-point-highlight").remove();
-    return this;
-};
-
-SimpleGraph.prototype.removeHighlights = function() {
-    this.removeHighlightPoints();
-    return this;
-};
-
-/**
- * Save graph as a PNG. Note, in IE, canvg library is required due to security error. This library is not 
- * packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, 
- * function will simply error on IE.
- * @param {string} [pngName] - Default name to save png.
- * @memberof SimpleGraph 
- */
 SimpleGraph.prototype.saveAsPng = function(pngName) {
     if(!pngName) { pngName = "graph.png"; }
     if(!pngName.toLowerCase().endsWith(".png")) { pngName += ".png"; }

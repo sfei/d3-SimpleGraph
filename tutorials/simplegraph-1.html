@@ -213,16 +213,15 @@ graph.drawLines();"
 	// for fun, size scales with score (that is, y-value)
 	size: function() {
       return 4 + this.y/15;
-	}, 
-	// a map of shapes by series names
-	shape: {
-	  'Made-Up River': 'circle', 
-	  'Fake Lagoon': 'triangle', 
-	  'Mirage': 'diamond', 
-	  'YMCA': 'triangle-down'
 	}
   }
 );
+, 
+// set shapes by data series
+graph.setPointSeriesShape('Made-Up River', 'circle');
+graph.setPointSeriesShape('Fake Lagoon', 'triangle');
+graph.setPointSeriesShape('Mirage', 'diamond');
+graph.setPointSeriesShape('YMCA', 'triangle-down');
 graph.drawPoints();"
           onclick="openHelp(this)">
         Adding Points

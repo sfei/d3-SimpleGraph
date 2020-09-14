@@ -1,14 +1,5 @@
 export default function(SimpleGraph, d3) {
-    /**
-     * Add line data series as an array of coordinates.
-     * @param {string} name - series name
-     * @param {Array[]} lineCoordinates - array of x,y coordinates.
-     * @param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
-     *        the resulting SVG element's CSS style.
-     * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
-     * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
-     * @memberof SimpleGraph 
-     */
+
     SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation, y2Axis) {
         if(!lineCoordinates || lineCoordinates.length === 0) {
             return this;
@@ -39,20 +30,6 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    /**
-     * Add line data series as a function.
-     * @param {string} name - Series name
-     * @callback lineFunction - Callback function such that function(x) returns y.
-     * @param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
-     *        the resulting SVG element's CSS style.
-     * @param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 
-     *        20 pixels of width if not provided and if provided enforces minimum of 2).
-     * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
-     * @param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied 
-     *        will still be truncated to the min-max of the graph if it extends past.
-     * @param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style, resolution, interpolation, xRange, y2Axis) {
         if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
             return this;
@@ -84,16 +61,6 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    /**
-     * Interpolate lines for each data series in the points data. If called multiple times, will recalculate the 
-     * lines and replace existing data.
-     * @param {Object} [style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as 
-     *        the resulting SVG element's CSS style.
-     * @param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
-     * @param {string} [handleOverlap="average"] - If there are 2 or more points overlapped for a given x-value, 
-     *        how to handle the y-value for the line. Options are "average", "median", "highest", and "lowest".
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, handleOverlap) {
         if(!this.points || this.points.length === 0) {
             this.pointLines = null;
@@ -209,30 +176,6 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    /** 
-     * @typedef LineData
-     * @type Object
-     * @property {string} series - The series name this line belongs to.
-     * @property {callback} lineFunction - The line function defining this line (or null if the line was provided 
-     *           as a series of coordinates.
-     * @property {number[][]} coords - The line as a series of coordinates (or null if the line was provided as a 
-     *           function.
-     * @property {number} resolution - If the line was defined by a function, the resolution to draw the line, 
-     *           i.e. the number of points to draw then interpolate a line through, or null if using default 
-     *           settings.
-     * @property {number[]} xRange - The minimum and maximum x-values the drawn line may not exceed, or null if 
-     *           there are no limits.
-     * @property {boolean} y2 - If true, the y-values of the line correlates to the y2 axis.
-     * @property {Object} style - A dictionary of styles to apply to the line. Even if no style was provided with 
-     *           the data, a default 'stroke' style value provided.
-     * @property {string} interpolate - The interpolation type (now curve factory) when drawing the line.
-     */
-    /**
-     * Grab all line data by series names.
-     * @param {string} seriesName - Name of the series for which you want to grab data.
-     * @returns {LineData[]} Array of line data.
-     * @memberof SimpleGraph 
-     */
     SimpleGraph.prototype.getLinesDataBySeries = function(seriesName) {
         var lineData = [];
         if(this.lines) {
@@ -244,11 +187,7 @@ export default function(SimpleGraph, d3) {
         }
         return lineData;
     };
-
-    /**
-     * Clear all lines data.
-     * @memberof SimpleGraph 
-     */
+    
     SimpleGraph.prototype.clearLinesData = function() {
         this.lines = null;
         this.pointLines = null;

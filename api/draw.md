@@ -1,41 +1,47 @@
-<a name="api-sg-functions-draw-data"></a>
-## Draw Data Functions ##
+## Drawing data ##
 
-<a name="api-sg-drawPoints"></a>
-**`SimpleGraph.drawPoints()`** : (Re)draw all points data on graph. Points will have class `.sg-point`.
+After adding data, it must be explicitly drawn. As currently handled, data is reorganized and formatted before being sent to D3 to create elements. As such, data bindings are not tied to any persisting member variables of the SimpleGraph instance.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+All data SVG nodes will be given the attribute `series`, which may be helpful in selecting or parsing the elements manually.
 
-<a name="api-sg-drawLines"></a>
-**`SimpleGraph.drawLines()`** : (Re)draw all points data on graph. Lines will have class `.sg-line` or `.sg-plotted-line`.
+<a name="drawPoints">#</a> *sg*.**drawPoints**()
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="api-sg-drawAreas"></a>
-**`SimpleGraph.drawAreas()`** : (Re)draw all area data on graph. Areas will have class `.plotted-areas`.
+(Re)draw all points data on graph. Points will have class `.sg-point`. Additionally, depending on shape drawn, will have additional class of `.sg-point-sd` (square/diamond), `.sg-point-cr` (circle), `.sg-point-tu` (triangle-up), or `.sg-point-td` (triangle-down).
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+<a name="drawLines">#</a> *sg*.**drawLines**()
 
-<a name="api-sg-functions-remove-graph"></a>
-## Remove From Graph Functions ##
-
-<a name="api-sg-removePoints"></a>
-**`SimpleGraph.removePoints()`** : Remove all drawn points on graph. Does not remove the underlying data.
+(Re)draw all points data on graph. Lines will have class `.sg-line` or `.sg-plotted-line`.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeLines"></a>
-**`SimpleGraph.removeLines()`** : Remove all drawn lines on graph. Does not remove the underlying data.
+<a name="drawAreas">#</a> *sg*.**drawAreas**()
+
+(Re)draw all area data on graph. Areas will have class `.plotted-areas`.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeAreas"></a>
-**`SimpleGraph.removeAreas()`** : Remove all drawn areas on graph. Does not remove the underlying data.
+<a name="removePoints">#</a> *sg*.**removePoints**()
+
+Remove all drawn points on graph. Does not remove the underlying data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="api-sg-removeAll"></a>
-**`SimpleGraph.removeAll()`** : Remove all drawn data series on graph. Does not remove the underlying data.
+<a name="removeLines">#</a> *sg*.**removeLines**()
+
+Remove all drawn lines on graph. Does not remove the underlying data.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="removeAreas">#</a> *sg*.**removeAreas**()
+
+Remove all drawn areas on graph. Does not remove the underlying data.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="removeAll">#</a> *sg*.**removeAll**()
+
+Remove all drawn data series on graph. Does not remove the underlying data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.

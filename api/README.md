@@ -4,25 +4,24 @@
 
 ----------
 
-* <a href="#api-sg">Constructor</a>
-* <a href="#api-sg-properties">Properties</a>
-* <a href="api/misc.md">Misc. functions</a>
-* <a href="api/axis-grid-legend.md">Axis, hrid, and legend</a>
-* <a href="api/color.md">Color category functions</a>
-* <a href="api/data.md">Adding and manipulating data</a>
-* <a href="api/draw.md">Drawing data onto the graph</a>
-* <a href="api/interactivity.md">Adding interactive functions</a>
-* <a href="api/defs">Definitions</a>
+* [Constructor](#constructor)
+* [Properties](#properties)
+* [Misc. functions](./misc.md)
+* [Axis, grid, and legend](./axis-grid-legend.md)
+* [Color category functions](./color.md)
+* [Adding and manipulating data](./data.md)
+* [Drawing data onto the graph](./draw.md)
+* [Adding interactive features](./interactivity.md)
+* [Definitions](./defs.md)
 
 
-<a name="api-sg"></a>
 ## Constructor ##
 
-**`new SimpleGraph(options)`**
+new **SimpleGraph**(*options*)
 
 #### Options ####
 
-<table>
+<table style="font-size:0.9em;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -64,10 +63,10 @@
       <td>height</td><td>number</td><td>Total graph height (including margins). Defaults to 400.</td>
     </tr>
     <tr>
-      <td>allowDrawBeyondGraph</td><td>boolean</td><td>Allow drawing beyond graph. If true, all data will be drawn  as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut off where they extend past the x/y-axis ranges.</td>
+      <td>allowDrawBeyondGraph</td><td>boolean</td><td>Allow drawing beyond graph. If true, all data will be drawn as supplied. If false, points beyond the x/y-axis range will not be drawn and lines/areas will be cut off where they extend past the x/y-axis ranges.</td>
     </tr>
     <tr>
-      <td>colorScale</td><td>d3.scale</td><td> Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale. Defaults to d3.scaleOrdinal(d3.schemeCategory10).</td>
+      <td>colorScale</td><td>d3.scale</td><td> Optional color scale to use with data. If data series will have non-numeric identifiers, it should be a categorical or ordinal scale. Defaults to `d3.scaleOrdinal(d3.schemeCategory10)`.</td>
     </tr>
     <tr>
       <td>styles</td><td>object</td><td>Key-value pairs of additional CSS styles to apply to SVG.</td>
@@ -84,13 +83,13 @@
               <th>Name</th><th>Description</th>
             </tr>
             <tr>
-              <td>x</td><td>X-Axis options (see <a href="api/defs.md#api-sg-defs-axisoptions">Axis Options</a>).</td>
+              <td>x</td><td>X-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td>
             </tr>
             <tr>
-              <td>y</td><td>Y-Axis options (see <a href="pi/defs.md#api-sg-defs-axisoptions">Axis Options</a>).</td>
+              <td>y</td><td>Y-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td>
             </tr>
             <tr>
-              <td>y2</td><td>Y2-Axis options (see <a href="pi/defs.md#api-sg-defs-axisoptions">Axis Options</a>).</td>
+              <td>y2</td><td>Y2-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td>
             </tr>
             <tr>
               <td>styles</td>
@@ -112,18 +111,17 @@
 </table>
 
 
-<a name="api-sg-properties"></a>
 ## Properties ##
 
 A few (but not comprehensive) list of the important variables in an initialized SimpleGraph object are below:
 
 * `svg` - The D3 wrapper for the SVG node
-* `svgGraph` - The D3 wrapper for the \<g\> node in the SVG
+* `svgGraph` - The D3 wrapper for the \<g\> node wrapping the graph (resized and positions to fit margins) in the SVG
 * `x` - The x-axis (See below for details)
 * `y` - The y-axis (See below for details)
 * `y2` - The second y-axis (See below for details), if it exists
+* `color` - The base/default [D3 color scale](https://github.com/d3/d3-scale-chromatic).
 
-<a name="api-axis"></a>
 #### Axis ####
 
 * `axis` - The main D3 axis object for this axis
@@ -137,13 +135,3 @@ A few (but not comprehensive) list of the important variables in an initialized 
 * `min` - The axis min value
 * `max` - The axis max value
 * `scale` - The D3 scale object for this axis
-
-
-<style>
-  table { border-collapse: collapse; font-size: 0.9em; margin-left: 2.5em; }
-  th { text-align: left; background-color: #bbb; }
-  td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
-  td table { font-size: 1em; margin: 0.2em; width: 100%; }
-  td table th { background-color: #d6d6d6; border-color: #ddd; }
-  td table td { background-color: #fff; border-color: #ddd; }
-</style>

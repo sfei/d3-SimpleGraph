@@ -1,9 +1,8 @@
 ## Definitions ##
 
-<a name="api-sg-defs-axisoptions"></a>
 #### Axis Options ####
 
-<table>
+<table style="font-size:0.9em;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -77,10 +76,9 @@
   </tbody>
 </table>
 
-<a name="api-sg-defs-pointdata"></a>
 #### Point Data ####
 
-<table>
+<table style="font-size:0.9em;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -103,10 +101,9 @@
   </tbody>
 </table>
 
-<a name="api-sg-defs-linedata"></a>
 #### Line Data ####
 
-<table>
+<table style="font-size:0.9em;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -139,10 +136,9 @@
 </table>
 
 
-<a name="api-sg-defs-areadata"></a>
 #### Area Data ####
 
-<table>
+<table style="font-size:0.9em;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -174,10 +170,11 @@
   </tbody>
 </table>
 
-<a name="api-sg-defs-tooltip"></a>
 #### Tooltip Text Function ####
+
 Handles the text appearing in the tooltip. Expected to return text/html. The following parameters are passed to provided to pull relevant data. 
-<table>
+
+<table style="font-size:0.9em;">
   <tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
@@ -196,14 +193,3 @@ Handles the text appearing in the tooltip. Expected to return text/html. The fol
     </tr>
   </tbody>
 </table>
-
-
-
-<style>
-  table { border-collapse: collapse; font-size: 0.9em; margin-left: 2.5em; }
-  th { text-align: left; background-color: #bbb; }
-  td h5 { margin: 0.4em 0.2em; font-size: 1.05em; font-style: italic; }
-  td table { font-size: 1em; margin: 0.2em; width: 100%; }
-  td table th { background-color: #d6d6d6; border-color: #ddd; }
-  td table td { background-color: #fff; border-color: #ddd; }
-</style>
