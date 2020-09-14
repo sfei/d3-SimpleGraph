@@ -1,7 +1,23 @@
 {
-    "name": "d3-simplegraph",
-    "main": "d3.simplegraph.min.js",
-    "dependencies": {
-        "node-minify": "~2.0.0"
-    }
+  "name": "@lawrencesim/interaction-handler",
+  "version": "3.0.0",
+  "author": "Lawrence Sim",
+  "license": "LGPL-3.0",
+  "main": "interaction-handler.min.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sfei/d3-SimpleGraph"
+  },
+  "homepage": "https://github.com/sfei/d3-SimpleGraph",
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.41.1",
+    "webpack-cli": "^3.3.12",
+    "d3": "^6.1.1"
+  }
 }

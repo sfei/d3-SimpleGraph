@@ -1,0 +1,1 @@
+export default ["diamond", "circle", "square", "triangle", "triangle-up", "triangle-down"];

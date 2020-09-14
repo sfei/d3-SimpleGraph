@@ -3,7 +3,7 @@
   <head>
     <title>D3 SimpleGraph Introduction</title>
     <meta charset="UTF-8">
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="../d3.simplegraph.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <style>
@@ -201,17 +201,26 @@ graph.drawLines();"
             <p class='param'>@param {string} dataPointName - The key name in each data object to retrieve the data point or data series name and label. Optional. If not supplied, or it cannot find the given key in the data object, defaults to the index position in array of points.</p>
             <p class='param'>@param {string} xValueName - The key name in each data object to retrieve the x-value.</p>
             <p class='param'>@param {string} yValueName - The key name in each data object to retrieve the y-value.</p>
-            <p class='param'>@param {string[]} [additionalDataKeys] - Additional keys for data you want to store for each point.</p>
-            <p class='param'>@param {number|callback} [size=10] - The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied).</p>
-            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
+            <p class='param'>@param {Object} [options] - Additional options (see API for full list).</p>"
           sampleCode="graph.addPointsData(
   scores,           // example data supplied with this page
   'name',           // the key name for the data series
   'age',            // the key name for the x-value
   'score',          // the key name for the y-value
-  ['wetlandclass'], // additional keys to store with the D3 data
-  function() {      // for fun, size scales with score (that is, y-value)
+  {
+	// additional keys to store with the D3 data (comes in handy later)
+    additionalDataKeys: ['wetlandclass'], 
+	// for fun, size scales with score (that is, y-value)
+	size: function() {
       return 4 + this.y/15;
+	}, 
+	// a map of shapes by series names
+	shape: {
+	  'Made-Up River': 'circle', 
+	  'Fake Lagoon': 'triangle', 
+	  'Mirage': 'diamond', 
+	  'YMCA': 'triangle-down'
+	}
   }
 );
 graph.drawPoints();"
@@ -317,19 +326,6 @@ graph.drawLegend(
           Data used for points are as follows:
         </p>
         <pre><code id='show-data'></code></pre>
-        <p style="margin-top:20px;">
-          <b>Known Issues:</b><br />
-          - None, my code is perfect.<br />
-        </p>
-        <p style="margin-top:20px;">
-          <b>Future Updates(?):</b><br />
-          - Choose order on legend items (and/or omitt items).<br />
-          - Custom style for points.<br />
-          - Alternative shapes for points (currently only diamonds).<br />
-          - Potentially carrying over tooltip functionality on redrawing elements.<br />
-          - Highlight animations/styles.<br />
-          - Hover functionality with legend.<br />
-        </p>
         <p style="margin-top:20px;">
           &gt; <a href="simplegraph-2.html">For the next tutorial with some additional functionalities run down, click here.</a>
         <p>
