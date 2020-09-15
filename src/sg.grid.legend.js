@@ -31,7 +31,7 @@
         return this;
     };
     
-    SimpleGraph.prototype.drawLegend = function(position, anchor, bgstyle, itemsPerColumn, rowHeight, exclude) {
+    SimpleGraph.prototype.drawLegend = function(position, options) {
         this.svg.selectAll(".sg-legend").remove();
         
         if(!position) {
@@ -44,16 +44,17 @@
                 position.y = (position[1] !== undefined && typeof position[1] === "number") ? position[1] : 0;
             }
         }
-        if(!anchor) {
-            anchor = "left";
-        }
-        
+
+        options = options || {};
+        let anchor = options.anchor || "left", 
+            bgstyle = options.bgstyle || {}, 
+            exclude = options.exclude || [];
+
         if(!exclude) { exclude = []; }
         if(typeof exclude === "string") { exclude = exclude.trim().split(/\s+/); }
         for(var i = 0; i < exclude.length; i++) { exclude[i] = exclude[i].toLowerCase(); }
         
         // default styles for legend container (padding is set via explicit sides)
-        if(!bgstyle) { bgstyle = {}; }
         if(bgstyle.padding) {
             var pads = (typeof bgstyle.padding === "string") ? bgstyle.padding.split(" ") : [bgstyle.padding];
             if(pads.length === 1) {
@@ -91,26 +92,26 @@
         
         // create legend graphic and background (note, added to top SVG not svgGraph)
         var legend = this.svg.append("g")
-            .attr("class", "sg-legend")
-            .attr("transform", "translate(" + position.x + "," + position.y + ")");
-        var legendBg = legend.append("rect")
-            .attr("class", "sg-legend-bg")
-            .attr("x", 0)
-            .attr("y", 0);
+                .attr("class", "sg-legend")
+                .attr("transform", "translate(" + position.x + "," + position.y + ")"), 
+            legendBg = legend.append("rect")
+                .attr("class", "sg-legend-bg")
+                .attr("x", 0)
+                .attr("y", 0);
         for(var skey in bgstyle) {
             if(!skey.startsWith('padding')) {
                 legendBg.style(skey, bgstyle[skey]);
             }
         }
         
-        // column parameters
-        if(!itemsPerColumn) { itemsPerColumn = 0; }
-        if(!rowHeight) { rowHeight = 24; }
-        var columnNumber = 0;
-        var columnItemCount = 0;
-        // running position for next item
-        var yOffset = bgstyle['padding-top'];
-        var xOffset = bgstyle['padding-left'];
+            // column parameters
+        var itemsPerColumn  = options.itemsPerColumn || 0, 
+            rowHeight       = options.rowHeight || 24, 
+            columnNumber    = 0,
+            columnItemCount = 0, 
+            // running position for next item
+            yOffset = bgstyle['padding-top'], 
+            xOffset = bgstyle['padding-left'];
         
         // local function checks for new column and adjusts position if so
         function addAndCheckColumn() {

@@ -1,90 +1,67 @@
 export default function(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.addLineDataAsCoordinates = function(name, lineCoordinates, style, interpolation, y2Axis) {
-        if(!lineCoordinates || lineCoordinates.length === 0) {
+    SimpleGraph.prototype.addLineDataAsCoordinates = function(name, coords, options) {
+        if(!coords || coords.length === 0) {
             return this;
         }
-        if(!this.lines) {
-            this.lines = [];
-        }
-        //lineCoordinates.sort(function(a, b) { return a[0] - b[0]; });
-        // default styles
-        if(!style) {
-            style = {};
-        }
+        this.lines = this.lines || [];
+        //coords.sort(function(a, b) { return a[0] - b[0]; });
+        // defaults
+        options = options || {};
+        var style = options.style || {};
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
             style['stroke-width'] = 1.5;
         }
-        if(!interpolation) {
-            interpolation = d3.curveLinear;
-        }
         this.lines.push({
-            series: name, 
+            series:       name, 
             lineFunction: null, 
-            coords: lineCoordinates, 
-            y2: y2Axis ? true : false, 
-            style: style, 
-            interpolate: interpolation
+            coords:       coords.map(c => [...c]), 
+            xRange:       null, 
+            y2:           !!options.y2Axis, 
+            style:        style, 
+            interpolate:  options.interpolation || d3.curveLinear, 
+            _bind:        {coords: coords}
         });
-        
         return this;
     };
 
-    SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, style, resolution, interpolation, xRange, y2Axis) {
+    SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, xRange, options) {
         if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
             return this;
         }
-        // default styles
-        if(!style) {
-            style = {};
-        }
+        this.lines = this.lines || [];
+        // defaults
+        options = options || {};
+        var style = options.style || {};
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
             style['stroke-width'] = 1.5;
         }
-        if(!interpolation) {
-            interpolation = d3.curveLinear;
-        }
-        if(!this.lines) {
-            this.lines = [];
-        }
+        var interpolation = interpolation || d3.curveLinear;
         this.lines.push({
-            series: name, 
+            series:       name, 
             lineFunction: lineFunction, 
-            resolution: resolution, 
-            coords: null, 
-            xRange: xRange, 
-            y2: y2Axis ? true : false, 
-            style: style, 
-            interpolate: interpolation
+            coords:       null, 
+            xRange:       xRange ? [...xRange] : null, 
+            y2:           !!options.y2Axis, 
+            style:        style, 
+            interpolate:  options.interpolation || d3.curveLinear, 
+            _bind:        {xRange: xRange}
         });
-        
         return this;
     };
 
-    SimpleGraph.prototype.addLinesDataFromPoints = function(style, interpolation, handleOverlap) {
-        if(!this.points || this.points.length === 0) {
-            this.pointLines = null;
-            return this;
-        }
-        if(!handleOverlap) {
-            handleOverlap = 'average';
-        } else {
-            handleOverlap = handleOverlap.toLowerCase();
-        }
+    SimpleGraph.prototype.addLinesDataFromPoints = function(forSeries, options) {
+        if(!this.points || this.points.length === 0) return this;
+
+        options = options || {};
+        var handleOverlap = !options.handleOverlap ? 'average' : options.handleOverlap.toLowerCase();
         // default styles
-        if(!style) {
-            style = {};
-        }
+        var style = options.style || {};
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
             style['stroke-width'] = 1.5;
         }
         // can't specify color, will be taken from related point data series
-        if(style.stroke) {
-            delete style.stroke;
-        }
-        if(!interpolation) {
-            interpolation = d3.curveLinear;
-        }
+        if(style.stroke) delete style.stroke;
         // this multiple series of loops isn't pretty but necessary for flexible preprocessing
         // first organize points by data series
         var pointsBySeries = {};
@@ -97,78 +74,32 @@ export default function(SimpleGraph, d3) {
                 pointsBySeries[series] = {points: [this.points[i]]};
             }
         }
-        
+
+        // change forSeries to function
+        var checkSeries = function(s) { return true; };
+        if(forSeries) {
+            if(typeof forSeries === "function") {
+                checkSeries = forSeries;
+            } else if(typeof forSeries === "string") {
+                checkSeries = function(s) { return s === forSeries; };
+            } else if(Array.isArray(forSeries)) {
+                checkSeries = function(s) { return ~forSeries.indexOf(s); };
+            }
+        }
+
         // will be our array of point-connecting-lines
         this.pointLines = [];
 
-        // start looping
-        for(var series in pointsBySeries) {
-            var checkPoints = pointsBySeries[series].points;
-            var yAxis = pointsBySeries[series].y2 ? this.y2 : this.y;
-            // less than 2 points, skip
-            if(checkPoints.length < 2) {
-                continue;
-            }
-            // first sort in ascending order
-            checkPoints.sort(function(a, b) {
-                return a.x - b.x;
-            });
-            var lineCoords = [];
-            for(var i = 0; i < checkPoints.length; i++) {
-                var pointToAdd = checkPoints[i];
-                // always add point to line, will now do check beyond graph at drawing stage
-                // check is point overlaps another on x-position
-                var exists = false;
-                for(var j = 0; j < lineCoords.length; j++) {
-                    if(lineCoords[j][0] === pointToAdd.x) {
-                        exists = true;
-                        // if it exists, add to count and..
-                        if(handleOverlap === "median") {
-                            if(!Array.isArray(lineCoords[j][2])) {
-                                lineCoords[j][2] = [];
-                            }
-                            lineCoords[j][2].push(pointToAdd.y);
-                            lineCoords[j][2].sort();
-                            var medianIndex = (lineCoords[j][2].length > 1) ? Math.round(lineCoords[j][2].length/2)-1 : 0;
-                            lineCoords[j][1] = lineCoords[j][2][medianIndex];
-                        } else {
-                            lineCoords[j][2] += 1;
-                            if(handleOverlap === "average") {
-                                lineCoords[j][1] = (lineCoords[j][1]*(lineCoords[j][2]-1) + pointToAdd.y)/lineCoords[j][2];
-                            } else if(handleOverlap === "lowest") {
-                                if(pointToAdd.y < lineCoords[j][1]) {
-                                    lineCoords[j][1] = pointToAdd.y;
-                                }
-                            } else if(handleOverlap === "highest") {
-                                if(pointToAdd.y > lineCoords[j][1]) {
-                                    lineCoords[j][1] = pointToAdd.y;
-                                }
-                            } else {
-                                throw "Unknown handle overlap operation: " + handleOverlap;
-                            }
-                        }
-                        break;
-                    } else if(lineCoords[j] > pointToAdd.x) {
-                        // since this is assumed in ascending order
-                        break;
-                    }
-                }
-                // if no match found, add with count=1
-                if(!exists) {
-                    lineCoords.push([pointToAdd.x, pointToAdd.y, 1]);
-                }
-            }
-            // add after looping coords
+        for(let series in pointsBySeries) {
+            if(!checkSeries(series) || pointsBySeries[series].points.length < 2) continue;
+            var lineCoords = this._getPointLine(pointsBySeries[series].points, handleOverlap);
             if(lineCoords.length >= 2) {
                 this.pointLines.push({
-                    series: series, 
-                    lineFunction: null, 
-                    resolution: null, 
-                    coords: lineCoords, 
-                    xRange: null, 
-                    y2: pointsBySeries[series].y2, 
-                    interpolate: interpolation, 
-                    style: style
+                    series:      series, 
+                    coords:      lineCoords, 
+                    y2:          pointsBySeries[series].y2, 
+                    style:       style, 
+                    interpolate: options.interpolation || d3.curveLinear
                 });
             }
         }
@@ -176,21 +107,106 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.getLinesDataBySeries = function(seriesName) {
-        var lineData = [];
-        if(this.lines) {
-            for(var i = 0; i < this.lines.length; i++) {
-                if(this.lines[i].series === seriesName) {
-                    lineData.push(this.lines[i]);
+    SimpleGraph.prototype._getPointLine = function(points, handleOverlap) {
+        points.sort((a,b) => a.x - b.x);
+        var lineCoords = [];
+        for(let i = 0; i < points.length; ++i) {
+            var p = points[i], 
+                ys = [p.y], 
+                coords = [p.x, p.y], 
+                overlaps = false;
+            // accumlate overlaps
+            while(i+1 < points.length) {
+                p = points[i+1];
+                if(p.x === coords[0]) {
+                    overlaps = true;
+                    ys.push(p.y);
+                    ++i;
+                } else {
+                    // assuming sorted, so all equal values should be consequtive
+                    break;
                 }
             }
+            // add next line coordinate, processing overlaps as necessary
+            if(overlaps) {
+                if(~["mean", "average"].indexOf(handleOverlap)) {
+                    coords[1] = ys.reduce((a,v) => a+v);
+                } else {
+                    ys.sort();
+                    switch(handleOverlap) {
+                        case "lowest":
+                        case "min":
+                            coords[1] = ys[0];
+                            break;
+                        case "highest":
+                        case "max":
+                            coords[1] = ys[ys.length-1];
+                            break;
+                        case "median":
+                            coords[1] = ys[Math.floor(0.5*ys.length)];
+                            break;
+                        default:
+                            throw `Unknown handle overlap operation: ${handleOverlap}`;
+                    }
+                }
+            }
+            lineCoords.push(coords);
         }
-        return lineData;
+        return lineCoords;
     };
     
-    SimpleGraph.prototype.clearLinesData = function() {
-        this.lines = null;
-        this.pointLines = null;
+    SimpleGraph.prototype.clearLinesData = function(series) {
+        if(!series) {
+            this.lines = null;
+        } else {
+            this.lines = this.lines.filter(d => d.series !== series);
+        }
         return this;
     };
+    
+    SimpleGraph.prototype.clearPointLinesData = function(series) {
+        if(!series) {
+            this.pointLines = null;
+        } else {
+            this.pointLines = pointLines.lines.filter(d => d.series !== series);
+        }
+        return this;
+    };
+
+    SimpleGraph.prototype.getLinesDataBySeries = function(series) {
+        if(!this.lines) return [];
+        return this.lines
+            .filter(d => d.series === series)
+            .map(d => ({
+                series:       d.series, 
+                lineFunction: d.lineFunction, 
+                coords:       d.coords.map(c => [...c]), 
+                xRange:       [...d.xRange], 
+                y2:           d.y2, 
+                style:        d.style, 
+                interpolate:  d.interpolation
+            }));
+    };
+
+    SimpleGraph.prototype.updateLineInterpolation = function(series, interpolation) {
+        if(!this.lines) return this;
+        this.lines.forEach(d => {
+            if(d.series === series) d.interpolation = interpolation;
+        });
+        return this;
+    };
+
+    SimpleGraph.prototype.updateLinesData = function() {
+        if(!this.lines) return this;
+        this.lines.forEach(d => {
+            if(d._bind.xRange) {
+                d.xRange = [...d._bind.xRange];
+            }
+            if(d._bind.coords) {
+                d.coords = d._bind.coords.map(c => [...c]);
+            }
+        });
+        return this;
+    };
+
 }

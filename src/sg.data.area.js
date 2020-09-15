@@ -59,20 +59,28 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.getAreasDataBySeries = function(seriesName) {
-        var areaData = [];
-        if(this.areas) {
-            for(var i = 0; i < this.areas.length; i++) {
-                if(this.areas[i].series === seriesName) {
-                    areaData.push(this.areas[i]);
-                }
-            }
-        }
-        return areaData;
+    SimpleGraph.prototype.getAreasDataBySeries = function(series) {
+        if(!this.areas) return [];
+        return this.areas
+            .filter(d => d.series === series)
+            .map(d => ({
+                series:        d.series, 
+                areaFunctions: d.areaFunctions, 
+                coords:        d.coords.map(c => [...c]), 
+                resolution:    d.resolution, 
+                xRange:        [...d.xRange], 
+                y2:            d.y2, 
+                style:         d.style, 
+                interpolate:   d.interpolation
+            }));
     };
     
-    SimpleGraph.prototype.clearAreasData = function() {
-        this.areas = null;
+    SimpleGraph.prototype.clearAreasData = function(series) {
+        if(!series) {
+            this.areas = null;
+        } else {
+            this.areas = this.areas.filter(d => d.series !== series);
+        }
         return this;
     };
 }

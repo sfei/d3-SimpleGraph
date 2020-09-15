@@ -1,8 +1,14 @@
 ## Adding interactive features ##
 
-<a name="addTooltipToPoints">#</a> *sg*.**addTooltipToPoints**(*tooltipFunction*[, *options*])
+#### Tooltips ####
 
-Add tooltip function to the points on the graph. Does not add tooltips to the lines connecting points, if they were added. That is handled by addTooltipToLines(). You can check the series name in the callback's returned SVG element or the class to determine type, regular lines are `.sg-plotted-line` and lines drawn from connecting points are `.sg-line`.
+Tooltips are attached as event listeners to the SVG objects, tied to the data, drawn on the graph. Event listeners are attached to mouse events suffixed by `.sg-tooltip`.
+
+To create a the tooltip itself, a div is created and appended to the document body with absolute positioning to have the least conflict possible with existing HTML and CSS layouts.
+
+<a name="addTooltipToPoints">#</a> *sg*.**addTooltipToPoints**(*tooltipFunction*[, *forSeries*[, *options*]])
+
+Add tooltip function to points on the graph. Does not add tooltips to the lines connecting points, if they were added. That is handled by addTooltipToLines(). You can check the series name in the callback's returned SVG element or the class to determine type, regular lines are `.sg-plotted-line` and lines drawn from connecting points are `.sg-line`.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -10,7 +16,10 @@ Add tooltip function to the points on the graph. Does not add tooltips to the li
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>tooltipFunction</td><td><a href="./defs.md#defs-tooltip">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
+      <td>textFunction</td><td><a href="./defs.md#tooltip-text-function">textFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip. Note this is called on `mousemove` events.</td>
+    </tr>
+    <tr>
+      <td>forSeries</td><td>string|string[]</td><td>If provided, only applies tooltips to series matching this name (or within list of names, if array).</td>
     </tr>
     <tr>
       <td>options</td>
@@ -28,6 +37,12 @@ Add tooltip function to the points on the graph. Does not add tooltips to the li
             <tr>
               <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
             </tr>
+            <tr>
+              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+            </tr>
+            <tr>
+              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+            </tr>
           </tbody>
         </table>
       </td>
@@ -38,9 +53,9 @@ Add tooltip function to the points on the graph. Does not add tooltips to the li
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="addTooltipToLines">#</a> *sg*.**addTooltipToLines**(*tooltipFunction*[, *options*])
+<a name="addTooltipToLines">#</a> *sg*.**addTooltipToLines**(*textFunction*[, *forSeries*[, *options*]])
 
-Add tooltip function to the lines on the graph.
+Add tooltip function to lines on the graph.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -48,7 +63,10 @@ Add tooltip function to the lines on the graph.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>tooltipFunction</td><td><a href="./defs.md#defs-tooltip">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
+      <td>textFunction</td><td><a href="./defs.md#tooltip-text-function">textFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip. Note this is called on `mousemove` events.</td>
+    </tr>
+    <tr>
+      <td>forSeries</td><td>string|string[]</td><td>If provided, only applies tooltips to series matching this name (or within list of names, if array).</td>
     </tr>
     <tr>
       <td>options</td>
@@ -66,6 +84,12 @@ Add tooltip function to the lines on the graph.
             <tr>
               <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
             </tr>
+            <tr>
+              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+            </tr>
+            <tr>
+              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+            </tr>
           </tbody>
         </table>
       </td>
@@ -76,9 +100,9 @@ Add tooltip function to the lines on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="addTooltipToAreas">#</a> *sg*.**addTooltipToAreas**(*tooltipFunction*[, *options*])
+<a name="addTooltipToAreas">#</a> *sg*.**addTooltipToAreas**(*textFunction*[, *forSeries*[, *options*]])
 
-Add tooltip function to the areas on the graph.
+Add tooltip function to areas on the graph.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -86,7 +110,10 @@ Add tooltip function to the areas on the graph.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>tooltipFunction</td><td><a href="./defs.md#defs-tooltip">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
+      <td>forSeries</td><td>string|string[]</td><td>If provided, only applies tooltips to series matching this name (or within list of names, if array).</td>
+    </tr>
+    <tr>
+      <td>textFunction</td><td><a href="./defs.md#tooltip-text-function">textFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip. Note this is called on `mousemove` events.</td>
     </tr>
     <tr>
       <td>options</td>
@@ -104,8 +131,15 @@ Add tooltip function to the areas on the graph.
             <tr>
               <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
             </tr>
+            <tr>
+              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+            </tr>
+            <tr>
+              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+            </tr>
           </tbody>
         </table>
+      </td>
       </td>
     </tr>
   </tbody>
@@ -114,7 +148,9 @@ Add tooltip function to the areas on the graph.
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 
-## Highlight Functions ##
+### Highlighting ###
+
+Highlight functionality is still somewhat rough. It does not, on it's own, add any event listeners or direct interactions with user events. Instead, event handlers defined outside should call these functions dynamically to highlight/unhighlight points as needed.
 
 <a name="highlightPoints">#</a> *sg*.**highlightPoints**(*series*[, *validationCallback*[, *size*[, *fill*[, *stylesDict*]]]])
 

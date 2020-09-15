@@ -56,11 +56,11 @@ function SimpleGraph(options) {
 //************************************************************************************************************
 // Basic Functions
 //************************************************************************************************************
-SimpleGraph.prototype.getSvgElement = function() {    
+SimpleGraph.prototype.getSvgElement = function() {
     return this.svg;
 };
 
-SimpleGraph.prototype.getSvgGraphic = function() {    
+SimpleGraph.prototype.getSvgGraphic = function() {
     return this.svgGraph;
 };
 
@@ -85,6 +85,11 @@ SimpleGraph.prototype.destroy = function() {
     this.xAxis = null;
     this.yGridAxis = null;
     this.xGridAxis = null;
+    this.points = null;
+    this.ptSeriesShapes = null;
+    this.lines = null;
+    this.pointLines = null;
+    this.areas = null;
 };
 
 //************************************************************************************************************
@@ -108,22 +113,31 @@ sgDataArea(SimpleGraph, d3);
 sgDataLine(SimpleGraph, d3);
 // Draw functions
 import sgDrawLib from "./sg.draw.lib";
-import sgDraw from "./sg.draw";
+import sgDrawPoints from "./sg.draw.points";
+import sgDrawLines from "./sg.draw.lines";
+import sgDrawAreas from "./sg.draw.areas";
 sgDrawLib(SimpleGraph, d3);
-sgDraw(SimpleGraph, d3);
+sgDrawPoints(SimpleGraph, d3);
+sgDrawLines(SimpleGraph, d3);
+sgDrawAreas(SimpleGraph, d3);
 // Interactivity functions
 import sgTooltip from "./sg.tooltip";
-import sgHighlight from "./sg.higlight";
+import sgHighlight from "./sg.highlight";
 sgTooltip(SimpleGraph, d3);
 sgHighlight(SimpleGraph, d3);
 
 //************************************************************************************************************
 // Misc Functions
 //************************************************************************************************************
-SimpleGraph.prototype.clearAllData = function() {
-    this.clearPointsData();
-    this.clearLinesData();
-    this.clearAreasData();
+SimpleGraph.prototype.clearAllData = function(series) {
+    this.clearPointsData(series);
+    this.clearLinesData(series);
+    this.clearAreasData(series);
+    return this;
+};
+
+SimpleGraph.prototype.removeAll = function() {
+    this.removePoints().removeAllLines().removeAreas();
     return this;
 };
 

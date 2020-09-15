@@ -1,9 +1,14 @@
 export default function(SimpleGraph) {
     
+    /*
+     * Find x-intercept (on either y-axis min or max).using simple binary search
+     */
     SimpleGraph.prototype._findIntercept = function(f, x1, x2, y2Axis) {
-        var y1 = f(x1), y2 = f(x2);
-        var breakValue, increasing;
-        var yAxis = y2Axis ? this.y2 : this.y;
+        var y1 = f(x1), 
+            y2 = f(x2), 
+            breakValue, 
+            increasing, 
+            yAxis = y2Axis ? this.y2 : this.y;
         if(y1 < yAxis.min !== y2 < yAxis.min) {
             breakValue = yAxis.min;
         } else if(y1 > yAxis.max !== y2 > yAxis.max) {
@@ -11,12 +16,12 @@ export default function(SimpleGraph) {
         } else {
             return null;
         }
-        var x = x1 + 0.5*(x2 - x1);          // start halfway
-        var search = 0.25*Math.abs(x2 - x1); // search distance
-        var lasty = y1, lastx = x1;          // store last x,y values
-        var y, diff, goHigher;               // vars scoped only in interation but to avoid redeclaring var
-        var lastDiff, lastGoHigher;          // some other memory items
-        x1 -= 0.00001;                       // add tolerances to min/max bounds as binary arithmetic can cause 
+        var x = x1 + 0.5*(x2 - x1),          // start halfway
+            search = 0.25*Math.abs(x2 - x1), // search distance
+            lasty = y1, lastx = x1,          // store last x,y values
+            y, diff, goHigher,               // vars scoped only in interation but to avoid redeclaring var
+            lastDiff, lastGoHigher;          // some other memory items
+        x1 -= 0.00001;                       // tolerances to min/max bounds as binary conversion be funky
         x2 += 0.00001;                       // minor discrepancies when converted to decimal values
         var i = 0;                           // increment for fail-safe stop condition
         while(i++ < 100) {
@@ -43,40 +48,43 @@ export default function(SimpleGraph) {
                 lastDiff = diff;
             }
             x += (lastGoHigher) ? search : -search;
-            if(x < x1 || x > x2) {
-                return null;
-            }
+            if(x < x1 || x > x2) return null;
         }
         return null;
     };
 
+    /*
+     * Split line into segments based on it crossing in/out of the graph bounds. This version works on line coordinates, traversing through coordinates and tracking as it enters or leaves domain.
+     */
     SimpleGraph.prototype._getLineSegmentsFromCoordinates = function(lineCoords, y2Axis) {
-        var yAxis = y2Axis ? this.y2 : this.y;
-        var lineSegments = [];
-        var segment = [];
-        var lastCoords = null;
-        var crossedXMin = false;
-        var crossedXMax = false;
+        var yAxis       = y2Axis ? this.y2 : this.y, 
+            segments    = [], 
+            segment     = [], 
+            lastCoords  = null, 
+            crossedXMin = false, 
+            crossedXMax = false;
 
         for(var c = 0; c < lineCoords.length; c++) {
             var coords = lineCoords[c];
+
             // null means a break in the line
             if(coords[1] === undefined || coords[1] === null) {
-                if(segment.length > 1) {
-                    lineSegments.push(segment);
-                }
+                if(segment.length > 1) segments.push(segment);
                 segment = [];
                 lastCoords = null;
                 continue;
             }
-            // note, if date, this will become y per milliseconds
-            var slope = (!lastCoords) ? 0 : (lineCoords[c][1] - lastCoords[1]) / (lineCoords[c][0] - lastCoords[0]);
 
+            // note, if date, this will become y per milliseconds
+            var slope = (!lastCoords) ? 
+                            0 : (lineCoords[c][1] - lastCoords[1]) / (lineCoords[c][0] - lastCoords[0]);
+
+            // search for x-domain crossings, if it hasn't yet entered graph area
             if(!crossedXMin) {
                 if(coords[0] >= this.x.min) {
                     crossedXMin = true;
                     if(coords[0] > this.x.min && lastCoords) {
-                        // get intercept on y=x-min, add if within range
+                        // get y-intercept on x-domain-min, add if within range
                         var intercept = [
                             this.x.min, 
                             lastCoords[0] + slope*(coords[1] - lastCoords[1])
@@ -90,18 +98,15 @@ export default function(SimpleGraph) {
                         segment.push(coords);
                     }
                 }
-                // skip rest of loop until crossing x-min or because we just added segment start
+                // skip rest of loop until crossing x-domain or because we just added segment start
                 lastCoords = coords;
                 continue;
             }
-
             if(!crossedXMax && coords[0] >= this.x.max) {
                 crossedXMax = true;
                 if(coords[0] > this.x.max) {
                     // if no last coords, this is just a point outside
-                    if(!lastCoords) {
-                        break;
-                    }
+                    if(!lastCoords) break;
                     // interpolate back to x-max
                     coords = [
                         this.x.max, 
@@ -110,9 +115,9 @@ export default function(SimpleGraph) {
                 }
             }
 
-            // check within y-range
+            // check within y-domain, if inside, add to running segment, if outside, end segment
             if(coords[1] >= yAxis.min && coords[1] <= yAxis.max) {
-                // case: first point of new segment
+                // SPECIAL CASE: first point of new segment
                 if(segment.length === 0 && lastCoords) {
                     if(slope !== 0) {
                         // get y-intercept
@@ -122,9 +127,7 @@ export default function(SimpleGraph) {
                             lastX + (yTarget - lastCoords[1])/slope, 
                             yTarget
                         ];
-                        if(this.x.isDate) {
-                            coords[0] = new Date(coords[0]);
-                        }
+                        if(this.x.isDate) coords[0] = new Date(coords[0]);
                         // force repeat of the coords that original came in for this loop (intercept will become last)
                         c--;
                     }
@@ -132,7 +135,7 @@ export default function(SimpleGraph) {
                 // add to segment
                 segment.push(coords);
             } else {
-                // case: ending segment with last point outside of range
+                // SPECIAL CASE: ending segment with last point outside of range
                 if(segment.length > 0) {
                     // yet y-intercept
                     var yTarget = slope > 0 ? yAxis.max : yAxis.min;
@@ -141,35 +144,32 @@ export default function(SimpleGraph) {
                         lastX + (yTarget - lastCoords[1])/slope, 
                         yTarget
                     ];
-                    if(this.x.isDate) {
-                        coords[0] = new Date(coords[0]);
-                    }
+                    if(this.x.isDate) coords[0] = new Date(coords[0]);
                     // add to segment
                     segment.push(coords);
                 }
                 // finish segment
                 if(segment.length > 1) {
-                    lineSegments.push(segment);
+                    segments.push(segment);
                     segment = [];
                 }
             }
             // if crossed x-max we can break
-            if(crossedXMax) { break; }
+            if(crossedXMax) break;
             // save last coordinates
             lastCoords = coords;
         }
 
-        // always attempt to add last segment
-        if(segment.length > 1) {
-            lineSegments.push(segment);
-        }
+        // always add last segment (if valid)
+        if(segment.length > 1) segments.push(segment);
 
-        return lineSegments;
+        return segments;
     };
 
+    /*
+     * Split line into segments based on it crossing in/out of the graph bounds. This version works on line as function, traversing through coordinates by resolution and tracking as it enters or leaves domain.
+     */
     SimpleGraph.prototype._getLineSegmentsFromFunction = function(lineFunction, resolution, xRange, y2Axis, limitToGraphRange) {
-        var yAxis = y2Axis ? this.y2 : this.y;
-
         if(!xRange) {
             xRange = [this.x.min, this.x.max];
         } else {
@@ -179,22 +179,17 @@ export default function(SimpleGraph) {
         if(!resolution || typeof resolution !== "number") {
             resolution = Math.floor((this.width - this.margins.left - this.margins.right) / 10);
         }
-        if(resolution < 2) {
-            resolution = 2;
-        }
+        if(resolution < 2) resolution = 2;
 
-        // how increments are handled and needed variables
+        // how increments down the line are handled
         var incrementFunc;
         if(!this.x.isLog) {
             // if not log-scale, standard increment (this works for dates too)
-            var increment = (xRange[1] - xRange[0])/(resolution-1);
-            var isDate = this.x.isDate;
+            var increment = (xRange[1] - xRange[0])/(resolution-1), 
+                isDate = this.x.isDate;
             // standard increment function
             incrementFunc = function(n) {
-                if(isDate) {
-                    return new DateUTC(n.getTime() + increment);
-                }
-                return n += increment;
+                return isDate ? new DateUTC(n.getTime() + increment) : n + increment;
             };
         } else {
             // increment in exponential scale fit to range and resolution
@@ -205,11 +200,11 @@ export default function(SimpleGraph) {
             };
         }
 
-        var lineSegments = [], 
-            segment = [], 
-            x = xRange[0], 
-            lastX = x;
-
+        var segments = [], 
+            segment  = [], 
+            x        = xRange[0], 
+            lastX    = x, 
+            yAxis    = y2Axis ? this.y2 : this.y;
         while(true) {
             var markForBreak = false;
             if(x >= xRange[1]) {
@@ -246,7 +241,7 @@ export default function(SimpleGraph) {
                 }
                 // finish segment
                 if(segment.length > 1) {
-                    lineSegments.push(segment);
+                    segments.push(segment);
                     segment = [];
                 }
             }
@@ -257,14 +252,14 @@ export default function(SimpleGraph) {
         }
         
         // always attempt to add last segment
-        if(segment.length > 1) lineSegments.push(segment);
+        if(segment.length > 1) segments.push(segment);
 
-        return lineSegments;
+        return segments;
     };
 
     SimpleGraph.prototype._getAreaPolysFromCoordinates = function(areaCoordinates, y2Axis) {
-        var lineA = [];
-        var lineB = [];
+        var lineA = [], 
+            lineB = [];
         for(var i = 0; i < areaCoordinates.length; i++) {
             lineA.push([areaCoordinates[i][0], areaCoordinates[i][1]]);
             lineB.push([areaCoordinates[i][0], areaCoordinates[i][2]]);
@@ -296,7 +291,6 @@ export default function(SimpleGraph) {
             endOfLines = [false, false], 
             endOfCoords = [false, false], 
             coordA, coordB;
-
         while(true) {
             // grab coords
             coordA = endOfLines[0] ? null : lineA[li[0]][ci[0]];

@@ -1,37 +1,46 @@
 export default function(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.addTooltipToPoints = function(tooltipFunction, options) {
+    SimpleGraph.prototype.addTooltipToPoints = function(textFunction, forSeries, options) {
+        forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
         this.svgGraph.selectAll(".sg-point")
-            .call(this._constructTooltipFunctionality(tooltipFunction, options));
+            .filter(d => !forSeries || forSeries.indexOf(d.series))
+            .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
 
-    SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
-        this.svgGraph.selectAll(".sg-line, .sg-plotted-line")
-            .call(this._constructTooltipFunctionality(tooltipFunction, options));
+    SimpleGraph.prototype.addTooltipToLines = function(textFunction, forSeries, options) {
+        forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
+        this.svgGraph.selectAll(".sg-line")
+            .filter(d => !forSeries || forSeries.indexOf(d.series))
+            .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
 
-    SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
-        this.svgGraph.selectAll(".sg-plotted-area")
-            .call(this._constructTooltipFunctionality(tooltipFunction, options));
+    SimpleGraph.prototype.addTooltipToAreas = function(textFunction, forSeries, options) {
+        forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
+        this.svgGraph.selectAll(".sg-area")
+            .filter(d => !forSeries || forSeries.indexOf(d.series))
+            .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
 
     SimpleGraph.prototype._constructTooltipFunctionality = function(textFunction, options) {
-        var svgNode = this.svg.node();
+        var gNode = this.svgGraph.node();
 
         return function(selection) {
             if(!selection) return null;
             if(!options) options = {};
 
             var d3Body = d3.select('body'), 
+                tooltipOffset = options.offset || [10, -15], 
+                // TODO: selection is no longer array-like, hides it in _groups var
+                // this seems less than ideal, update/change when able
+                selGroup = selection._groups[0], 
                 tooltipDiv;
 
             selection.on("mouseover.sg-tooltip", function(evt, d) {
                 // set relative position of tool-tip
                 let absMousePos = d3.pointer(evt, d3Body.node()), 
-                    tooltipOffset = options.offset || [10, -15], 
                     styles;
                 // Check if tooltip div already exists
                 if(!tooltipDiv) {
@@ -69,21 +78,20 @@ export default function(SimpleGraph, d3) {
                         tooltipDiv.style(styleKey, options.style[styleKey]);
                     }
                 }
+                // additional trigger
+                if(options.mouseover) options.mouseover(d, d3.pointer(evt, gNode), selGroup, i);
             })
 
             .on('mousemove.sg-tooltip', function(evt, d, i) {
                 if(tooltipDiv) {
                     // Move tooltip
-                    let absMousePos = d3.pointer(evt, d3Body.node()), 
-                        tooltipOffset = (options.offset) ? options.offset : [10, -15];
+                    let absMousePos = d3.pointer(evt, d3Body.node());
                     tooltipDiv
                         .style('left', (absMousePos[0] + tooltipOffset[0])+'px')
                         .style('top', (absMousePos[1] + tooltipOffset[1])+'px');
                     let tooltipText = null;
                     if(textFunction) {
-                        // TODO: selection is no longer array-like, hides it in _groups var
-                        // this seems less than ideal, update/change when able
-                        tooltipText = textFunction(d, d3.pointer(evt, svgNode), selection._groups[0], i);
+                        tooltipText = textFunction(d, d3.pointer(evt, gNode), selGroup, i);
                     }
                     // If no text, remove tooltip
                     if(!tooltipText) {
@@ -96,6 +104,8 @@ export default function(SimpleGraph, d3) {
             })
 
             .on("mouseout.sg-tooltip", function(evt, d) {
+                // additional trigger
+                if(options.mouseout) options.mouseout(d, d3.pointer(evt, gNode), selGroup, i);
                 // Remove tooltip
                 if(tooltipDiv) {
                     tooltipDiv.remove();

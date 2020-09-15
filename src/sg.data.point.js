@@ -1,32 +1,24 @@
 import shapes from "./sg.point.shapes";
 
 export default function(SimpleGraph) {
-    /** 
-     * @typedef PointData
-     * @type Object
-     * @property {string} series - The series name this point belongs to.
-     * @property {number|Date} x - The x-value.
-     * @property {number} y - The y-value.
-     * @property {boolean} y2 - If true, the y-value correlates to the y2 axis.
-     * @property {number|callback} size - The symbol size. May be a number, a callback function, or null.
-     * @memberof SimpleGraph 
-     */
 
-    SimpleGraph.prototype.addPointData = function(name, xValue, yValue, options) {
+    SimpleGraph.prototype.addPointData = function(series, xValue, yValue, options) {
         this.points = this.points || [];
         this.ptSeriesShapes = this.ptSeriesShapes || {};
         options = options || {};
-        options.size = !options.size || typeof options.size == "function" || options.size <= 0 ? options.size = 10 : options.size;
+        options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
         options.y2Axis = !!options.y2Axis;
         options.showNulls = !!options.showNulls;
-        if(options.shape) this.setPointSeriesShape(name, options.shape);
+        if(options.shape) this.setPointSeriesShape(series, options.shape);
 
         var p = {
-            series: name, 
+            series: series, 
             x: parseFloat(xValue), 
             y: parseFloat(yValue), 
             y2: options.y2Axis, 
-            size: options.size
+            size: options.size, 
+            _bind: null, 
+            _keys: null
         };
 
         if(isNaN(p.y) || (!p.y && p.y !== 0)) {
@@ -42,126 +34,170 @@ export default function(SimpleGraph) {
         return this;
     };
 
-    SimpleGraph.prototype.addPointsData = function(data, dataPointName, xValueName, yValueName, options) {
+    SimpleGraph.prototype.addPointsData = function(data, seriesName, xValueName, yValueName, options) {
         if(!data || data.length === 0) return this;
         this.points = this.points || [];
         this.ptSeriesShapes = this.ptSeriesShapes || {};
         options = options || {};
-        options.size = !options.size || typeof options.size == "function" || options.size <= 0 ? options.size = 10 : options.size;
+        options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
         options.y2Axis = !!options.y2Axis;
         options.showNulls = !!options.showNulls;
         options.additionalDataKeys = options.additionalDataKeys || null;
 
         // first we gotta comb through the data and organize it nicely
-        for(var i = 0; i < data.length; i++) {
-            // get data series name, if it exists, otherwise assume dataPointName is series name
-            var seriesName = !dataPointName ? i : (data[i][dataPointName] ? data[i][dataPointName] : dataPointName), 
-                xValue = data[i][xValueName], 
-                yValue = data[i][yValueName];
+        var self = this;
+        data.forEach((datum, i) => {
+            // get data series name, if it exists, otherwise assume seriesName is series name
+            var series = !seriesName ? i : (datum[seriesName] ? datum[seriesName] : seriesName), 
+                xValue = datum[xValueName], 
+                yValue = datum[yValueName];
             // add shape if provided as constant string
-            if(options.shape) this.ptSeriesShapes[seriesName] = options.shape;
-            // if any null x-values, skip
-            if(xValue === undefined || xValue === null) continue;
+            if(options.shape) self.ptSeriesShapes[series] = options.shape;
             // nicely organize data
             var point = {
-                series: seriesName, 
+                series: series, 
                 x: xValue, 
                 y: parseFloat(yValue), 
                 y2: options.y2Axis, 
-                size: options.size
+                size: options.size, 
+                _bind: datum, 
+                _keys: {
+                    x: xValueName, 
+                    y: yValueName, 
+                    additional: null
+                }
             };
             // check for nulls
             if(isNaN(point.y) || (!point.y && point.y !== 0)) {
-                if(!showNulls) continue;
-                point.y = 0;
-                point.wasNull = true;
-            }
-            // check for NaN 
-            if(isNaN(point.y)) {
+                if(!showNulls) return;
                 point.y = 0;
                 point.wasNull = true;
             }
             // additonal keys
             if(options.additionalDataKeys && Array.isArray(options.additionalDataKeys)) {
+                var addKeys = [];
                 options.additionalDataKeys.forEach((key) => {
-                    let asKey = key, 
+                    let name = key, 
                         t = 1;
                     // if key exists (name, x, y are reserved), adjust key name
-                    while(asKey in point) {
-                        asKey = key + String(++t);
+                    while(name in point) {
+                        name = key + String(++t);
                     }
-                    point[asKey] = data[i][key];
+                    addKeys.push({key: key, name: name})
+                    point[name] = datum[key];
                 });
+                point._keys.additional = addKeys;
             }
             this.points.push(point);
-        }
+        });
         
         return this;
     };
 
-    SimpleGraph.prototype.addPointsDataAsArray = function(name, data, options) {
+    SimpleGraph.prototype.addPointsDataAsArray = function(series, data, options) {
         if(!data || data.length === 0) return this;
         this.points = this.points || [];
         this.ptSeriesShapes = this.ptSeriesShapes || {};
         options = options || {};
-        options.size = !options.size || typeof options.size == "function" || options.size <= 0 ? options.size = 10 : options.size;
+        options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
         options.y2Axis = !!options.y2Axis;
         options.showNulls = !!options.showNulls;
-        if(options.shape) this.setPointSeriesShape(name, options.shape);
+        if(options.shape) this.setPointSeriesShape(series, options.shape);
 
-        for(var i = 0; i < data.length; i++) {
-            if(data[i][0] === undefined || data[i][0] === null || data[i][1] === undefined || data[i][1] === null) {
-                continue;
-            }
+        var self = this;
+        data.forEach(datum => {
             var p = {
-                series: name, 
-                x: parseFloat(data[i][0]),
-                y: parseFloat(data[i][1]), 
+                series: series, 
+                x: parseFloat(datum[0]),
+                y: parseFloat(datum[1]), 
                 y2: options.y2Axis, 
-                size: options.size
+                size: options.size, 
+                _bind: datum, 
+                _keys: {
+                    x: 0, 
+                    y: 1, 
+                    additional: null
+                }
             };
             if(isNaN(p.y) || (!p.y && p.y !== 0)) {
-                if(showNulls) {
-                    p.y = 0;
-                    p.wasNull = true;
-                } else {
-                    continue;
-                }
+                if(!showNulls) return;
+                p.y = 0;
+                p.wasNull = true;
             }
-            this.points.push(p);
-        }
+            self.points.push(p);
+        });
         
         return this;
     };
 
-    SimpleGraph.prototype.setPointSeriesShape = function(name, shape) {
-        this.ptSeriesShapes = this.ptSeriesShapes || {};
-        if(!shape) return null;
-        if(typeof shape == "string" && ~shapes.indexOf(shape)) {
-            this.ptSeriesShapes[name] = shape
+    SimpleGraph.prototype.clearPointsData = function(series) {
+        if(!series) {
+            this.points = null;
+        } else {
+            this.points = this.points.filter(d => d.series !== series);
         }
         return this;
     };
 
-    SimpleGraph.prototype.getPointSeriesShape = function(name) {
-        this.ptSeriesShapes = this.ptSeriesShapes || {};
-        return this.ptSeriesShapes[name];
-    };
-
-    SimpleGraph.prototype.getPointsDataBySeries = function(seriesName) {
-        if(!this.points) retunr [];
-        return this.points.filter(c => c.series === seriesName);
-    };
-
-    SimpleGraph.prototype.getPointCoordinatesBySeries = function(seriesName) {
+    SimpleGraph.prototype.getPointsDataBySeries = function(series) {
         if(!this.points) return [];
         return this.points
-            .filter(c => c.series === seriesName)
+            .filter(c => c.series === series)
+            .map(d => ({
+                x: d.x, 
+                y: d.y, 
+                y2: d.y2, 
+                size: d.size
+            }));
+    };
+
+    SimpleGraph.prototype.getPointCoordinatesBySeries = function(series) {
+        if(!this.points) return [];
+        return this.points
+            .filter(c => c.series === series)
             .map(c => [c.x, c.y || c.y === 0 ? c.y : c.y2]);
     };
 
-    SimpleGraph.prototype.clearPointsData = function() {
-        this.points = null;
+    SimpleGraph.prototype.getPointSeriesShape = function(series) {
+        this.ptSeriesShapes = this.ptSeriesShapes || {};
+        return this.ptSeriesShapes[series];
+    };
+
+    SimpleGraph.prototype.setPointSeriesShape = function(series, shape) {
+        this.ptSeriesShapes = this.ptSeriesShapes || {};
+        this.ptSeriesShapes[series] = ~shapes.indexOf(shape) ? shape : null;
+        return this;
+    };
+
+    SimpleGraph.prototype.updatePointsData = function() {
+        if(!this.points) return this;
+        this.points.forEach(d => {
+            if(!d._bind || d._keys) return;
+            d.x = parseFloat(d._bind[d._keys.x]);
+            d.y = parseFloat(d._bind[d._keys.y]);
+            if(!d._keys.a) return;
+            d._keys.additional.forEach(a => d[a.name] = d._bind[a.key]);
+        });
+
+        if(!this.pointLines) return this;
+        // first organize points by data series
+        var pointsBySeries = {};
+        for(var i = 0; i < this.points.length; i++) {
+            var series = this.points[i].series;
+            if(series in pointsBySeries) {
+                pointsBySeries[series].push(this.points[i]);
+            } else {
+                pointsBySeries[series] = [this.points[i]];
+            }
+        }
+        // update existing point-line data
+        var self = this;
+        this.pointLines = this.pointLines.filter(d => {
+            if(!(d.series in pointsBySeries)) return false;
+            d.coords = self._getPointLine(pointsBySeries[d.series]);
+            return true;
+        });
+
         return this;
     };
 

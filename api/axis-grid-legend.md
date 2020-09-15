@@ -86,7 +86,7 @@ Removes grid.
 
 #### Legend ####
 
-<a name="drawLegend">#</a> *sg*.**drawLegend**(*position*[, *anchor*[, *bgstyle*[, *itemsPerColumn*[, *rowHeight*[, *exclude*]]]]])`**
+<a name="drawLegend">#</a> *sg*.**drawLegend**(*position*[, *options*])`**
 
 Draw the legend onto the graph. If legend already exists, will redraw it.
 
@@ -99,16 +99,26 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
       <td>position</td><td>number[]</td><td>x,y coordinate position from top-left corner of SVG.</td>
     </tr>
     <tr>
-      <td>anchor</td><td>string</td><td>Optional anchor for the coordinate x-position (left, middle, or right). Defaults "left".</td>
-    </tr>
-    <tr>
-      <td>bgstyle</td><td>object</td><td>Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</td>
-    </tr>
-    <tr>
-      <td>itemsPerColumn</td><td>number</td><td>Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.</td>
-    </tr>
-    <tr>
-      <td>rowHeight</td><td>number</td><td>The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
+      <td>options</td>
+      <td>object</td>
+      <td>
+        Additional options for the legend.
+        <h5>Properties</h5>
+        <table>
+          <tr>
+            <td>anchor</td><td>string</td><td>Optional anchor for the coordinate x-position (left, middle, or right). Defaults "left".</td>
+          </tr>
+          <tr>
+            <td>bgstyle</td><td>object</td><td>Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</td>
+          </tr>
+          <tr>
+            <td>itemsPerColumn</td><td>number</td><td>Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.</td>
+          </tr>
+          <tr>
+            <td>rowHeight</td><td>number</td><td>The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
+          </tr>
+        </table>
+      </td>
     </tr>
   </tbody>
 </table>

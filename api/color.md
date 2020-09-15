@@ -34,7 +34,7 @@ Reset domain on color scale, or replace with provided.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>colorScale</td><td>d3.colorScale</td><td>olor scale to replace with or null.</td>
+      <td>colorScale</td><td>d3.colorScale</td><td>Color scale to replace with or null.</td>
     </tr>
   </tbody>
 </table>
