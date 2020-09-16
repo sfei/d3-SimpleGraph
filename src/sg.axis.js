@@ -267,86 +267,134 @@ export default function(SimpleGraph) {
         // determine label position
         if(labelPosition) {
             // split by keys
-            var lpKeys = labelPosition.toLowerCase().split(/[ ,]+/);
-            var xparallel = "center", yparallel = "center", perpendicular = "outside";
-            for(var i = 0; i < lpKeys.length; i++) {
-                if(lpKeys[i] === "outside") {
-                    xLabelPos.y =(xAxisPosition === "top") ? -(tickMargin.x + axisLabelMargin) : (tickMargin.x + 10 + axisLabelMargin);
-                    yLabelPos.y = -(tickMargin.y + 10 + axisLabelMargin);
-                    y2LabelPos.y = -(tickMargin.y2 + 10 + axisLabelMargin);
-                    perpendicular = "outside";
-                } else if(lpKeys[i] === "inside") {
-                    xLabelPos.y = (xAxisPosition === "top") ? (14 + axisLabelMargin) : -(6 + axisLabelMargin);
-                    yLabelPos.y = 6 + axisLabelMargin;
-                    y2LabelPos.y = yLabelPos.y;
-                    perpendicular = "inside";
-                } else if(lpKeys[i] === "center") {
-                    xLabelPos.a = 'middle';
-                    xLabelPos.x = 0.5*this.width;
-                    yLabelPos.a = 'middle';
-                    yLabelPos.x = -0.5*this.height;
-                    y2LabelPos.a = 'middle';
-                    y2LabelPos.x = -yLabelPos.x;
-                    xparallel = "center";
-                    yparallel = "center";
-                } else if(lpKeys[i] === "left") {
-                    xLabelPos.a = 'start';
-                    xLabelPos.x = 0;
-                    xparallel = "left";
-                } else if(lpKeys[i] === "right") {
-                    xLabelPos.a = 'end';
-                    xLabelPos.x = this.width;
-                    xparallel = "right";
-                } else if(lpKeys[i] === "top") {
-                    yLabelPos.a = 'end';
-                    yLabelPos.x = 0;
-                    y2LabelPos.a = 'start';
-                    y2LabelPos.x = -yLabelPos.x;
-                    yparallel = "top";
-                } else if(lpKeys[i] === "bottom") {
-                    yLabelPos.a = 'start';
-                    yLabelPos.x = -this.height;
-                    y2LabelPos.a = 'end';
-                    y2LabelPos.x = -yLabelPos.x;
-                    yparallel = "bottom";
+            var lpKeys          = labelPosition.toLowerCase().split(/[ ,]+/), 
+                xparallel       = "center", 
+                yparallel       = "center", 
+                y2parallel      = "center", 
+                xperpendicular  = "outside", 
+                yperpendicular  = "outside", 
+                y2perpendicular = "outside";
+            lpKeys.forEach(directive => {
+                let parts = directive.trim().split("-"), 
+                    axis = parts.length > 1 ? parts[0] : false;
+                directive = parts.length > 1 ? parts[parts.length-1] : parts[0];
+                switch(directive) {
+                    case "outside":
+                        if(!axis || axis === "x") {
+                            xLabelPos.y =(xAxisPosition === "top") ? -(tickMargin.x + axisLabelMargin) : (tickMargin.x + 10 + axisLabelMargin);
+                            xperpendicular = "outside";
+                        }
+                        if(!axis || axis === "y") {
+                            yLabelPos.y = -(tickMargin.y + 10 + axisLabelMargin);
+                            yperpendicular = "outside";
+                        }
+                        if(!axis || axis === "y2") {
+                            y2LabelPos.y = -(tickMargin.y2 + 10 + axisLabelMargin);
+                            y2perpendicular = "outside";
+                        }
+                        break;
+                    case "inside":
+                        if(!axis || axis === "x") {
+                            xLabelPos.y = (xAxisPosition === "top") ? (14 + axisLabelMargin) : -(6 + axisLabelMargin);
+                            xperpendicular = "inside";
+                        }
+                        if(!axis || axis === "y") {
+                            yLabelPos.y = 6 + axisLabelMargin;
+                            yperpendicular = "inside";
+                        }
+                        if(!axis || axis === "y2") {
+                            y2LabelPos.y = 6 + axisLabelMargin;
+                            y2perpendicular = "inside";
+                        }
+                    case "center":
+                        if(!axis || axis === "x") {
+                            xLabelPos.a = 'middle';
+                            xLabelPos.x = 0.5*this.width;
+                            xparallel = "center";
+                        }
+                        if(!axis || axis === "y") {
+                            yLabelPos.a = 'middle';
+                            yLabelPos.x = -0.5*this.height;
+                            yparallel = "center";
+                        }
+                        if(!axis || axis === "y2") {
+                            y2LabelPos.a = 'middle';
+                            y2LabelPos.x = 0.5*this.height;
+                            y2parallel = "center";
+                        }
+                        break;
+                    case "left":
+                        xLabelPos.a = 'start';
+                        xLabelPos.x = 0;
+                        xparallel = "left";
+                        break;
+                    case "right":
+                        xLabelPos.a = 'end';
+                        xLabelPos.x = this.width;
+                        xparallel = "right";
+                        break;
+                    case "top":
+                        if(!axis || axis === "y") {
+                            yLabelPos.a = 'end';
+                            yLabelPos.x = 0;
+                            yparallel = "top";
+                        }
+                        if(!axis || axis === "y2") {
+                            y2LabelPos.a = 'start';
+                            y2LabelPos.x = 0;
+                            y2parallel = "top";
+                        }
+                        break;
+                    case "bottom":
+                        if(!axis || axis === "y") {
+                            yLabelPos.a = 'start';
+                            yLabelPos.x = -this.height;
+                            yparallel = "bottom";
+                        }
+                        if(!axis || axis === "y2") {
+                            y2LabelPos.a = 'end';
+                            y2LabelPos.x = this.height;
+                            y2parallel = "bottom";
+                        }
+                        break;
                 }
-            }
+            });
             // if near axis crossing, needs some extra padding
-            if(perpendicular === "inside") {
+            if(xperpendicular === "inside") {
                 if(xparallel === "left") {
                     xLabelPos.x += 10;
                 } else if(xparallel === "right" && this.y2) {
                     xLabelPos.x -= 10;
                 }
                 if(xAxisPosition === "bottom") {
-                    if(yparallel === "bottom") {
+                    if(yperpendicular == "inside" && yparallel === "bottom") {
                         yLabelPos.x += 10;
-                        y2LabelPos.x -= 10;
                         if(xparallel === "left") {
                             xLabelPos.x += 10;
                             yLabelPos.x += 10;
-                        } else if(xparallel === "right" && this.y2) {
+                        }
+                    }
+                    if(y2perpendicular == "inside" && y2parallel === "bottom") {
+                        y2LabelPos.x -= 10;
+                        if(xparallel === "right" && this.y2) {
                             xLabelPos.x -= 10;
                             y2LabelPos.x -= 10;
                         }
-                    } else {
-                        yLabelPos.x -= 10;
-                        y2LabelPos.x += 10;
                     }
                 } else {
-                    if(yparallel === "top") {
+                    if(yperpendicular == "inside" && yparallel === "top") {
                         yLabelPos.x -= 10;
-                        y2LabelPos.x += 10;
                         if(xparallel === "left") {
                             xLabelPos.x += 10;
                             yLabelPos.x -= 10;
-                        } else if(xparallel === "right" && this.y2) {
+                        }
+                    }
+                    if(y2perpendicular == "inside" && y2parallel === "top") {
+                        y2LabelPos.x += 10;
+                        if(xparallel === "right" && this.y2) {
                             xLabelPos.x -= 10;
                             y2LabelPos.x += 10;
                         }
-                    } else {
-                        yLabelPos.x += 10;
-                        y2LabelPos.x -= 10;
                     }
                 }
             }

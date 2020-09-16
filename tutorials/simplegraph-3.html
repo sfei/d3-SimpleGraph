@@ -64,8 +64,10 @@ graph.drawGrid();"
           <p class='param'>@param {string} xAxisPosition - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to 'bottom'.</p>
           <p class='param'>@param {number} axisLabelMargin - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
         sampleCode="graph.drawAxes(
-    'inside top center', // draw labels on inside, y-axis labels on top, and x-axis centered
-    'top'                // place x-axis on top of graph
+  // draw labels on outside, then x label inside, center all labels, then y and y2 axes on bottom and top
+  'outside x-inside center y-bottom y2-top', 
+  // place x-axis on top of graph
+  'top'
 );"
         onclick="openHelp(this)"
       >Axis Labels</span>
