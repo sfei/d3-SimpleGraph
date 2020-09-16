@@ -1,0 +1,157 @@
+      <span 
+          class="btn" 
+          helptitle="Advanced Graph Options" 
+          helptext="Let's start by creating a graph, similar as before, but play with a few advanced options.<br /><br />
+            To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options except the label (the rest will revert to default), but specify a y2-axis.<br /><br />
+            After creating the graph object, let's first draw the grid before drawing anything on the graph."
+          sampleCode="var colors = d3.scaleOrdinal(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
+var graph = new SimpleGraph({
+    container: '#simple-chart',
+    width: 850,
+    height: 580,
+    // we'll want to expand our margins for playing with labels later
+    margins: { top: 50, left: 50, bottom: 50, right: 50 },
+    colorScale: colors, 
+    axis: {
+      x: {
+        label: 'x-value'
+      }, 
+      y: {
+        label: 'y-value'
+      }, 
+      y2: {
+        min: 0, 
+        max: 10,
+        label: 'y2-value'
+      }
+    }
+});
+graph.drawGrid();" 
+          onclick="openHelp(this)">
+        Advanced Graph Options
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding an Area"
+          helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
+            You'll notice that the area will overlap over the axes and one of the axes labels, so it's necessary to redraw the axis which we'll do in the next step.<br /><br />
+            <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
+            <p class='param'>@param {string} name - Series name</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
+            <p class='param'>@param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
+            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
+            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
+            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
+          sampleCode="var bottomBoundary = function(x) {
+    return -0.01*x*x + 1.6*x;
+};
+var topBoundary = function(x) {
+    return -0.0003*Math.pow(x-40,2)+0.2*x+80;
+};
+graph.addAreaBetweenTwoLines(
+    'Area',
+    bottomBoundary, // callback line function for bottom boundary
+    topBoundary,    // callback line function for top boundary
+    {opacity: 0.6}  // let's make it transparent
+);
+graph.drawAreas();" 
+          onclick="openHelp(this)">
+        Adding an Area
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Axis Label Placement" 
+          helptext="Let's play with a custom label placement. We'll move the x-axis to the top, have the x-axis label centered, but the y-axis labels up top.<br /><br />
+            <b>drawAxes(labelPosition):</b>
+            <p class='param'>@param {string} [labelPosition='outside center'] - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top.</p>
+            <p class='param'>@param {string} [xAxisPosition='bottom'] - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom.</p>
+            <p class='param'>@param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
+          sampleCode="graph.drawAxes(
+    'inside top center', // draw labels on inside, y-axis labels on top, and x-axis centered
+    'top'                // place x-axis on top of graph
+);" 
+          onclick="openHelp(this)">
+        Axis Label Placement
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Adding a Range Limited Line"
+          helptext="Let's add a line, as a function, same as previously, but using the new y2-axis we've created. Additionally, we'll limit it's range via an x-range parameter.<br /><br />
+            Note two things in the result, one is that the line starts at 10 and ends at 90 (as specified), but also that when the line dips outside of the graph domain (where y values are below zero), it is not drawn. This can be called with the SimpleGraph.allowDrawBeyondGraph option, if desired.<br /><br />
+            <b>addLineDataAsFunction(name, lineFunction, resolution, style, interpolation, xRange):</b>
+            <p class='param'>@param {string} name - Series name</p>
+            <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
+            <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
+            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
+            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
+            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
+          sampleCode="var limitedLineFunction = function(x) {
+    return (2.5*Math.sin(0.2*x) + 2);
+};
+graph.addLineDataAsFunction(
+    'Limited Line',
+    limitedLineFunction,
+    {'stroke-width':3.0},
+    50,                   // compute line at 50 intervals
+    d3.curveStepBefore,   // stepped drawing, just to demonstrate another type of interpolation
+    [10, 90],             // draw line only between 10 < x < 90
+    true                  // flags it for the y2-axis
+);
+graph.drawLines();" 
+          onclick="openHelp(this)">
+        Limiting Line Range
+      </span>
+      <span 
+          class="btn" 
+          helptitle="Customizing Tooltips"
+          helptext="Now let's add tooltips to both our lines and areas. As well, let's add some custom styling to the tooltip.
+            <br /><br />
+            The call to add tooltips to areas looks identical to the function used for points and lines, but instead of calling from our globals, we will use two methods to retrieve the series data from within the graph object (using both is redudant but for demonstration). Also note that the y-values need no special handling for either y-axis, however to know which of these axes the value is placed on calls the boolean y2 parameter.<br /><br />
+            <b>LineData:</b>
+            <p class='param'>@property {string} series - The series name this line belongs to.</p>
+            <p class='param'>@property {callback} lineFunction - The line function defining this line (or null if the line was provided as a series of coordinates.</p>
+            <p class='param'>@property {number[][]} coords - The line as a series of coordinates (or null if the line was provided as a function.</p>
+            <p class='param'>@property {number} resolution - If the line was defined by a function, the resolution to draw the line, i.e. the number of points to draw then interpolate a line through, or null if using default settings.</p>
+            <p class='param'>@property {number[]} xRange - The minimum and maximum x-values the drawn line may not exceed, or null if  there are no limits.</p>
+            <p class='param'>@property {boolean} y2 - If true, the y-values of the line correlates to the y2 axis.</p>
+            <p class='param'>@property {Object} style - A dictionary of styles to apply to the line. Even if no style was provided with  the data, a default 'stroke' style value provided.</p>
+            <p class='param'>@property {string} interpolate - The interpolation type.when drawing the line.</p>
+            <br />
+            <b>getLinesDataBySeries(seriesName):</b>
+            <p class='param'>@param {string} seriesName - Name of the series for which you want to grab data.</p>
+            <p class='param'>@returns {LineData[]} Array of line data.</p>"
+          sampleCode="var tooltipOptions = {
+    style: {
+        border: '1px solid #02D', 
+        'background-color': '#333', 
+        color: '#fff'
+    }
+};
+var lineTooltipFunction = function(d, p, s, i) {
+    var seriesName = s[i].getAttribute('series');
+    var linesData = graph.getLinesDataBySeries(seriesName)[0];
+    if(linesData.lineFunction) {
+        var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
+        var y = linesData.lineFunction(x).toFixed(1);
+        // while we know it's always from the y2 axis as we have only one line, we'll dynamically check
+        return 'x: ' + x + ',&amp;lt;br /&amp;gt;' + (linesData.y2 ? 'y2' : 'y') + ': ' + y;
+    }
+};
+var areaTooltipFunction = function(d, p, s, i) {
+    var seriesName = s[i].getAttribute('series');
+    var areasData = graph.getAreasDataBySeries(seriesName)[0];
+    if(areasData.areaFunctions) {
+        var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
+        var y0 = areasData.areaFunctions[0](x).toFixed(1);
+        var y1 = areasData.areaFunctions[1](x).toFixed(1);
+        return 'At ' + x + ':&amp;lt;br /&amp;gt;min = ' + y0 + '&amp;lt;br /&amp;gt;max = ' + y1;
+    }
+};
+graph.addTooltipToLines(lineTooltipFunction, tooltipOptions);
+graph.addTooltipToAreas(areaTooltipFunction, tooltipOptions);"
+          onclick="openHelp(this)">
+        Custom Tooltips
+      </span>

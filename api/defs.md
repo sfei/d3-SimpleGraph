@@ -118,9 +118,6 @@
       <td>coords</td><td>number[][]</td><td>Array of line coordinates [x, y] or null if line is defined from function.</td>
     </tr>
     <tr>
-      <td>resolution</td><td>number</td><td>How many coordinates to calculate when drawing the line. Null if line is defined from coordinates.</td>
-    </tr>
-    <tr>
       <td>xRange</td><td>number[]</td><td>The [min, max] x-range of the line. Null if line is defined from coordinates.</td>
     </tr>
     <tr>
@@ -130,7 +127,7 @@
       <td>interpolate</td><td>d3.Curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
     </tr>
     <tr>
-      <td>style</td><td>object[]</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</td>
+      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</td>
     </tr>
   </tbody>
 </table>
@@ -147,13 +144,10 @@
       <td>series</td><td>string</td><td>The name of the data series this point belongs to.</td>
     </tr>
     <tr>
-      <td>areaFunctions</td><td>function[]</td><td>Array of bottom and top callback functions defining the area such that f(x)=y. Null if area is defined from coordinates.</td>
+      <td>functions</td><td>function[]</td><td>Array of bottom and top callback functions defining the area such that f(x)=y. Null if area is defined from coordinates.</td>
     </tr>
     <tr>
       <td>coords</td><td>number[][]</td><td>Array of area coordinate triplets [x, y0, y1] or null if area is defined from functions.</td>
-    </tr>
-    <tr>
-      <td>resolution</td><td>number</td><td>How many coordinates to calculate when drawing the line. Null if area is defined from coordinates.</td>
     </tr>
     <tr>
       <td>xRange</td><td>number[]</td><td>The [min, max] x-range of the line. Null if area is defined from coordinates.</td>
@@ -162,7 +156,7 @@
       <td>y2</td><td>boolean</td><td>If true, the y-value correlates to the y2 axis.</td>
     </tr>
     <tr>
-      <td>style</td><td>object[]</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</td>
+      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</td>
     </tr>
     <tr>
       <td>interpolate</td><td>d3.Curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>

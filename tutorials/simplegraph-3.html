@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>D3 SimpleGraph Tutorial 3: y2 axis and areas</title>
+    <title>SimpleGraph Tutorial 3</title>
     <meta charset="UTF-8">
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="tutorial-lib.js"></script>
     <script src="../d3.simplegraph.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <link href="style.css" rel="stylesheet" />
   </head>
   <body>
-    <div id="simple-chart" style="width:100%;height:600px;text-align:center;vertical-align:center;border:1px solid black;overflow:hidden;">
-      <div style="position:absolute;top:15px;left:15px;color:rgba(0,0,0,0.2);font-weight:bold;font-size:20px;text-align:left;">
-        #simple-chart
-      </div>
+    <h1>Tutorial 3: Y2 Axis and Area Data</h1>
+    
+    <div id="simple-chart">
+      <div class="label">#simple-chart</div>
     </div>
   
     <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
@@ -31,8 +32,8 @@
         sampleCode="var colors = d3.scaleOrdinal(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
 var graph = new SimpleGraph({
     container: '#simple-chart',
-    width: 850,
-    height: 580,
+    width: 700,
+    height: 500,
     // we'll want to expand our margins for playing with labels later
     margins: { top: 50, left: 50, bottom: 50, right: 50 },
     colorScale: colors, 
@@ -52,7 +53,7 @@ var graph = new SimpleGraph({
 });
 graph.drawGrid();"
         onclick="openHelp(this)"
-      >Create Graph 2</span>
+      >Create Y2 Graph</span>
     
       <span 
         class="btn" 
@@ -92,7 +93,7 @@ graph.drawGrid();"
           <p class='param'>@param {type} name - desc.</p>"
         sampleCode=""
         onclick="openHelp(this)"
-      >Tooltips 3</span>
+      >Area Tooltips</span>
     
       <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
         <p style="margin-top:20px;">

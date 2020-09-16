@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>D3 SimpleGraph Introduction: Adding and drawing data</title>
+    <title>SimpleGraph Tutorial 1</title>
     <meta charset="UTF-8">
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="tutorial-lib.js"></script>
     <script src="../d3.simplegraph.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <link href="style.css" rel="stylesheet" />
   </head>
   <body>
-    <div id="simple-chart" style="width:100%;height:600px;text-align:center;vertical-align:center;border:1px solid black;overflow:hidden;">
-      <div style="position:absolute;top:15px;left:15px;color:rgba(0,0,0,0.2);font-weight:bold;font-size:20px;text-align:left;">
-        #simple-chart
-      </div>
+    <h1>Tutorial 1: Adding and Drawing Data</h1>
+    
+    <div id="simple-chart">
+      <div class="label">#simple-chart</div>
     </div>
   
     <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
@@ -37,8 +38,8 @@
           <p class='param'>@param {Object} [options.styles] - Optional styles applied to SVG element.</p>"
         sampleCode="var graph = new SimpleGraph({
   container: '#simple-chart',
-  width: 850,
-  height: 600,
+  width: 700,
+  height: 500,
   axis: {
     style: {
       'stroke-width': 1.0  // make axes a little thicker than default
@@ -102,7 +103,7 @@
           <br /><br />
           <span class='func'><b>setPointSeriesShape</b>(<i>series</i>, <i>shape</i>)</span>
           <p class='param'>@param {string} series - The name of the data series.</p>
-          <p class='param'>@param {string} shape -The name of the shape. Currently supported shapes are 'square', 'diamond', 'circle', 'triangle', 'triangle-up', and 'triangle-down'. </p>"
+          <p class='param'>@param {string} shape - The name of the shape. Currently supported shapes are 'square', 'diamond', 'circle', 'triangle', 'triangle-up', and 'triangle-down'. </p>"
         sampleCode="// set shapes by data series
 graph.setPointSeriesShape('Made-Up River', 'circle');
 graph.setPointSeriesShape('Fake Lagoon', 'triangle');
@@ -114,10 +115,10 @@ graph.drawPoints();"
     
       <span 
         class="btn" 
-        helptitle="Adding a Line From Coordinates"
+        helptitle="Adding Lines From Coordinates"
         helptext="Next we'll add a line created from an array of coordinates. For now, we'll leave all other options to defaults.
           <br /><br />
-          <span class='func'><b>addLineDataAsCoordinates</b>(<i>name</i>, <i>coords</i>[, <i>options<i>])</span>
+          <span class='func'><b>addLineDataAsCoordinates</b>(<i>name</i>, <i>coords</i>[, <i>options</i>])</span>
           <p class='param'>@param {string} name - Series name</p>
           <p class='param'>@param {number[][]} [coords] - Array of x,y coordinates defining the line.</p>
     <p class='param'>@param {Object} [options] - Additional options defining the line data.</p>
@@ -129,14 +130,14 @@ var lineACoordinates = [[5,20],[15,30],[25,50],[35,55],[50,65]];
 graph.addLineDataAsCoordinates('Line A', lineACoordinates);
 graph.drawLines();" 
         onclick="openHelp(this)"
-      >Adding a Line 1</span>
+      >Adding Lines 1</span>
     
       <span 
         class="btn" 
-        helptitle="Adding a Line as a Function"
+        helptitle="Adding Lines as Functions"
         helptext="Another way to add lines is supply a callback function such that function(x) = y, then let the graph object handle drawing it. Additionally, to smooth the line (otherwise the graph will just linearly connect x,y points from the function drawn at a certain interval), we will use a smoothing function via the interpolation option.
           <br /><br />
-          <span class='func'><b>addLineDataAsFunction</b>(<i>name</i>, <i>lineFunction</i>, <i>xRange</i>[, <i>options<i>])</span>
+          <span class='func'><b>addLineDataAsFunction</b>(<i>name</i>, <i>lineFunction</i>[, <i>xRange</i>[, <i>options</i>]])</span>
           <p class='param'>@param {string} name - Series name</p>
           <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
           <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
@@ -159,15 +160,15 @@ graph.addLineDataAsFunction(
 );
 graph.drawLines();" 
         onclick="openHelp(this)"
-      >Adding a Line 2</span>
+      >Adding Lines 2</span>
     
       <span 
         class="btn" 
         helptitle="Custom colors"
         helptext="Ew. The default color category has set the 6th unique data series (our latest line) to a brown. Let's try that again but mapping a custom color to our last line series.
           <br /><br />
-          <span class='func'><b>setSeriesColor</b>(<i>series</i>, <i>lineFunction</i>, <i>xRange</i>[, <i>options<i>])</span>
-          <p class='param'>@param {string} series - Series name</p>
+          <span class='func'><b>setSeriesColor</b>(<i>series</i>, <i>color</i>)</span>
+          <p class='param'>@param {string} series - Series name.</p>
           <p class='param'>@param {string} color - The color value.</p>"
         sampleCode="graph.setSeriesColor('Line B', '#000');
 graph.drawLines();" 
@@ -180,7 +181,7 @@ graph.drawLines();"
         </p>
         <pre><code id='show-data'></code></pre>
         <p style="margin-top:20px;">
-          &gt; <a href="simplegraph-2.html">Go to the next tutorial</a>, which goes over points-lines, grids, legends, and tooltips.
+          &gt; <a href="simplegraph-2.html">Go to the next tutorial</a>, which covers point-lines, grids, legends, and tooltips.
         <p>
       </div>
       

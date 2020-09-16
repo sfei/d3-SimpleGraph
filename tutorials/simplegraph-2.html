@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>D3 SimpleGraph Tutorial 2: Points-lines, grids, legends, and tooltips</title>
+    <title>SimpleGraph Tutorial 2</title>
     <meta charset="UTF-8">
     <script src="https://d3js.org/d3.v6.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script src="tutorial-lib.js"></script>
     <script src="../d3.simplegraph.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
     <link href="style.css" rel="stylesheet" />
   </head>
   <body>
-    <div id="simple-chart" style="width:100%;height:600px;text-align:center;vertical-align:center;border:1px solid black;overflow:hidden;">
-      <div style="position:absolute;top:15px;left:15px;color:rgba(0,0,0,0.2);font-weight:bold;font-size:20px;text-align:left;">
-        #simple-chart
-      </div>
+    <h1>Tutorial 2: Point-lines, Grids, Legends, and Tooltips</h1>
+    
+    <div id="simple-chart">
+      <div class="label">#simple-chart</div>
     </div>
   
     <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
@@ -83,7 +84,7 @@ graph.drawPoints();"
           <span class='func'><b>drawGrid</b>([<i>style</i>])</span>
           <p class='param'>@param {Object} [style={opacity:0.4,stroke:'#555','stroke-width':0.3}]</p>
           <br />
-          <span class='func'><b>drawLegend</b>(position, bgstyle)</span>
+          <span class='func'><b>drawLegend</b>(<i>position</i>, <i>bgstyle</i>)</span>
           <p class='param'>@param {number[]} position - x,y coordinate position from top-left corner of SVG.</p>
           <p class='param'>@param {Object} options -Additional options for the legend.</p>
           <p class='param'>@param {string} [options.anchor='left'] - Optional anchor for the coordinate x-position (left, middle, or right).</p>
@@ -112,10 +113,10 @@ graph.drawLegend(
           <br /><br />
           <span class='func'><b>addTooltipToPoints</b>(<i>textFunction</i>[, <i>options</i>])</span>
           <p class='param'>@callback textFunction(d,n,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
-          <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
-          <p class='param' style='margin-left:20px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
-          <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
-          <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
+          <p class='param' style='padding-left:50px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+          <p class='param' style='padding-left:50px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
+          <p class='param' style='padding-left:50px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
+          <p class='param' style='padding-left:50px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
           <p class='param'>@param {string|string[]} [forSeries] - If provided, only applies tooltips to series matching this name (or within list of names, if array).</p>
           <p class='param'>@param {Object} [options] - Optional parameters.</p>
           <p class='param'>@param {number[]} [options.offset=[15,15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
@@ -128,21 +129,19 @@ graph.drawLegend(
   );
 });"
         onclick="openHelp(this)"
-      >Tooltips</span>
+      >Point Tooltips</span>
     
       <span 
         class="btn" 
-        helptitle="Adding Tooltips to Lines"
-        helptext="Now we're going to add tooltips to our line functions. But because we have two types of lines (one provided as coordinates, other as function), we have to apply tooltips to each individually, as they must be handled differently.
+        helptitle="Adding Tooltips to Lines (Function-based)"
+        helptext="Now we're going to add tooltips to our line added as a function. For the line defined by a function, we can use the original function (<code class='inline'>lineBFunction</code>) we defined globally earlier.
           <br /><br />
-          Note that parameter 'd' only stores raw coordinates for the entire line now, we have to use the other parameters to get the full line data. For the line defined by a function, we can use the original function (<code class='inline'>lineBFunction</code>) we defined globally earlier. For the line that's from coordinates, we can attempt to pull the nearest coordinate after D3 interpolated it onto the graph in finer scale.
-          <br /><br />
-          <b>graph.addTooltipToLines</b>(<i>textFunction</i>[, <i>options</i>]):<
+          <span class='func'><b>addTooltipToLines</b>(<i>textFunction</i>[, <i>options</i>])</span>
           <p class='param'>@callback textFunction(d,m,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
-          <p class='param' style='margin-left:20px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
-          <p class='param' style='margin-left:20px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
-          <p class='param' style='margin-left:20px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
-          <p class='param' style='margin-left:20px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
+          <p class='param' style='padding-left:50px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+          <p class='param' style='padding-left:50px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
+          <p class='param' style='padding-left:50px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
+          <p class='param' style='padding-left:50px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
           <p class='param'>@param {string|string[]} [forSeries] - If provided, only applies tooltips to series matching this name (or within list of names, if array).</p>
           <p class='param'>@param {Object} [options] - Optional parameters.</p>
           <p class='param'>@param {number[]} [options.offset=[15,15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
@@ -156,23 +155,30 @@ graph.addTooltipToLines(
     return 'Score of ' + y.toFixed(1) + ' at ' + x.toFixed(1) + ' years.';
   }, 
   'Line B', 
-);
-// adding for coordinates can be trickier, but since line A has no interpolation (linear) 
-// and is only a  few coordinates long (and was provided sorted by x), we're just going 
-// to do it really simply
-var nCoords = lineACoordinates.length;
+);"
+      onclick="openHelp(this)"
+      >Line Tooltips 1</span>
+      
+      <span 
+        class="btn" 
+        helptitle="Adding Tooltips to Lines (Coordinates-based)"
+        helptext="Now for our other line. As this was defined from coordinates as a fairly coarse resolution, we'll manually interpolate ourselves using the coordinate data (which we have defined as <code class='inline'>lineACoordinates</code>, but we can also pull from the supplied data)."
+        sampleCode="// Since line A has no interpolation (linear), is only a few coordinates long,
+// and is sorted by x, we're just going to do it really simply for demonstration
 graph.addTooltipToLines(
   function(d, m, s, i) {
-    var x = graph.xScale.invert(m[0]), 
+    var lineCoords = d.coords, 
+        nCoords = lineCoords.length, 
+        x = graph.xScale.invert(m[0]), 
         y;
-    if(x <= lineACoordinates[0][0]) {
-      y = lineACoordinates[0][1];
-    } else if(x >= lineACoordinates[nCoords-1][0]) {
-      y = lineACoordinates[nCoords-1][1];
+    if(x <= lineCoords[0][0]) {
+      y = lineCoords[0][1];
+    } else if(x >= lineCoords[nCoords-1][0]) {
+      y = lineCoords[nCoords-1][1];
     } else {
       var pts;
-      lineACoordinates.find(function(c,i) {
-        if(i && lineACoordinates[i][0] > x) return (pts = [lineACoordinates[i-1], c]);
+      lineCoords.find(function(c,i) {
+        if(i && lineCoords[i][0] > x) return (pts = [lineCoords[i-1], c]);
       });
       var slope = (pts[1][1] - pts[0][1]) / (pts[1][0] - pts[0][0]);
       y = pts[0][1] + slope*(x - pts[0][0]);
@@ -182,7 +188,7 @@ graph.addTooltipToLines(
   'Line A', 
 );"
       onclick="openHelp(this)"
-      >Tooltips 2</span>
+      >Line Tooltips 2</span>
     
       <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
         <p style="font-weight:bold;margin-bottom:4px;">
@@ -190,7 +196,7 @@ graph.addTooltipToLines(
         </p>
         <pre><code id='show-data'></code></pre>
         <p style="margin-top:20px;">
-          &gt; <a href="simplegraph-3.html">Go to the next tutorial</a>, which covers advanced more axis options and adding areas.
+          &gt; <a href="simplegraph-3.html">Go to the next tutorial</a>, which covers more axis options and adding areas.
         </p>
         <p style="margin-top:0px;">
           &gt; <a href="simplegraph-1.html">Go back to the previous tutorial</a>.
@@ -224,8 +230,8 @@ graph.addTooltipToLines(
       
       var graph = new SimpleGraph({
         container: '#simple-chart',
-        width: 850,
-        height: 600,
+        width: 700,
+        height: 500,
         axis: {
           style: {'stroke-width': 1.0},
           x: {
