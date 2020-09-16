@@ -32,7 +32,7 @@ Add tooltip function to points on the graph. Does not add tooltips to the lines 
               <th>Name</th><th>Type</th><th>Description</th>
             </tr>
             <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).</td>
+              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [15,15] places the tooltip to the bottom right of the cursor).</td>
             </tr>
             <tr>
               <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>

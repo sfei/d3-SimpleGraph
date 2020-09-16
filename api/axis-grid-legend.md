@@ -54,7 +54,7 @@ Redraws the axes on the graph.
       <td>xAxisPosition</td><td>string</td><td>Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to "bottom".</td>
     </tr>
     <tr>
-      <td>axisLabelMargin</td><td>number</td><td>Labels are automatically placed at a margin determined not to overlap  with the tick marks. However you may specify and additional margin here.</td>
+      <td>axisLabelMargin</td><td>number</td><td>Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</td>
     </tr>
   </tbody>
 </table>

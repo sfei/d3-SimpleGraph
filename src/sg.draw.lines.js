@@ -44,8 +44,9 @@ export default function(SimpleGraph, d3) {
             } else {
                 line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
             }
+            if(line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
         });
-        this._drawLines(this.lines, ".sg-line");
+        this._drawLines(this.lines, "sg-line");
 
         return this;
     };
@@ -61,8 +62,9 @@ export default function(SimpleGraph, d3) {
             } else {
                 line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
             }
+            if(line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
         });
-        this._drawLines(this.pointLines, ".sg-point-line");
+        this._drawLines(this.pointLines, "sg-point-line");
 
         return this;
     };
@@ -95,6 +97,7 @@ export default function(SimpleGraph, d3) {
             } else {
                 line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
             }
+            if(line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
         });
         self._updateLines(this.lines, "sg-line", transition);
 
@@ -115,6 +118,7 @@ export default function(SimpleGraph, d3) {
             } else {
                 line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
             }
+            if(line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
         });
         self._updateLines(this.pointLines, "sg-point-line", transition);
 
@@ -122,13 +126,11 @@ export default function(SimpleGraph, d3) {
     };
 
     SimpleGraph.prototype._drawLines = function(lines, className, transition) {
-        if(!lines) return this;
-        lines = lines.filter(line => line._segments && line._segments.length >= 2);
         var self = this, 
             addedLines = this.svgGraph.selectAll(".sg-temporary-line")
                 .data(lines)
               .enter().append("path")
-                .attr("series", line.series)
+                .attr("series", d => d.series)
                 .attr("class", className)
                 .attr("opacity", transition ? 0 : 1)
                 .style("fill", 'none')
@@ -137,13 +139,13 @@ export default function(SimpleGraph, d3) {
                         d3line = d3.line()
                             .x(c => self.x.scale(c[0]))
                             .y(c => yAxis.scale(c[1]))
-                            .curve(line.interpolate);
+                            .curve(d.interpolate);
                     return d._segments.reduce(
                         (path, segment) => (path || "") + (segment.length < 2 ? "" : " " + d3line(segment)), 
                         ""
-                    )
+                    );
                 })
-                .each(d => {
+                .each(function(d) {
                     // add styles
                     var nLine = d3.select(this), 
                         styles = d.style || {};
@@ -152,7 +154,7 @@ export default function(SimpleGraph, d3) {
                     }
                     // add color if not specified
                     if(!('stroke' in styles)) {
-                        nLine.style('stroke', self.getColorBySeriesName(line.series, true));
+                        nLine.style('stroke', self.getColorBySeriesName(d.series, true));
                     }
                     // attach
                     d._d3s = nLine;
@@ -169,7 +171,7 @@ export default function(SimpleGraph, d3) {
 
         // remove, while also filter for new lines
         lines = lines.filter(line => {
-            if(!line_segments.length || line_segments.length < 2) {
+            if(!line._segments || !line._segments.length) {
                 if(segments._d3s) {
                     line._d3s.remove();
                     line._d3s = null;
@@ -190,18 +192,22 @@ export default function(SimpleGraph, d3) {
                     d3line = d3.line()
                         .x(c => self.x.scale(c[0]))
                         .y(c => yAxis.scale(c[1]))
-                        .curve(line.interpolate);
+                        .curve(d.interpolate);
                 return d._segments.reduce(
                     (path, segment) => (path || "") + (segment.length < 2 ? "" : " " + d3line(segment)), 
                     ""
                 )
             })
-            .each(d => {
+            .each(function(d) {
                 // update styles
                 var nLine = d3.select(this), 
                     styles = d.style || {};
                 for(var key in styles) {
                     nLine.style(key, styles[key]);
+                }
+                // add color if not specified
+                if(!('stroke' in styles)) {
+                    nLine.style('stroke', self.getColorBySeriesName(d.series, true));
                 }
             });
 

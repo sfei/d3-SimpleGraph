@@ -40,7 +40,7 @@ export default function(SimpleGraph, d3) {
 
         for(let series in pointsDataBySeries) {
             this._drawPoints(
-                this.svgGraph.selectAll(".sg-temporary-point").data(data).enter(), 
+                this.svgGraph.selectAll(".sg-temporary-point").data(pointsDataBySeries[series]).enter(), 
                 this.ptSeriesShapes[series],
             );
         }
@@ -184,7 +184,7 @@ export default function(SimpleGraph, d3) {
                         return (d.y2 ? self.y2.scale : self.y.scale)(d.y)-size/2.0;
                     })
                     .attr("transform", d => {
-                        if(!isDiamond) return "";
+                        if(shape !== "diamond") return "";
                         let y = (!d.y && d.y !== 0 ) || Number.isNaN(d.y) ? 0 : d.y;
                         return `rotate(45,${self.x.scale(d.x)},${(d.y2 ? self.y2.scale : self.y.scale)(y)})`
                     })
@@ -229,7 +229,7 @@ export default function(SimpleGraph, d3) {
         if(transition) {
             selection = selection.transition().duration(transition.duration).ease(transition.ease);
         }
-        var self = this, items;
+        var self = this;
         switch(shape) {
             case "triangle-down":
                 selection
@@ -289,7 +289,7 @@ export default function(SimpleGraph, d3) {
                         return (d.y2 ? self.y2.scale : self.y.scale)(d.y)-size/2.0;
                     })
                     .attr("transform", d => {
-                        if(!isDiamond) return "";
+                        if(shape !== "diamond") return "";
                         let y = (!d.y && d.y !== 0 ) || Number.isNaN(d.y) ? 0 : d.y;
                         return `rotate(45,${self.x.scale(d.x)},${(d.y2 ? self.y2.scale : self.y.scale)(y)})`
                     })

@@ -3,7 +3,7 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.addTooltipToPoints = function(textFunction, forSeries, options) {
         forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
         this.svgGraph.selectAll(".sg-point")
-            .filter(d => !forSeries || forSeries.indexOf(d.series))
+            .filter(d => !forSeries || ~forSeries.indexOf(d.series))
             .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
@@ -11,7 +11,7 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.addTooltipToLines = function(textFunction, forSeries, options) {
         forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
         this.svgGraph.selectAll(".sg-line")
-            .filter(d => !forSeries || forSeries.indexOf(d.series))
+            .filter(d => !forSeries || ~forSeries.indexOf(d.series))
             .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
@@ -19,7 +19,7 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.addTooltipToAreas = function(textFunction, forSeries, options) {
         forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
         this.svgGraph.selectAll(".sg-area")
-            .filter(d => !forSeries || forSeries.indexOf(d.series))
+            .filter(d => !forSeries || ~forSeries.indexOf(d.series))
             .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
@@ -32,7 +32,7 @@ export default function(SimpleGraph, d3) {
             if(!options) options = {};
 
             var d3Body = d3.select('body'), 
-                tooltipOffset = options.offset || [10, -15], 
+                tooltipOffset = options.offset || [15, 15], 
                 // TODO: selection is no longer array-like, hides it in _groups var
                 // this seems less than ideal, update/change when able
                 selGroup = selection._groups[0], 
