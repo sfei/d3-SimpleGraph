@@ -57,15 +57,15 @@ graph.drawGrid();"
       <span 
         class="btn" 
         helptitle="Axis Labels"
-        helptext="Let's play with a custom label placement. We'll move the x-axis to the top, have the x-axis label centered, but the y-axis labels up top.
+        helptext="Let's play with a custom label placement. Note that axis placement keywords are sent as a single string (separated by spaces). They are processed in the order they are received (overwriting the previous directive if that is the sequence read), and can be prefixed by the axis name (e.g. 'x', 'y', 'y2') to add specificity. By playing with these keywords, we can place any combination of possible label positions.
           <br /><br />
           <span class='func'><b>drawAxes</b>([<i>labelPosition</i>[, <i>xAxisPosition</i>[, <i>axisLabelMargin</i>]]])</span>
           <p class='param'>@param {string} labelPosition - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top. Defaults to 'outside center'.</p>
           <p class='param'>@param {string} xAxisPosition - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to 'bottom'.</p>
           <p class='param'>@param {number} axisLabelMargin - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
         sampleCode="graph.drawAxes(
-  // draw labels on outside, then x label inside, center all labels, then y and y2 axes on bottom and top
-  'outside x-inside center y-bottom y2-top', 
+  // draw labels on inside, then x label outside, center all labels, then y and y2 axes on bottom and top
+  'inside x-outside center y-bottom y2-top', 
   // place x-axis on top of graph
   'top'
 );"

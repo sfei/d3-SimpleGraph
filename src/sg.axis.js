@@ -299,11 +299,11 @@ export default function(SimpleGraph) {
                             xperpendicular = "inside";
                         }
                         if(!axis || axis === "y") {
-                            yLabelPos.y = 6 + axisLabelMargin;
+                            yLabelPos.y = 5;
                             yperpendicular = "inside";
                         }
                         if(!axis || axis === "y2") {
-                            y2LabelPos.y = 6 + axisLabelMargin;
+                            y2LabelPos.y = 5;
                             y2perpendicular = "inside";
                         }
                     case "center":
@@ -367,37 +367,33 @@ export default function(SimpleGraph) {
                     xLabelPos.x -= 10;
                 }
                 if(xAxisPosition === "bottom") {
-                    if(yperpendicular == "inside" && yparallel === "bottom") {
+                    if(xparallel === "left" && yperpendicular === "inside" && yparallel === "bottom") {
+                        xLabelPos.x += 10;
                         yLabelPos.x += 10;
-                        if(xparallel === "left") {
-                            xLabelPos.x += 10;
-                            yLabelPos.x += 10;
-                        }
                     }
-                    if(y2perpendicular == "inside" && y2parallel === "bottom") {
+                    if(xparallel === "right" && this.y2 && y2perpendicular === "inside" && y2parallel === "bottom") {
+                        xLabelPos.x -= 10;
                         y2LabelPos.x -= 10;
-                        if(xparallel === "right" && this.y2) {
-                            xLabelPos.x -= 10;
-                            y2LabelPos.x -= 10;
-                        }
                     }
                 } else {
-                    if(yperpendicular == "inside" && yparallel === "top") {
+                    if(xparallel === "left" && yperpendicular === "inside" && yparallel === "top") {
+                        xLabelPos.x += 10;
                         yLabelPos.x -= 10;
-                        if(xparallel === "left") {
-                            xLabelPos.x += 10;
-                            yLabelPos.x -= 10;
-                        }
                     }
-                    if(y2perpendicular == "inside" && y2parallel === "top") {
+                    if(xparallel === "right" && this.y2 && y2perpendicular === "inside" && y2parallel === "top") {
+                        xLabelPos.x -= 10;
                         y2LabelPos.x += 10;
-                        if(xparallel === "right" && this.y2) {
-                            xLabelPos.x -= 10;
-                            y2LabelPos.x += 10;
-                        }
                     }
                 }
             }
+        }
+        if(yperpendicular === "inside") {
+            if(yparallel === "top") yLabelPos.x -= 5;
+            if(yparallel === "bottom") yLabelPos.x += 5;
+        }
+        if(y2perpendicular === "inside") {
+            if(y2parallel === "top") y2LabelPos.x += 5;
+            if(y2parallel === "bottom") y2LLabelPos.x -= 5;
         }
         
         // add labels
