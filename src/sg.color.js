@@ -3,7 +3,7 @@ export default function(SimpleGraph) {
     SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
         if(!name) { return null; }
         if(name in this.customColors) {
-            return this.customColors[name];
+            this.customColors[name];
         }
         if(this.points) {
             for(var p in this.points) {

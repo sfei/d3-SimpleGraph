@@ -169,7 +169,7 @@ graph.drawLines();"
           <br /><br />
           <span class='func'><b>setSeriesColor</b>(<i>series</i>, <i>color</i>)</span>
           <p class='param'>@param {string} series - Series name.</p>
-          <p class='param'>@param {string} color - The color value.</p>"
+          <p class='param'>@param {string|function} color - The color value. However, for the legend, this parameter will be null, so be sure the callback returns a valid value if null parameter.</p>"
         sampleCode="graph.setSeriesColor('Line B', '#000');
 graph.drawLines();" 
         onclick="openHelp(this)"

@@ -133,12 +133,14 @@ export default function(SimpleGraph, d3) {
                         y = (d.y2 ? self.y2.scale : self.y.scale)(y);
                         return `${x-hl},${y+hh} ${x},${y-hh} ${x+hl},${y+hh}`;
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
 
             case "triangle":
@@ -158,12 +160,14 @@ export default function(SimpleGraph, d3) {
                         y = (d.y2 ? self.y2.scale : self.y.scale)(y);
                         return `${x-hl},${y-hh} ${x},${y+hh} ${x+hl},${y-hh}`;
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
 
             case "square":
@@ -188,12 +192,14 @@ export default function(SimpleGraph, d3) {
                         let y = (!d.y && d.y !== 0 ) || Number.isNaN(d.y) ? 0 : d.y;
                         return `rotate(45,${self.x.scale(d.x)},${(d.y2 ? self.y2.scale : self.y.scale)(y)})`
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
 
             default:
@@ -210,12 +216,14 @@ export default function(SimpleGraph, d3) {
                         let y = (!d.y && d.y !== 0 ) || Number.isNaN(d.y) ? 0 : d.y;
                         return (d.y2 ? self.y2.scale : self.y.scale)(y);
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
         }
         if(transition) {
@@ -244,12 +252,14 @@ export default function(SimpleGraph, d3) {
                         y = (d.y2 ? self.y2.scale : self.y.scale)(y);
                         return `${x-hl},${y+hh} ${x},${y-hh} ${x+hl},${y+hh}`;
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
 
             case "triangle":
@@ -266,12 +276,14 @@ export default function(SimpleGraph, d3) {
                         y = (d.y2 ? self.y2.scale : self.y.scale)(y);
                         return `${x-hl},${y-hh} ${x},${y+hh} ${x+hl},${y-hh}`;
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
 
             case "square":
@@ -293,12 +305,14 @@ export default function(SimpleGraph, d3) {
                         let y = (!d.y && d.y !== 0 ) || Number.isNaN(d.y) ? 0 : d.y;
                         return `rotate(45,${self.x.scale(d.x)},${(d.y2 ? self.y2.scale : self.y.scale)(y)})`
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
 
             default:
@@ -312,12 +326,14 @@ export default function(SimpleGraph, d3) {
                         let y = (!d.y && d.y !== 0 ) || Number.isNaN(d.y) ? 0 : d.y;
                         return (d.y2 ? self.y2.scale : self.y.scale)(y);
                     })
-                    .style("fill", d => (
-                        d.wasNull ? "none" : self.getColorBySeriesName(d.series, true)
-                    ))
-                    .style("stroke", d => (
-                        !d.wasNull ? null : self.getColorBySeriesName(d.series, true)
-                    ));
+                    .style("fill", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    })
+                    .style("stroke", d => {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        return typeof color === "function" ? color(d) : color;
+                    });
                 break;
         }
     };

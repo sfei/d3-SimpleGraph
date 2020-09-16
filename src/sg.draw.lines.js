@@ -154,7 +154,8 @@ export default function(SimpleGraph, d3) {
                     }
                     // add color if not specified
                     if(!('stroke' in styles)) {
-                        nLine.style('stroke', self.getColorBySeriesName(d.series, true));
+                        let color = self.getColorBySeriesName(d.series, true);
+                        nLine.style('stroke', typeof color === "function" ? color(d) : color);
                     }
                     // attach
                     d._d3s = nLine;
@@ -207,7 +208,8 @@ export default function(SimpleGraph, d3) {
                 }
                 // add color if not specified
                 if(!('stroke' in styles)) {
-                    nLine.style('stroke', self.getColorBySeriesName(d.series, true));
+                    let color = self.getColorBySeriesName(d.series, true);
+                    nLine.style('stroke', typeof color === "function" ? color(d) : color);
                 }
             });
 

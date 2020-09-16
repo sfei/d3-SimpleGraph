@@ -129,7 +129,7 @@
         // local functions for adding items to legend by data type (not needed yet but will make custom item order
         // easier for future)
         var self = this;
-        function addPointItem(data, shape, drawPointLine) {
+        function addPointItem(data, shape, color, drawPointLine) {
             if(drawPointLine) {
                 let lineOffset = yOffset + 10,
                     path = legend.append("path")
@@ -167,7 +167,7 @@
                                 + `${ioffx+hl},${ioffy} `
                                 + `${ioffx+length},${ioffy+height}`
                             ))
-                            .style("fill", self.getColorBySeriesName(data.series));
+                            .style("fill", color);
                         break;
                     case "triangle":
                     case "triangle-up":
@@ -177,7 +177,7 @@
                                 + `${ioffx+hl},${ioffy+height} `
                                 + `${ioffx+length},${ioffy}`
                             ))
-                            .style("fill", self.getColorBySeriesName(data.series));
+                            .style("fill", color);
                         break;
                 }
             } else {
@@ -191,7 +191,7 @@
                             .attr("cx", ioffx+hs)
                             .attr("cy", ioffy+hs)
                             .attr("r", hs)
-                            .style("fill", self.getColorBySeriesName(data.series));
+                            .style("fill", color);
                         break;
                     case "square":
                     case "diamond":
@@ -202,7 +202,7 @@
                             .attr("width", size)
                             .attr("height", size)
                             .attr("transform", shape == "square" ? "" : `rotate(45,${ioffx+hs},${ioffy+hs})`)
-                            .style("fill", self.getColorBySeriesName(data.series));
+                            .style("fill", color);
                         break;
                 }
             }
@@ -216,7 +216,7 @@
 
             addAndCheckColumn();
         }
-        function addLineItem(data) {
+        function addLineItem(data, color) {
             var lineOffset = yOffset + 10;
             var path = legend.append("path")
                 .attr("x", xOffset)
@@ -229,7 +229,7 @@
                 path.style(style, data.style[style]);
             }
             if(!("stroke" in data.style)) {
-                path.style("stroke", self.getColorBySeriesName(data.series));
+                path.style("stroke", color);
             }
             legend.append("text")
                 .attr("x", xOffset+23)
@@ -239,7 +239,7 @@
                 .text(data.series);
             addAndCheckColumn();
         }
-        function addAreaItem(data) {
+        function addAreaItem(data, color) {
             var symbol = legend.append("rect")
                 .attr("x", xOffset)
                 .attr("y", yOffset)
@@ -249,7 +249,7 @@
                 symbol.style(style, data.style[style]);
             }
             if(!("fill" in data.style)) {
-                symbol.style("fill", self.getColorBySeriesName(data.series));
+                symbol.style("fill", color);
             }
             legend.append("text")
                 .attr("x", xOffset+23)
@@ -267,7 +267,8 @@
                 let name = this.areas[i].series;
                 if(!~areaSeries.indexOf(name)) {
                     areaSeries.push(name);
-                    addAreaItem(this.areas[i]);
+                    let color = this.getColorBySeriesName(this.areas[i].series);
+                    addAreaItem(this.areas[i], typeof color === "function" ? color(this.areas[i]) : color);
                 }
             }
         }
@@ -278,7 +279,8 @@
                 let name = this.lines[i].series;
                 if(!~lineSeries.indexOf(name)) {
                     lineSeries.push(name);
-                    addLineItem(this.lines[i]);
+                    let color = this.getColorBySeriesName(this.lines[i].series);
+                    addLineItem(this.lines[i], typeof color === "function" ? color(this.lines[i]) : color);
                 }
             }
         }
@@ -300,7 +302,9 @@
                             }
                         }
                     }
-                    addPointItem(this.points[i], this.getPointSeriesShape(name), drawPointLine);
+                    let color = this.getColorBySeriesName(this.points[i].series);
+                    color = typeof color === "function" ? color(this.points[i]) : color;
+                    addPointItem(this.points[i], this.getPointSeriesShape(name), color, drawPointLine);
                 }
             }
         }

@@ -54,7 +54,7 @@ Sets a custom color (overriding the color scale) for a given series name.
       <td>series</td><td>string</td><td>The series name.</td>
     </tr>
     <tr>
-      <td>color</td><td>string</td><td>The color value.</td>
+      <td>color</td><td>string|function</td><td>The color value or callback function that returns a color value as string. Function will be provided the data object. However, for the legend, this parameter will be null, so be sure the callback returns a valid value if null parameter.</td>
     </tr>
   </tbody>
 </table>

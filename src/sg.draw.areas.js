@@ -25,15 +25,18 @@ export default function(SimpleGraph, d3) {
                         .y0(function(c) { return yScale(c[1]); })
                         .y1(function(c) { return yScale(c[2]); })
                         .curve(areaData.interpolate)
-                );
-            var styles = areaData.style ? areaData.style : {};
-            for(var skey in styles) {
-                addedArea.style(skey, styles[skey]);
-            }
-            // add color if not specified
-            if(!('fill' in styles)) {
-                addedArea.style("fill", self.getColorBySeriesName(areaData.series, true));
-            }
+                )
+                .each(function(d) {
+                    var styles = d.style ? d.style : {};
+                    for(let sey in styles) {
+                        addedArea.style(key, styles[key]);
+                    }
+                    // add color if not specified
+                    if(!('fill' in styles)) {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        addedArea.style('fill', typeof color === "function" ? color(d) : color);
+                    }
+                });
         }
 
         if(this.areas) {

@@ -180,18 +180,19 @@ export default function(SimpleGraph, d3) {
             .map(d => ({
                 series:       d.series, 
                 lineFunction: d.lineFunction, 
-                coords:       d.coords.map(c => [...c]), 
-                xRange:       [...d.xRange], 
+                coords:       d.coords ? d.coords.map(c => [...c]) : null, 
+                xRange:       d.xRange ? [...d.xRange] : null, 
                 y2:           d.y2, 
                 style:        d.style, 
-                interpolate:  d.interpolation
+                interpolate:  d.interpolate
             }));
     };
 
     SimpleGraph.prototype.updateLineInterpolation = function(series, interpolation) {
         if(!this.lines) return this;
+        interpolation = interpolation || d3.curveLinear;
         this.lines.forEach(d => {
-            if(d.series === series) d.interpolation = interpolation;
+            if(d.series === series) d.interpolate = interpolation;
         });
         return this;
     };
