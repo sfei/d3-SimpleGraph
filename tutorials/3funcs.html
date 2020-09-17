@@ -1,35 +1,4 @@
-      <span 
-          class="btn" 
-          helptitle="Advanced Graph Options" 
-          helptext="Let's start by creating a graph, similar as before, but play with a few advanced options.<br /><br />
-            To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options except the label (the rest will revert to default), but specify a y2-axis.<br /><br />
-            After creating the graph object, let's first draw the grid before drawing anything on the graph."
-          sampleCode="var colors = d3.scaleOrdinal(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
-var graph = new SimpleGraph({
-    container: '#simple-chart',
-    width: 850,
-    height: 580,
-    // we'll want to expand our margins for playing with labels later
-    margins: { top: 50, left: 50, bottom: 50, right: 50 },
-    colorScale: colors, 
-    axis: {
-      x: {
-        label: 'x-value'
-      }, 
-      y: {
-        label: 'y-value'
-      }, 
-      y2: {
-        min: 0, 
-        max: 10,
-        label: 'y2-value'
-      }
-    }
-});
-graph.drawGrid();" 
-          onclick="openHelp(this)">
-        Advanced Graph Options
-      </span>
+
       <span 
           class="btn" 
           helptitle="Adding an Area"
@@ -60,50 +29,7 @@ graph.drawAreas();"
           onclick="openHelp(this)">
         Adding an Area
       </span>
-      <span 
-          class="btn" 
-          helptitle="Axis Label Placement" 
-          helptext="Let's play with a custom label placement. We'll move the x-axis to the top, have the x-axis label centered, but the y-axis labels up top.<br /><br />
-            <b>drawAxes(labelPosition):</b>
-            <p class='param'>@param {string} [labelPosition='outside center'] - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top.</p>
-            <p class='param'>@param {string} [xAxisPosition='bottom'] - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom.</p>
-            <p class='param'>@param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
-          sampleCode="graph.drawAxes(
-    'inside top center', // draw labels on inside, y-axis labels on top, and x-axis centered
-    'top'                // place x-axis on top of graph
-);" 
-          onclick="openHelp(this)">
-        Axis Label Placement
-      </span>
-      <span 
-          class="btn" 
-          helptitle="Adding a Range Limited Line"
-          helptext="Let's add a line, as a function, same as previously, but using the new y2-axis we've created. Additionally, we'll limit it's range via an x-range parameter.<br /><br />
-            Note two things in the result, one is that the line starts at 10 and ends at 90 (as specified), but also that when the line dips outside of the graph domain (where y values are below zero), it is not drawn. This can be called with the SimpleGraph.allowDrawBeyondGraph option, if desired.<br /><br />
-            <b>addLineDataAsFunction(name, lineFunction, resolution, style, interpolation, xRange):</b>
-            <p class='param'>@param {string} name - Series name</p>
-            <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
-            <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
-            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
-            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
-            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
-            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
-          sampleCode="var limitedLineFunction = function(x) {
-    return (2.5*Math.sin(0.2*x) + 2);
-};
-graph.addLineDataAsFunction(
-    'Limited Line',
-    limitedLineFunction,
-    {'stroke-width':3.0},
-    50,                   // compute line at 50 intervals
-    d3.curveStepBefore,   // stepped drawing, just to demonstrate another type of interpolation
-    [10, 90],             // draw line only between 10 < x < 90
-    true                  // flags it for the y2-axis
-);
-graph.drawLines();" 
-          onclick="openHelp(this)">
-        Limiting Line Range
-      </span>
+      
       <span 
           class="btn" 
           helptitle="Customizing Tooltips"

@@ -12,7 +12,7 @@ export default function(SimpleGraph, d3) {
             xRange:      xRange ? [...xRange] : null, 
             y2:          !!options.y2Axis, 
             style:       option.style || {}, 
-            interpolate: options.interpolation || d3.curveLinear;
+            interpolate: options.interpolation || d3.curveLinear
         });
         return this;
     };
@@ -28,7 +28,7 @@ export default function(SimpleGraph, d3) {
             xRange:      xRange ? [...xRange] : null, 
             y2:          !!options.y2Axis, 
             style:       option.style || {}, 
-            interpolate: options.interpolation || d3.curveLinear;
+            interpolate: options.interpolation || d3.curveLinear
         });
         return this;
     };
@@ -39,7 +39,7 @@ export default function(SimpleGraph, d3) {
             .filter(d => d.series === series)
             .map(d => ({
                 series:      d.series, 
-                functions:   d.functions ? [..d.functions] : null, 
+                functions:   d.functions ? [...d.functions] : null, 
                 coords:      d.coords ? d.coords.map(c => [...c]) : null, 
                 xRange:      d.xRange ? [...d.xRange] : null, 
                 y2:          d.y2, 

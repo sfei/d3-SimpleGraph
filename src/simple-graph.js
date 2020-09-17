@@ -13,7 +13,6 @@ function SimpleGraph(options) {
     if(!options.margins)     { options.margins = {}; }
     if(!options.axis)        { options.axis = {}; }
     if(!options.styles)      { options.styles = {}; }
-    if(!options.styles["font-size"]) { options.styles["font-size"] = "1.0em"; }
     
     // Option to allow drawing outside graph range.
     this.allowDrawBeyondGraph = options.allowDrawBeyondGraph;
