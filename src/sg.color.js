@@ -1,10 +1,8 @@
 export default function(SimpleGraph) {
 
     SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
-        if(!name) { return null; }
-        if(name in this.customColors) {
-            this.customColors[name];
-        }
+        if(!name) return null;
+        if(name in this.customColors) return this.customColors[name];
         if(this.points) {
             for(var p in this.points) {
                 var point = this.points[p];
@@ -45,7 +43,8 @@ export default function(SimpleGraph) {
                 }
             }
         }
-        if(create) { return this.color(name); }
+        if(create) return this.color(name);
+        return null;
     };
 
     SimpleGraph.prototype.resetColorScale = function(colorScale) {

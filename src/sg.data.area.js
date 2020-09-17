@@ -11,8 +11,9 @@ export default function(SimpleGraph, d3) {
             coords:      null, 
             xRange:      xRange ? [...xRange] : null, 
             y2:          !!options.y2Axis, 
-            style:       option.style || {}, 
-            interpolate: options.interpolation || d3.curveLinear
+            style:       options.style || {}, 
+            interpolate: options.interpolation || d3.curveLinear, 
+            _bind:       {xRange: xRange}
         });
         return this;
     };
@@ -25,10 +26,11 @@ export default function(SimpleGraph, d3) {
             series:      name, 
             functions:   null, 
             coords:      areaCoordinates, 
-            xRange:      xRange ? [...xRange] : null, 
+            xRange:      null, 
             y2:          !!options.y2Axis, 
-            style:       option.style || {}, 
-            interpolate: options.interpolation || d3.curveLinear
+            style:       options.style || {}, 
+            interpolate: options.interpolation || d3.curveLinear, 
+            _bind:       {coords: areaCoordinates}
         });
         return this;
     };
@@ -65,4 +67,18 @@ export default function(SimpleGraph, d3) {
         });
         return this;
     };
+
+    SimpleGraph.prototype.updateAreasData = function() {
+        if(!this.areas) return this;
+        this.areas.forEach(d => {
+            if(d._bind.xRange) {
+                d.xRange = [...d._bind.xRange];
+            }
+            if(d._bind.coords) {
+                d.coords = d._bind.coords.map(c => [...c]);
+            }
+        });
+        return this;
+    };
+    
 }

@@ -8,13 +8,19 @@ export default function(SimpleGraph, d3) {
 
     SimpleGraph.prototype.removeLines = function() {
         this.svgGraph.selectAll(".sg-line").remove();
-        if(this.lines) this.lines.forEach(d => d._d3s = null);
+        if(this.lines) this.lines.forEach(d => {
+            d._segments = null;
+            d._d3s = null;
+        });
         return this;
     };
 
     SimpleGraph.prototype.removePointLines = function() {
         this.svgGraph.selectAll(".sg-point-line").remove();
-        if(this.pointLines) this.pointLines.forEach(d => d._d3s = null);
+        if(this.pointLines) this.pointLines.forEach(d => {
+            d._segments = null;
+            d._d3s = null;
+        });
         return this;
     };
 
@@ -172,7 +178,7 @@ export default function(SimpleGraph, d3) {
 
         // remove, while also filter for new lines
         lines = lines.filter(line => {
-            if(!line._segments || !line._segments.length) {
+            if(!line._segments || !line._segments.length || line._segments.filter(c => c.length < 2).length) {
                 if(segments._d3s) {
                     line._d3s.remove();
                     line._d3s = null;
@@ -189,9 +195,9 @@ export default function(SimpleGraph, d3) {
         }
         var self = this;
         sel.attr("d", d => {
-                var yAxis = d.y2 ? self.y2 : self.y, 
+                var yAxis = d.y2 ? this.y2 : this.y, 
                     d3line = d3.line()
-                        .x(c => self.x.scale(c[0]))
+                        .x(c => this.x.scale(c[0]))
                         .y(c => yAxis.scale(c[1]))
                         .curve(d.interpolate);
                 return d._segments.reduce(
