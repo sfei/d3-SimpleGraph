@@ -207,7 +207,7 @@ export default function(SimpleGraph) {
             yAxis    = y2Axis ? this.y2 : this.y;
         while(true) {
             var markForBreak = false;
-            if(x >= xRange[1]) {
+            if(x >= xRange[1] || isNaN(x)) {
                 x = xRange[1];
                 markForBreak = true;
             }

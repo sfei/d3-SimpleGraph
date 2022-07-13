@@ -26,6 +26,7 @@ export default function(SimpleGraph, d3) {
             series:      name, 
             functions:   null, 
             coords:      areaCoordinates, 
+            resolution:  null, 
             xRange:      null, 
             y2:          !!options.y2Axis, 
             style:       options.style || {}, 

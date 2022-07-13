@@ -95,11 +95,14 @@ export default function(SimpleGraph, d3) {
             var lineCoords = this._getPointLine(pointsBySeries[series].points, handleOverlap);
             if(lineCoords.length >= 2) {
                 this.pointLines.push({
-                    series:      series, 
-                    coords:      lineCoords, 
-                    y2:          pointsBySeries[series].y2, 
-                    style:       style, 
-                    interpolate: options.interpolation || d3.curveLinear
+                    series:       series, 
+                    lineFunction: null, 
+                    resolution:   null, 
+                    coords:       lineCoords, 
+                    xRange:       null, 
+                    y2:           pointsBySeries[series].y2, 
+                    style:        style, 
+                    interpolate:  options.interpolation || d3.curveLinear
                 });
             }
         }
