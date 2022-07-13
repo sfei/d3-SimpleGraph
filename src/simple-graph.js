@@ -2153,7 +2153,7 @@ SimpleGraph.prototype._getLineSegmentsFromFunction = function(lineFunction, reso
 
     while(true) {
         var markForBreak = false;
-        if(x >= xRange[1]) {
+        if(x >= xRange[1] || isNaN(x)) {
             x = xRange[1];
             markForBreak = true;
         }
