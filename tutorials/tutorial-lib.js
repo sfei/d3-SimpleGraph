@@ -52,7 +52,7 @@ function copyToClipboard() {
         range.moveToElementText(copyDiv[0]);
         range.select();
     } else if(window.getSelection) {
-        var selection = window.getSelection();        
+        var selection = window.getSelection();
         var range = document.createRange();
         range.selectNodeContents(copyDiv[0]);
         selection.removeAllRanges();

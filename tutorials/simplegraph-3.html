@@ -11,7 +11,7 @@
     <link href="style.css" rel="stylesheet" />
   </head>
   <body>
-    <h1>Tutorial 3: Y2 Axis and Area Data</h1>
+    <h1>Tutorial 3: Y2 Axis, Areas, Colors, and Transitions</h1>
     
     <div id="simple-chart">
       <div class="label">#simple-chart</div>
@@ -46,7 +46,7 @@ var graph = new SimpleGraph({
       }, 
       y2: {
         min: 0, 
-        max: 10,
+        max: 1000,
         label: 'y2-value'
       }
     }
@@ -72,44 +72,63 @@ graph.drawGrid();"
 );"
         onclick="openHelp(this)"
       >Axis Labels</span>
-    
+
       <span 
-        class="btn" 
-        helptitle="Dynamic Color Function"
-        helptext="longdescription
-          <br /><br />
-          <span class='func'><b>func</b>([<i>param</i>])</span>
-          <p class='param'>@param {type} name - desc.</p>"
-        sampleCode=""
-        onclick="openHelp(this)"
-      >Color Function</span>
-    
+          class="btn" 
+          helptitle="Adding an Area"
+          helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
+            You'll notice that the area will overlap over the axes and one of the axes labels, so it's necessary to redraw the axis which we'll do in the next step.<br /><br />
+            <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
+            <p class='param'>@param {string} name - Series name</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
+            <p class='param'>@param {number[]} [xRange] - The x-range of the area. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
+            @param {Object} [options] - Additional options defining the area data.
+            @param {Object} [options.style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.
+            @param {string} [options.interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
+            @param {boolean} [options.y2Axis=false] - Whether coordinates are for 2nd y-axis."
+          sampleCode="var bottomBoundary = function(x) {
+    return -0.1*x*x + 16*x;
+};
+var topBoundary = function(x) {
+    return -0.003*Math.pow(x-40,2)+2.0*x+800;
+};
+graph.addAreaBetweenTwoLines(
+    'Area',
+    bottomBoundary,          // callback line function for bottom boundary
+    topBoundary,             // callback line function for top boundary
+    null,                    // won't constrain x-range of area
+    {
+      y2Axis: true,          // put in on 2nd y-axis
+      style: {opacity: 0.6}  // let's make it transparent
+    }
+);
+graph.drawAreas();" 
+          onclick="openHelp(this)">
+        Adding an Area
+      </span>
+
       <span 
-        class="btn" 
-        helptitle="Adding an Areas"
-        helptext="longdescription
-          <br /><br />
-          <span class='func'><b>func</b>([<i>param</i>])</span>
-          <p class='param'>@param {type} name - desc.</p>"
-        sampleCode=""
-        onclick="openHelp(this)"
-      >Adding Areas</span>
-    
-      <span 
-        class="btn" 
-        helptitle="title"
-        helptext="longdescription
-          <br /><br />
-          <span class='func'><b>func</b>([<i>param</i>])</span>
-          <p class='param'>@param {type} name - desc.</p>"
-        sampleCode=""
-        onclick="openHelp(this)"
-      >Area Tooltips</span>
+          class="btn" 
+          helptitle="Series colors"
+          helptext="We can manually set the series colors as well with a few simple functions.<br /><br />
+            <b>setSeriesColor(series, color):</b>
+            <p class='param'>@param {string} series - Series name.</p>
+            <p class='param'>@param {string} color - The color to assign to the series.</p>
+            <br /><br />
+            <b>resetColorScale(colorScale):</b>
+            <p class='param'>@param [colorScale] - If supplied, the d3 color scale to use. Otherwise simply resets the domain of the existing color scale.</p>"
+          sampleCode="// while not necessary in this case, will free current color used by area
+graph.resetColorScale();
+// set area to an orange/umber
+graph.setSeriesColor('Area', 'rgb(235,170,55)');
+// redraw
+graph.drawAreas();" 
+          onclick="openHelp(this)">
+        Series Colors
+      </span>
     
       <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
-        <p style="margin-top:20px;">
-          &gt; <a href="simplegraph-4.html">Go to the next tutorial</a>, which covers dynamically updating data and animations.
-        </p>
         <p style="margin-top:0px;">
           &gt; <a href="simplegraph-2.html">Go back to the previous tutorial</a>.
         <p>

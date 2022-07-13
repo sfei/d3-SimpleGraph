@@ -79,10 +79,10 @@ export default function(SimpleGraph, d3) {
                     }
                 }
                 // additional trigger
-                if(options.mouseover) options.mouseover(d, d3.pointer(evt, gNode), selGroup, i);
+                if(options.mouseover) options.mouseover(d, d3.pointer(evt, gNode), selGroup);
             })
 
-            .on('mousemove.sg-tooltip', function(evt, d, i) {
+            .on('mousemove.sg-tooltip', function(evt, d) {
                 if(tooltipDiv) {
                     // Move tooltip
                     let absMousePos = d3.pointer(evt, d3Body.node());
@@ -91,7 +91,7 @@ export default function(SimpleGraph, d3) {
                         .style('top', (absMousePos[1] + tooltipOffset[1])+'px');
                     let tooltipText = null;
                     if(textFunction) {
-                        tooltipText = textFunction(d, d3.pointer(evt, gNode), selGroup, i);
+                        tooltipText = textFunction(d, d3.pointer(evt, gNode), selGroup);
                     }
                     // If no text, remove tooltip
                     if(!tooltipText) {
@@ -105,7 +105,7 @@ export default function(SimpleGraph, d3) {
 
             .on("mouseout.sg-tooltip", function(evt, d) {
                 // additional trigger
-                if(options.mouseout) options.mouseout(d, d3.pointer(evt, gNode), selGroup, i);
+                if(options.mouseout) options.mouseout(d, d3.pointer(evt, gNode), selGroup);
                 // Remove tooltip
                 if(tooltipDiv) {
                     tooltipDiv.remove();

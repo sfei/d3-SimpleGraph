@@ -16,10 +16,10 @@ export default function(SimpleGraph, d3) {
 
         var self = this;
         this.areas.forEach(area => {
-            if(area.areaFunctions) {
+            if(area.functions) {
                 area._parts = this._getAreasPolysFromFunctions(
-                    area.areaFunctions[0], 
-                    area.areaFunctions[1], 
+                    area.functions[0], 
+                    area.functions[1], 
                     area.resolution, 
                     area.xRange, 
                     area.y2, 

@@ -116,7 +116,6 @@ graph.drawLegend(
           <p class='param' style='padding-left:50px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
           <p class='param' style='padding-left:50px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
           <p class='param' style='padding-left:50px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
-          <p class='param' style='padding-left:50px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
           <p class='param'>@param {string|string[]} [forSeries] - If provided, only applies tooltips to series matching this name (or within list of names, if array).</p>
           <p class='param'>@param {Object} [options] - Optional parameters.</p>
           <p class='param'>@param {number[]} [options.offset=[15,15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
@@ -141,14 +140,13 @@ graph.drawLegend(
           <p class='param' style='padding-left:50px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
           <p class='param' style='padding-left:50px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
           <p class='param' style='padding-left:50px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
-          <p class='param' style='padding-left:50px;'>@param {number} i - Index of selected element in array above such that s[i] gives the specific SVG element.</p>
           <p class='param'>@param {string|string[]} [forSeries] - If provided, only applies tooltips to series matching this name (or within list of names, if array).</p>
           <p class='param'>@param {Object} [options] - Optional parameters.</p>
           <p class='param'>@param {number[]} [options.offset=[15,15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
           <p class='param'>@param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's CSS style (optional).</p>"
         sampleCode="// adding for a function is easy as we can reference original function
 graph.addTooltipToLines(
-  function(d, m, s, i) {
+  function(d, m, s) {
     // convert to x-position of mouse to x-value on graph
     var x = graph.xScale.invert(m[0]), 
         y = lineBFunction(x);
@@ -166,7 +164,7 @@ graph.addTooltipToLines(
         sampleCode="// Since line A has no interpolation (linear), is only a few coordinates long,
 // and is sorted by x, we're just going to do it really simply for demonstration
 graph.addTooltipToLines(
-  function(d, m, s, i) {
+  function(d, m, s) {
     var lineCoords = d.coords, 
         nCoords = lineCoords.length, 
         x = graph.xScale.invert(m[0]), 
@@ -177,7 +175,7 @@ graph.addTooltipToLines(
       y = lineCoords[nCoords-1][1];
     } else {
       var pts;
-      lineCoords.find(function(c,i) {
+      lineCoords.find(function(c, i) {
         if(i && lineCoords[i][0] > x) return (pts = [lineCoords[i-1], c]);
       });
       var slope = (pts[1][1] - pts[0][1]) / (pts[1][0] - pts[0][0]);
@@ -196,7 +194,7 @@ graph.addTooltipToLines(
         </p>
         <pre><code id='show-data'></code></pre>
         <p style="margin-top:20px;">
-          &gt; <a href="simplegraph-3.html">Go to the next tutorial</a>, which covers more axis options and adding areas.
+          &gt; <a href="simplegraph-3.html">Go to the next tutorial</a>, which covers more axis options, adding areas, colors, and transitions.
         </p>
         <p style="margin-top:0px;">
           &gt; <a href="simplegraph-1.html">Go back to the previous tutorial</a>.
