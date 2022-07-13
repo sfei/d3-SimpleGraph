@@ -24,11 +24,11 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.drawAllLines = function(resolution) {
-        return this.drawPointLines().drawLines(resolution);
+    SimpleGraph.prototype.drawAllLines = function(resolution, transition) {
+        return this.drawPointLines().drawLines(resolution, transition);
     };
 
-    SimpleGraph.prototype.drawLines = function(resolution) {
+    SimpleGraph.prototype.drawLines = function(resolution, transition) {
         this.removeLines();
         // default and enforced minimum resolution for resolving from function
         if(!resolution && resolution !== 0) resolution = 20;
@@ -57,7 +57,7 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.drawPointLines = function() {
+    SimpleGraph.prototype.drawPointLines = function(transition) {
         this.removePointLines();
         if(!this.pointLines) return this;
 
@@ -70,7 +70,7 @@ export default function(SimpleGraph, d3) {
             }
             if(line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
         });
-        this._drawLines(this.pointLines, "sg-point-line");
+        this._drawLines(this.pointLines, "sg-point-line", transition);
 
         return this;
     };
@@ -138,7 +138,7 @@ export default function(SimpleGraph, d3) {
               .enter().append("path")
                 .attr("series", d => d.series)
                 .attr("class", className)
-                .attr("opacity", transition ? 0 : 1)
+                .style("opacity", transition ? 0 : 1)
                 .style("fill", 'none')
                 .attr("d", d => {
                     var yAxis = d.y2 ? self.y2 : self.y, 
@@ -156,7 +156,9 @@ export default function(SimpleGraph, d3) {
                     var nLine = d3.select(this), 
                         styles = d.style || {};
                     for(var key in styles) {
-                        nLine.style(key, styles[key]);
+                        if(!transition || (key && key.toLowerCase() != "opacity")) {
+                            nLine.style(key, styles[key]);
+                        }
                     }
                     // add color if not specified
                     if(!('stroke' in styles)) {
@@ -168,8 +170,12 @@ export default function(SimpleGraph, d3) {
                 });
         // animate
         if(transition) {
+            transition.duration = transition.duration || 200;
+            transition.ease = transition.ease || d3.easePolyOut;
             addedLines.transition().duration(transition.duration).ease(transition.ease)
-                .attr("opacity", 1.0);
+                .style("opacity", d => {
+                    return d.style && ('opacity' in d.style) ? d.style.opacity : 1;
+                });
         }
     };
 

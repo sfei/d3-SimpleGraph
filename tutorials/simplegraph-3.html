@@ -78,7 +78,7 @@ graph.drawGrid();"
           helptitle="Adding an Area"
           helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
             You'll notice that the area will overlap over the axes and one of the axes labels, so it's necessary to redraw the axis which we'll do in the next step.<br /><br />
-            <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
+            <span class='func'><b>addAreaBetweenTwoLines</b>(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</span>
             <p class='param'>@param {string} name - Series name</p>
             <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
             <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
@@ -102,10 +102,27 @@ graph.addAreaBetweenTwoLines(
       y2Axis: true,          // put in on 2nd y-axis
       style: {opacity: 0.6}  // let's make it transparent
     }
-);
-graph.drawAreas();" 
+);" 
           onclick="openHelp(this)">
         Adding an Area
+      </span>
+
+      <span 
+          class="btn" 
+          helptitle="Transition Draw"
+          helptext="Additionally, we'll add a transition to fade in our area upon drawing. Previously we'd call the draw functions without specifying arguments but some can be provided. For lines and areas, the first argument is the resolution to draw lines and areas defined by functions. (For points, the first argument is a boolean whether to show points with NaN y-values with y=0.) The second argument is transition parameters.
+            <br /><br />
+            <span class='func'><b>drawAreas</b>(resolution, transition):</span>
+            <p class='param'>@param {number} [resolution] - The resolution on which to draw an area defined via functions. That is, in how many evenly-spaced locations to split the horizontal span and calculate points from which to interpolate the lines. Defaults to 20.</p>
+            <p class='param'>@param {Object} [transition] - Transition parameters.</p>
+            <p class='param'>@param {number} [transition.duration] - Transition duration in milliseconds (defaults to 200).</p>
+            <p class='param'>@param {number} [transition.ease] - Transition easing function (defaults to d3.easePolyOut).</p>"
+          sampleCode="graph.drawAreas(
+    null,                                   // default resolution
+    {duration: 1000, ease: d3.easePolyOut}  // transition fade in
+);" 
+          onclick="openHelp(this)">
+        Transition Draw
       </span>
 
       <span 

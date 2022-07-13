@@ -7,7 +7,7 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.drawPoints = function(showNulls) {
+    SimpleGraph.prototype.drawPoints = function(showNulls, transition) {
         this.removePoints();
 
         if(!this.points || this.points.length === 0) return this;
@@ -42,6 +42,7 @@ export default function(SimpleGraph, d3) {
             this._drawPoints(
                 this.svgGraph.selectAll(".sg-temporary-point").data(pointsDataBySeries[series]).enter(), 
                 this.ptSeriesShapes[series],
+                transition
             );
         }
 
@@ -120,7 +121,7 @@ export default function(SimpleGraph, d3) {
             case "triangle-down":
                 items = selection.append("polygon")
                     .attr("series", d => d.series)
-                    .attr("opacity", transition ? 0 : 1)
+                    .style("opacity", transition ? 0 : 1)
                     .attr("class", "sg-point sg-point-td")
                     .attr("points", d => {
                         let size = size = typeof d.size === "function" ? d.size() : d.size, 
@@ -147,7 +148,7 @@ export default function(SimpleGraph, d3) {
             case "triangle-up":
                 items = selection.append("polygon")
                     .attr("series", d => d.series)
-                    .attr("opacity", transition ? 0 : 1)
+                    .style("opacity", transition ? 0 : 1)
                     .attr("class", "sg-point sg-point-tu")
                     .attr("points", d => {
                         let size = size = typeof d.size === "function" ? d.size(d, d._bind) : d.size, 
@@ -173,8 +174,8 @@ export default function(SimpleGraph, d3) {
             case "square":
             case "diamond":
                 items = selection.append("rect")
-                    .attr("opacity", transition ? 0 : 1)
                     .attr("series", d => d.series)
+                    .style("opacity", transition ? 0 : 1)
                     .attr("class", "sg-point sg-point-sd")
                     .attr("width", d => (typeof d.size === "function") ? d.size() : d.size)
                     .attr("height", d => (typeof d.size === "function") ? d.size() : d.size)
@@ -205,7 +206,7 @@ export default function(SimpleGraph, d3) {
             default:
             case "circle":
                 items = selection.append("circle")
-                    .attr("opacity", transition ? 0 : 1)
+                    .style("opacity", transition ? 0 : 1)
                     .attr("series", d => d.series)
                     .attr("class", "sg-point sg-point-cr")
                     .attr("r", d => (
@@ -227,8 +228,12 @@ export default function(SimpleGraph, d3) {
                 break;
         }
         if(transition) {
+            transition.duration = transition.duration || 200;
+            transition.ease = transition.ease || d3.easePolyOut;
             items.transition().duration(transition.duration).ease(transition.ease)
-                .attr("opacity", 1.0);
+                .style("opacity", d => {
+                    return d.style && ('opacity' in d.style) ? d.style.opacity : 1;
+                });
         }
     };
 

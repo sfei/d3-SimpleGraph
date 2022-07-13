@@ -7,11 +7,11 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.drawAreas = function(resolution) {
+    SimpleGraph.prototype.drawAreas = function(resolution, transition) {
         this.removeAreas();
         // default and enforced minimum resolution for resolving from function
         if(!resolution && resolution !== 0) resolution = 20;
-        if(resolution == 0 || resolution < 2) resolution = 2;
+        if(resolution < 2) resolution = 2;
         if(!this.areas) return this;
 
         var self = this;
@@ -32,7 +32,7 @@ export default function(SimpleGraph, d3) {
             }
             if(area._parts) area._parts = area._parts.filter(s => s && s.length >= 2);
         });
-        this._drawAreas(resolution);
+        this._drawAreas(resolution, transition);
 
         return this;
     };
@@ -45,7 +45,7 @@ export default function(SimpleGraph, d3) {
               .enter().append("path")
                 .attr("series", d => d.series)
                 .attr("class", "sg-area")
-                .attr("opacity", transition ? 0 : 1)
+                .style("opacity", transition ? 0 : 1)
                 .attr("d", d => {
                     let yAxis = d.y2 ? this.y2 : this.y, 
                         d3Area = d3.area()
@@ -63,7 +63,9 @@ export default function(SimpleGraph, d3) {
                     var nArea = d3.select(this), 
                         styles = d.style || {};
                     for(let key in styles) {
-                        nArea.style(key, styles[key]);
+                        if(!transition || (key && key.toLowerCase() != "opacity")) {
+                            nArea.style(key, styles[key]);
+                        }
                     }
                     // add color if not specified
                     if(!('fill' in styles)) {
@@ -75,13 +77,22 @@ export default function(SimpleGraph, d3) {
                 });
         // animate
         if(transition) {
+            transition.duration = transition.duration || 200;
+            transition.ease = transition.ease || d3.easePolyOut;
             addedAreas.transition().duration(transition.duration).ease(transition.ease)
-                .attr("opacity", 1.0);
+                .style("opacity", d => {
+                    return d.style && ('opacity' in d.style) ? d.style.opacity : 1;
+                });
         }
     };
 
     SimpleGraph.prototype._updateAreas = function(transition) {
         if(!this.areas) return;
+
+        if(transition) {
+            transition.duration = transition.duration || 200;
+            transition.ease = transition.ease || d3.easePolyOut;
+        }
 
         // remove, while also filter for new areas
         var areas = this.areas.filter(area => {
