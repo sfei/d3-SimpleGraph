@@ -1,7 +1,8 @@
 /*************************************************************************************************************
  * D3-Simple-Graph
+ * @version v2.2.2
  * @author Lawrence Sim
- * @copyright 2018 - San Francisco Estuary Institute
+ * @copyright 2022 - San Francisco Estuary Institute
  * @license This project is licensed under the GNU Lesser General Public License.
  ************************************************************************************************************/
 
