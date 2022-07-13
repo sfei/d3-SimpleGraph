@@ -7,7 +7,7 @@
 D3-SimpleGraph is an abstraction of the D3 library for quickly creating and adding functionality of basic, 2-dimensional plots.
 
 **Lawrence Sim** -- lawrences@sfei.org  
-**San Francisco Estuary Institute** -- 2019
+**San Francisco Estuary Institute** -- 2022
 
 ## License ##
 
