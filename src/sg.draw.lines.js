@@ -75,11 +75,11 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.updateAllLines = function(resolution, transition) {
-        return this.updateLines(resolution, transition).updatePointLines(transition);
+    SimpleGraph.prototype.drawUpdateAllLines = function(resolution, transition) {
+        return this.drawUpdateLines(resolution, transition).drawUpdatePointLines(transition);
     };
 
-    SimpleGraph.prototype.updateLines = function(resolution, transition) {
+    SimpleGraph.prototype.drawUpdateLines = function(resolution, transition) {
         // defaults
         if(!resolution && resolution !== 0) resolution = 20;
         if(resolution == 0 || resolution < 2) resolution = 2;
@@ -110,7 +110,7 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.updatePointLines = function(transition) {
+    SimpleGraph.prototype.drawUpdatePointLines = function(transition) {
         // defaults
         if(transition) {
             transition.duration = transition.duration || 200;
@@ -183,7 +183,7 @@ export default function(SimpleGraph, d3) {
         if(!lines) return this;
 
         // remove, while also filter for new lines
-        lines = lines.filter(line => {
+        var newLines = lines.filter(line => {
             if(!line._segments || !line._segments.length || line._segments.filter(c => c.length < 2).length) {
                 if(segments._d3s) {
                     line._d3s.remove();
@@ -226,7 +226,50 @@ export default function(SimpleGraph, d3) {
             });
 
         // add new lines
-        this._drawLines(lines, className, transition);
+        var addedLines = this.svgGraph.selectAll(".sg-temporary-line")
+                .data(newLines)
+              .enter().append("path")
+                .attr("series", d => d.series)
+                .attr("class", className)
+                .style("opacity", transition ? 0 : 1)
+                .style("fill", 'none')
+                .attr("d", d => {
+                    var yAxis = d.y2 ? self.y2 : self.y, 
+                        d3line = d3.line()
+                            .x(c => self.x.scale(c[0]))
+                            .y(c => yAxis.scale(c[1]))
+                            .curve(d.interpolate);
+                    return d._segments.reduce(
+                        (path, segment) => (path || "") + (segment.length < 2 ? "" : " " + d3line(segment)), 
+                        ""
+                    );
+                })
+                .each(function(d) {
+                    // add styles
+                    var nLine = d3.select(this), 
+                        styles = d.style || {};
+                    for(var key in styles) {
+                        if(!transition || (key && key.toLowerCase() != "opacity")) {
+                            nLine.style(key, styles[key]);
+                        }
+                    }
+                    // add color if not specified
+                    if(!('stroke' in styles)) {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        nLine.style('stroke', typeof color === "function" ? color(d) : color);
+                    }
+                    // attach
+                    d._d3s = nLine;
+                });
+        // animate
+        if(transition) {
+            transition.duration = transition.duration || 200;
+            transition.ease = transition.ease || d3.easePolyOut;
+            addedLines.transition().duration(transition.duration).ease(transition.ease)
+                .style("opacity", d => {
+                    return d.style && ('opacity' in d.style) ? d.style.opacity : 1;
+                });
+        }
     };
 
 }

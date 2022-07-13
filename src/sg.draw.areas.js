@@ -14,7 +14,6 @@ export default function(SimpleGraph, d3) {
         if(resolution < 2) resolution = 2;
         if(!this.areas) return this;
 
-        var self = this;
         this.areas.forEach(area => {
             if(area.functions) {
                 area._parts = this._getAreasPolysFromFunctions(
@@ -33,6 +32,32 @@ export default function(SimpleGraph, d3) {
             if(area._parts) area._parts = area._parts.filter(s => s && s.length >= 2);
         });
         this._drawAreas(resolution, transition);
+
+        return this;
+    };
+
+    SimpleGraph.prototype.drawUpdateAreas = function(resolution, transition) {
+        if(!resolution && resolution !== 0) resolution = 20;
+        if(resolution < 2) resolution = 2;
+
+        this.areas.forEach(area => {
+            if(area.functions) {
+                area._parts = this._getAreasPolysFromFunctions(
+                    area.functions[0], 
+                    area.functions[1], 
+                    area.resolution, 
+                    area.xRange, 
+                    area.y2, 
+                    !this.allowDrawBeyondGraph
+                );
+            } else if(this.allowDrawBeyondGraph) {
+                area._parts = [area.coords];
+            } else {
+                area._parts = this._getAreaPolysFromCoordinates(area.coords, area.y2);
+            }
+            if(area._parts) area._parts = area._parts.filter(s => s && s.length >= 2);
+        });
+        this._updateAreas(transition);
 
         return this;
     };
@@ -95,7 +120,7 @@ export default function(SimpleGraph, d3) {
         }
 
         // remove, while also filter for new areas
-        var areas = this.areas.filter(area => {
+        var newAreas = this.areas.filter(area => {
             if(!area._parts || !area._parts.length || area._parts.filter(c => c.length < 2).length) {
                 if(segments._d3s) {
                     area._d3s.remove();
@@ -139,7 +164,50 @@ export default function(SimpleGraph, d3) {
             });
 
         // add new areas
-        this._drawAreas(areas, transition);
+        var addedAreas = this.svgGraph.selectAll(".sg-temporary-area")
+                .data(newAreas)
+              .enter().append("path")
+                .attr("series", d => d.series)
+                .attr("class", "sg-area")
+                .style("opacity", transition ? 0 : 1)
+                .attr("d", d => {
+                    let yAxis = d.y2 ? this.y2 : this.y, 
+                        d3Area = d3.area()
+                            .x(c => this.x.scale(c[0]))
+                            .y0(c => yAxis.scale(c[1]))
+                            .y1(c => yAxis.scale(c[2]))
+                            .curve(d.interpolate);
+                    return d._parts.reduce(
+                        (path, area) => area.length < 2 ? path : path + " " + d3Area(area), 
+                        ""
+                    );
+                })
+                .each(function(d) {
+                    // update styles
+                    var nArea = d3.select(this), 
+                        styles = d.style || {};
+                    for(let key in styles) {
+                        if(!transition || (key && key.toLowerCase() != "opacity")) {
+                            nArea.style(key, styles[key]);
+                        }
+                    }
+                    // add color if not specified
+                    if(!('fill' in styles)) {
+                        let color = self.getColorBySeriesName(d.series, true);
+                        nArea.style('fill', typeof color === "function" ? color(d) : color);
+                    }
+                    // attach
+                    d._d3s = nArea;
+                });
+        // animate
+        if(transition) {
+            transition.duration = transition.duration || 200;
+            transition.ease = transition.ease || d3.easePolyOut;
+            addedAreas.transition().duration(transition.duration).ease(transition.ease)
+                .style("opacity", d => {
+                    return d.style && ('opacity' in d.style) ? d.style.opacity : 1;
+                });
+        }
     };
 
 }

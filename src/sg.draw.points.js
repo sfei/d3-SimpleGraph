@@ -12,16 +12,15 @@ export default function(SimpleGraph, d3) {
 
         if(!this.points || this.points.length === 0) return this;
 
-        var self = this, 
-            drawPointsData = this.points;
+        var drawPointsData = this.points;
         // if necessary, remove points that extend beyond graph
         if(!this.allowDrawBeyondGraph) {
             drawPointsData = drawPointsData.filter(d => {
                 if((!d.x && d.x !== 0) || Number.isNaN(d.x)) return false;
-                if(d.x < self.x.min || d.x > self.x.max) return false;
-                if(self.x.break && d.x > self.x.break.domain[0] && d.x < self.x.break.domain[1]) return false;
+                if(d.x < this.x.min || d.x > this.x.max) return false;
+                if(this.x.break && d.x > this.x.break.domain[0] && d.x < this.x.break.domain[1]) return false;
                 if((!d.y && d.y !== 0) || Number.isNaN(d.y) && !showNulls) return false;
-                let yAxis = d.y2 ? self.y2 : self.y;
+                let yAxis = d.y2 ? this.y2 : this.y;
                 if(d.y < yAxis.min || d.y > yAxis.max) return false;
                 if(yAxis.break && d.y > yAxis.break.domain[0] && d.y < yAxis.break.domain[1]) return false;
                 return true;
@@ -49,7 +48,7 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.updatePoints = function(showNulls, transition) {
+    SimpleGraph.prototype.drawUpdatePoints = function(showNulls, transition) {
         if(!this.points || this.points.length === 0) {
             this.removePoints();
             this.removePointLines();
@@ -66,10 +65,10 @@ export default function(SimpleGraph, d3) {
         if(!this.allowDrawBeyondGraph) {
             drawPointsData = drawPointsData.filter(d => {
                 if((!d.x && d.x !== 0) || Number.isNaN(d.x)) return false;
-                if(d.x < self.x.min || d.x > self.x.max) return false;
-                if(self.x.break && d.x > self.x.break.domain[0] && d.x < self.x.break.domain[1]) return false;
+                if(d.x < this.x.min || d.x > this.x.max) return false;
+                if(this.x.break && d.x > this.x.break.domain[0] && d.x < this.x.break.domain[1]) return false;
                 if((!d.y && d.y !== 0) || Number.isNaN(d.y) && !showNulls) return false;
-                let yAxis = d.y2 ? self.y2 : self.y;
+                let yAxis = d.y2 ? this.y2 : this.y;
                 if(d.y < yAxis.min || d.y > yAxis.max) return false;
                 if(yAxis.break && d.y > yAxis.break.domain[0] && d.y < yAxis.break.domain[1]) return false;
                 return true;
@@ -95,12 +94,9 @@ export default function(SimpleGraph, d3) {
             selection.filter(d => !~data.indexOf(d)).remove();
             selection = selection.filter(d => ~data.indexOf(d));
 
-            // update existing points
-            this._updatePoints(selection, shape, transition);
-
             // add new points
             var newData = [...data];
-            selection.forEach(d => {
+            selection.each(d => {
                 let exists = newData.indexOf(d);
                 if(~exists) newData.splice(exists, 1);
             });
@@ -109,6 +105,9 @@ export default function(SimpleGraph, d3) {
                 shape, 
                 transition
             );
+
+            // update existing points
+            this._updatePoints(selection, shape, transition);
         }
 
         return this;
@@ -240,6 +239,8 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype._updatePoints = function(selection, shape, transition) {
         if(!selection.size()) return;
         if(transition) {
+            transition.duration = transition.duration || 200;
+            transition.ease = transition.ease || d3.easePolyOut;
             selection = selection.transition().duration(transition.duration).ease(transition.ease);
         }
         var self = this;

@@ -172,7 +172,7 @@ export default function(SimpleGraph) {
     SimpleGraph.prototype.updatePointsData = function() {
         if(!this.points) return this;
         this.points.forEach(d => {
-            if(!d._bind || d._keys) return;
+            if(!d._bind || !d._keys) return;
             d.x = parseFloat(d._bind[d._keys.x]);
             d.y = parseFloat(d._bind[d._keys.y]);
             if(!d._keys.a) return;

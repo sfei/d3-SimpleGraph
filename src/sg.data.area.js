@@ -50,6 +50,34 @@ export default function(SimpleGraph, d3) {
                 interpolate: d.interpolate
             }));
     };
+
+    SimpleGraph.prototype.updateAreaData = function(series, index, update) {
+        if(!this.areas || !update) return this;
+        var areas = this.areas.filter(d => d.series === series)
+        if(!areas || !areas.length) return this;
+        if(index || index === 0) {
+            while(index < 0) { index = areas.length + index; }
+            areas = [areas[index]];
+        }
+        areas.forEach(area => {
+            if(area.functions && (update.lineFunctionTop || update.functionTop || update.lineFunctionBottom || update.functionBottom)) {
+                area.functions = [
+                    update.lineFunctionBottom || update.functionBottom || area.functions[0], 
+                    update.lineFunctionTop || update.functionTop || area.functions[1]
+                ];
+                area.xRange = update.xRange || area.xRange;
+            } else {
+                area.coords = update.coordinates || update.coords || area.coords;
+            }
+            area.interpolate = update.interpolate || area.interpolate;
+            if(update.style) {
+                for(let key in update.style) {
+                    area.style[key] = update.style[key];
+                }
+            }
+        });
+        return this;
+    };
     
     SimpleGraph.prototype.clearAreasData = function(series) {
         if(!series) {

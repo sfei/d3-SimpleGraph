@@ -191,6 +191,31 @@ export default function(SimpleGraph, d3) {
             }));
     };
 
+    SimpleGraph.prototype.updateLineData = function(series, index, update) {
+        if(!this.lines || !update) return this;
+        var lines = this.lines.filter(d => d.series === series)
+        if(!lines || !lines.length) return this;
+        if(index || index === 0) {
+            while(index < 0) { index = lines.length + index; }
+            lines = [lines[index]];
+        }
+        lines.forEach(line => {
+            if(line.lineFunction && (update.lineFunction || update.function)) {
+                line.lineFunction = update.lineFunction || update.function || line.lineFunction;
+                line.xRange = update.xRange || line.xRange;
+            } else {
+                line.coords = update.coordinates || update.coords || line.coords;
+            }
+            line.interpolate = update.interpolate || line.interpolate;
+            if(update.style) {
+                for(let key in update.style) {
+                    line.style[key] = update.style[key];
+                }
+            }
+        });
+        return this;
+    };
+
     SimpleGraph.prototype.updateLineInterpolation = function(series, interpolation) {
         if(!this.lines) return this;
         interpolation = interpolation || d3.curveLinear;

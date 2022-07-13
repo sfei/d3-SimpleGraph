@@ -85,7 +85,7 @@ graph.drawGrid();"
             <p class='param'>@param {number[]} [xRange] - The x-range of the area. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
             @param {Object} [options] - Additional options defining the area data.
             @param {Object} [options.style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.
-            @param {string} [options.interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
+            @param {d3.interpolation} [options.interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.
             @param {boolean} [options.y2Axis=false] - Whether coordinates are for 2nd y-axis."
           sampleCode="var bottomBoundary = function(x) {
     return -0.1*x*x + 16*x;
@@ -127,13 +127,13 @@ graph.addAreaBetweenTwoLines(
 
       <span 
           class="btn" 
-          helptitle="Series colors"
+          helptitle="Series Colors"
           helptext="We can manually set the series colors as well with a few simple functions.<br /><br />
-            <b>setSeriesColor(series, color):</b>
+            <span class='func'><b>setSeriesColor</b>(series, color):</span>
             <p class='param'>@param {string} series - Series name.</p>
             <p class='param'>@param {string} color - The color to assign to the series.</p>
             <br /><br />
-            <b>resetColorScale(colorScale):</b>
+            <span class='func'><b>resetColorScale</b>(colorScale):</span>
             <p class='param'>@param [colorScale] - If supplied, the d3 color scale to use. Otherwise simply resets the domain of the existing color scale.</p>"
           sampleCode="// while not necessary in this case, will free current color used by area
 graph.resetColorScale();
@@ -147,6 +147,9 @@ graph.drawAreas();"
     
       <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
         <p style="margin-top:0px;">
+        <p style="margin-top:20px;">
+          &gt; <a href="simplegraph-4.html">Go to the next tutorial</a>, which covers data updates and draw updates with transitions.
+        </p>
           &gt; <a href="simplegraph-2.html">Go back to the previous tutorial</a>.
         <p>
       </div>
