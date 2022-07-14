@@ -15,9 +15,8 @@ export default function(SimpleGraph) {
         
         // loop per axis to remove redundancies
         var axes = ["x", "y", "y2"];
-        for(var i = 0; i < axes.length; i++) {
+        axes.forEach(a => {
             // specific axis options
-            var a = axes[i];
             if(!axisOptions[a]) {
                 // if no second y-axis, just skip
                 if(a === "y2") continue;
@@ -26,8 +25,8 @@ export default function(SimpleGraph) {
             if(!axisOptions[a].scale) {
                 axisOptions[a].scale = d3.scaleLinear;
             }
-            var scaleIsTime = axisOptions[a].scale === d3.scaleTime || axisOptions[a].scale === d3.scaleUtc;
-            var scaleIsLog = !scaleIsTime && axisOptions[a].scale === d3.scaleLog;
+            let scaleIsTime = axisOptions[a].scale === d3.scaleTime || axisOptions[a].scale === d3.scaleUtc, 
+                scaleIsLog = !scaleIsTime && axisOptions[a].scale === d3.scaleLog;
             if(!axisOptions[a].format) {
                 if(scaleIsTime) {
                     axisOptions[a].format = "%Y-%m-%d";
@@ -61,7 +60,7 @@ export default function(SimpleGraph) {
             if(scaleIsLog) {
                 this[a].scale.base(axisOptions[a].logBase);
             }
-            var domain, range;
+            let domain, range;
             if(axisOptions[a].break) {
                 this[a].break = axisOptions[a].break;
                 domain = [
@@ -70,11 +69,11 @@ export default function(SimpleGraph) {
                     this[a].break.domain[1], 
                     this[a].max
                 ];
-                var domain2 = !scaleIsTime ? domain : domain.map(function(x) { return x.getTime(); });
-                var span = a === "x" ? this.width : this.height;
+                let domain2 = !scaleIsTime ? domain : domain.map(x => x.getTime()), 
+                    span = a === "x" ? this.width : this.height;
                 range = a === "x" ? [0, 0, 0, span] : [span, 0, 0, 0];
-                var validspan = span - this[a].break.rangegap;
-                var rangePerDomain = validspan / (domain2[1] - domain2[0] + domain2[3] - domain2[2]);
+                let validspan = span - this[a].break.rangegap, 
+                    rangePerDomain = validspan / (domain2[1] - domain2[0] + domain2[3] - domain2[2]);
                 range[1] = rangePerDomain*(domain2[1] - domain2[0]);
                 range[2] = range[1] + this[a].break.rangegap;
             } else {
@@ -84,21 +83,19 @@ export default function(SimpleGraph) {
             this[a].scale.domain(domain).range(range);
         
             // create axes
-            var applySecondAxes = false;
+            let applySecondAxes = false;
             if(a === "x") {
                 // create both versions of the axes as we need to apply tick formatting to both here
                 applySecondAxes = true;
                 this[a].axis = d3.axisBottom(this[a].scale);
                 this[a].axisTwo = d3.axisTop(this[a].scale);
                 this[a].gridAxis = d3.axisBottom(this[a].scale);
+            } else if(a === "y2") {
+                this[a].axis = d3.axisRight(this[a].scale);
+                this[a].gridAxis = d3.axisRight(this[a].scale);
             } else {
-                if(a === "y2") {
-                    this[a].axis = d3.axisRight(this[a].scale);
-                    this[a].gridAxis = d3.axisRight(this[a].scale);
-                } else {
-                    this[a].axis = d3.axisLeft(this[a].scale);
-                    this[a].gridAxis = d3.axisLeft(this[a].scale);
-                }
+                this[a].axis = d3.axisLeft(this[a].scale);
+                this[a].gridAxis = d3.axisLeft(this[a].scale);
             }
             
             // log scale handles ticks differently
@@ -192,8 +189,8 @@ export default function(SimpleGraph) {
             xAxisPosition = xAxisPosition.toLowerCase().trim();
             if(xAxisPosition !== "top") { xAxisPosition = "bottom"; }
         }
-        var xAxis;
-        var xAxisPosY = 0;
+        let xAxis, 
+            xAxisPosY = 0;
         if(xAxisPosition !== "top") {
             xAxis = this.x.axis;
             xAxisPosY = this.height;
@@ -204,34 +201,34 @@ export default function(SimpleGraph) {
         
         // draw axes first without labels
         this.svg.selectAll(".sg-xaxis, .sg-yaxis, .sg-y2axis, .sg-axis-label").remove();
-        var xAxisG = this.svgGraph.append("g")
-            .attr("class", "sg-xaxis")
-            .attr("transform", "translate(0," + xAxisPosY + ")")
-            .call(xAxis)
-            // annoyingly d3 adds these after axis call so remove so they don't override svg style
-            .attr("font-size", null)
-            .attr("font-family", null);
-        var yAxisG = this.svgGraph.append("g")
-            .attr("class", "sg-yaxis")
-            .call(this.y.axis)
-            .attr("font-size", null)
-            .attr("font-family", null);
-        var y2AxisG = !this.y2 ? null : this.svgGraph.append("g")
-            .attr("class", "sg-y2axis")
-            .attr("transform", "translate(" + this.width + ",0)")
-            .call(this.y2.axis)
-            .attr("font-size", null)
-            .attr("font-family", null);
+        let xAxisG = this.svgGraph.append("g")
+                .attr("class", "sg-xaxis")
+                .attr("transform", "translate(0," + xAxisPosY + ")")
+                .call(xAxis)
+                // annoyingly d3 adds these after axis call so remove so they don't override svg style
+                .attr("font-size", null)
+                .attr("font-family", null), 
+            yAxisG = this.svgGraph.append("g")
+                .attr("class", "sg-yaxis")
+                .call(this.y.axis)
+                .attr("font-size", null)
+                .attr("font-family", null), 
+            y2AxisG = !this.y2 ? null : this.svgGraph.append("g")
+                .attr("class", "sg-y2axis")
+                .attr("transform", "translate(" + this.width + ",0)")
+                .call(this.y2.axis)
+                .attr("font-size", null)
+                .attr("font-family", null);
         // for some reason ticks are by default invisible
         this.svgGraph.selectAll(".tick line").style("stroke", "#000");
         // add styles
-        var axes = this.svgGraph.selectAll(".sg-xaxis .domain, .sg-yaxis .domain, .sg-y2axis .domain");
-        for(var style in this.axisStyles) {
+        let axes = this.svgGraph.selectAll(".sg-xaxis .domain, .sg-yaxis .domain, .sg-y2axis .domain");
+        for(let style in this.axisStyles) {
             axes.style(style, this.axisStyles[style]);
         }
         
         // get size of ticks to know margin to place labels away if outside
-        var tickMargin = { x: 0, y: 0, y2: 0 };
+        let tickMargin = { x: 0, y: 0, y2: 0 };
         this.svgGraph.selectAll(".sg-xaxis .tick").each(function() {
             if(this.getBBox().height > tickMargin.x) {
                 tickMargin.x = this.getBBox().height;
@@ -249,25 +246,25 @@ export default function(SimpleGraph) {
         });
         
         // default position on center-outside
-        var xLabelPos = {
-            a: 'middle', 
-            x: 0.5*this.width,
-            y: (xAxisPosition === "top") ? -(tickMargin.x + axisLabelMargin) : (tickMargin.x + 10 + axisLabelMargin)
-        };
-        var yLabelPos = {
-            a: 'middle', 
-            x: -0.5*this.height,
-            y: -(tickMargin.y + 10 + axisLabelMargin)
-        };
-        var y2LabelPos = {
-            a: 'middle', 
-            x: 0.5*this.height,
-            y: -(tickMargin.y2 + 10 + axisLabelMargin)
-        };
+        let xLabelPos = {
+                a: 'middle', 
+                x: 0.5*this.width,
+                y: (xAxisPosition === "top") ? -(tickMargin.x + axisLabelMargin) : (tickMargin.x + 10 + axisLabelMargin)
+            }, 
+                yLabelPos = {
+                a: 'middle', 
+                x: -0.5*this.height,
+                y: -(tickMargin.y + 10 + axisLabelMargin)
+            }, 
+                y2LabelPos = {
+                a: 'middle', 
+                x: 0.5*this.height,
+                y: -(tickMargin.y2 + 10 + axisLabelMargin)
+            };
         // determine label position
         if(labelPosition) {
             // split by keys
-            var lpKeys          = labelPosition.toLowerCase().split(/[ ,]+/), 
+            let lpKeys          = labelPosition.toLowerCase().split(/[ ,]+/), 
                 xparallel       = "center", 
                 yparallel       = "center", 
                 y2parallel      = "center", 

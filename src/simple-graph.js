@@ -44,7 +44,7 @@ function SimpleGraph(options) {
         .attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
     
     // append styles, save to instance the default text-size
-    for(var style in options.styles) {
+    for(let style in options.styles) {
         this.svg.style(style, options.styles[style]);
     }
     
@@ -145,15 +145,14 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
     if(!pngName) { pngName = "graph.png"; }
     if(!pngName.toLowerCase().endsWith(".png")) { pngName += ".png"; }
     
-    var svgNode = this.svg
-        .attr("version", "1.1")
-        .attr("xmlns", "http://www.w3.org/2000/svg")
-        .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
-        .node();
-    var serializer = new XMLSerializer();
-    var svgHtml = serializer.serializeToString(svgNode);
-    
-    var canvas = document.createElement("canvas");
+    let svgNode = this.svg
+            .attr("version", "1.1")
+            .attr("xmlns", "http://www.w3.org/2000/svg")
+            .attr("xmlns:xlink", "http://www.w3.org/1999/xlink")
+            .node();
+        serializer = new XMLSerializer(), 
+        svgHtml = serializer.serializeToString(svgNode), 
+        canvas = document.createElement("canvas");
     canvas.style.display = "none";
     canvas.width = this.containerWidth;
     canvas.height = this.containerHeight;
@@ -172,12 +171,12 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
         return this;
     }
     
-    var a = document.createElement("a");
+    let a = document.createElement("a");
     a.style.display = "none";
     a.download = pngName;
     this.svg.node().parentNode.appendChild(a);
     
-    var img = new Image();
+    let img = new Image();
     img.onload = function() {
         canvas.getContext("2d").drawImage(img, 0, 0);
         // freaking internet explorer..

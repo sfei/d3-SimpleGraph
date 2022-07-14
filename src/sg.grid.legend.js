@@ -5,9 +5,9 @@
     SimpleGraph.prototype.drawGrid = function(style) {
         this.svgGraph.selectAll(".sg-grid").remove();
         // default styles
-        var opacity = (style && style.opacity) ? parseFloat(style.opacity) : 0.4;
-        var stroke = (style && style.stroke) ? style.stroke : "#555";
-        var strokeWidth = (style && style['stroke-width']) ? parseFloat(style['stroke-width']) : 0.3;
+        let opacity = (style && style.opacity) ? parseFloat(style.opacity) : 0.4, 
+            stroke = (style && style.stroke) ? style.stroke : "#555", 
+            strokeWidth = (style && style['stroke-width']) ? parseFloat(style['stroke-width']) : 0.3;
         
         this.svgGraph.append("g")
             .attr("class", "sg-grid")
@@ -18,7 +18,7 @@
             .call(this.x.gridAxis.tickSize(-this.height).tickFormat(""));
         this.svgGraph.append("g")
             .attr("class", "sg-grid")
-            .attr("opacity", opacity)
+            .style("opacity", opacity)
             .style("stroke", stroke)
             .style("stroke-width", strokeWidth)
             .call(this.y.gridAxis.tickSize(-this.width).tickFormat(""));
@@ -31,8 +31,13 @@
         return this;
     };
     
-    SimpleGraph.prototype.drawLegend = function(position, options) {
+    SimpleGraph.prototype.removeLegend = function() {
         this.svg.selectAll(".sg-legend").remove();
+        return this;
+    };
+    
+    SimpleGraph.prototype.drawLegend = function(position, options) {
+        this.removeLegend();
         
         if(!position) {
             position = { x: 0, y: 0 };
@@ -52,11 +57,10 @@
 
         if(!exclude) { exclude = []; }
         if(typeof exclude === "string") { exclude = exclude.trim().split(/\s+/); }
-        for(var i = 0; i < exclude.length; i++) { exclude[i] = exclude[i].toLowerCase(); }
         
         // default styles for legend container (padding is set via explicit sides)
         if(bgstyle.padding) {
-            var pads = (typeof bgstyle.padding === "string") ? bgstyle.padding.split(" ") : [bgstyle.padding];
+            let pads = (typeof bgstyle.padding === "string") ? bgstyle.padding.split(" ") : [bgstyle.padding];
             if(pads.length === 1) {
                 bgstyle['padding-left'] = pads[0];
                 bgstyle['padding-right'] = pads[0];
@@ -98,14 +102,14 @@
                 .attr("class", "sg-legend-bg")
                 .attr("x", 0)
                 .attr("y", 0);
-        for(var skey in bgstyle) {
+        for(let skey in bgstyle) {
             if(!skey.startsWith('padding')) {
                 legendBg.style(skey, bgstyle[skey]);
             }
         }
         
             // column parameters
-        var itemsPerColumn  = options.itemsPerColumn || 0, 
+        let itemsPerColumn  = options.itemsPerColumn || 0, 
             rowHeight       = options.rowHeight || 24, 
             columnNumber    = 0,
             columnItemCount = 0, 
@@ -217,15 +221,15 @@
             addAndCheckColumn();
         }
         function addLineItem(data, color) {
-            var lineOffset = yOffset + 10;
-            var path = legend.append("path")
-                .attr("x", xOffset)
-                .attr("y", yOffset)
-                .attr("d", 
-                    "M" + xOffset + " " + lineOffset + " " + 
-                    "L" + (18+xOffset) + " " + lineOffset
-                );
-            for(var style in data.style) {
+            let lineOffset = yOffset + 10, 
+                path = legend.append("path")
+                    .attr("x", xOffset)
+                    .attr("y", yOffset)
+                    .attr("d", 
+                        "M" + xOffset + " " + lineOffset + " " + 
+                        "L" + (18+xOffset) + " " + lineOffset
+                    );
+            for(let style in data.style) {
                 path.style(style, data.style[style]);
             }
             if(!("stroke" in data.style)) {
@@ -240,12 +244,12 @@
             addAndCheckColumn();
         }
         function addAreaItem(data, color) {
-            var symbol = legend.append("rect")
+            let symbol = legend.append("rect")
                 .attr("x", xOffset)
                 .attr("y", yOffset)
                 .attr("width", 18)
                 .attr("height", 18);
-            for(var style in data.style) {
+            for(let style in data.style) {
                 symbol.style(style, data.style[style]);
             }
             if(!("fill" in data.style)) {
@@ -262,7 +266,7 @@
         
         // start with areas data
         if(this.areas && !~exclude.indexOf("areas")) {
-            var areaSeries = [];
+            let areaSeries = [];
             for(let i = 0; i < this.areas.length; i++) {
                 let name = this.areas[i].series;
                 if(!~areaSeries.indexOf(name)) {
@@ -274,7 +278,7 @@
         }
         // then lines
         if(this.lines && !~exclude.indexOf("lines")) {
-            var lineSeries = [];
+            let lineSeries = [];
             for(let i = 0; i < this.lines.length; i++) {
                 let name = this.lines[i].series;
                 if(!~lineSeries.indexOf(name)) {
@@ -286,7 +290,7 @@
         }
         // finally points
         if(this.points && !~exclude.indexOf("points")) {
-            var pointSeries = [];
+            let pointSeries = [];
             for(let i = 0; i < this.points.length; i++) {
                 let name = this.points[i].series;
                 if(!~pointSeries.indexOf(name)) {
@@ -310,7 +314,7 @@
         }
         
         // finish up legend bg after completing elements inside
-        var legendBox = legend.node().getBBox();
+        let legendBox = legend.node().getBBox();
         legendBg
             .attr("width", legendBox.width + bgstyle['padding-left'] + bgstyle['padding-right'])
             .attr("height", legendBox.height + bgstyle['padding-top'] + bgstyle['padding-bottom']);

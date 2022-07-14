@@ -2,9 +2,9 @@
 
 #### Axis and grid ####
 
-There are three fixed axes available: the mandatory x and y axes, and an optional y2 axis. Axes are handled as a dictionary of [axis options](./defs.md#axis-options), to be enacted once drawing the axis.
+There are three fixed axes available: the mandatory x and y axes, and an optional y2 axis. Axes are handled as a dictionary of [axis options](./defs.md#axis-options), to be enacted once drawing the axis. You may also potentially manually access the axis objects within the SimpleGraph instance's [axis properties](./README.md#axis).
 
-<a name="resetAxisOptions">#</a> *sg*.**resetAxisOptions**(*axisOptions*)
+<a name="a-resetaxisoptions" href="#a-resetaxisoptions">#</a> *sg*.**resetAxisOptions**(*axisOptions*)
 
 Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
 
@@ -38,9 +38,9 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="drawAxes">#</a> *sg*.**drawAxes**([*labelPosition*[, *xAxisPosition*[, *axisLabelMargin*]]])
+<a name="a-drawaxes" href="a-drawaxes">#</a> *sg*.**drawAxes**([*labelPosition*[, *xAxisPosition*[, *axisLabelMargin*]]])
 
-Redraws the axes on the graph.
+Redraws the axes on the graph. Often useful for redrawing the axes on top of any objects on the graph.
 
 <table>
   <tbody>
@@ -61,9 +61,9 @@ Redraws the axes on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="drawGrid">#</a> *sg*.**drawGrid**([*style*])
+<a name="a-drawgrid" href="a-drawgrid">#</a> *sg*.**drawGrid**([*style*])
 
-Draw grid. If grid already exists, redraws it.
+Draws a grid. If grid already exists, redraws it. Grid spacing is determined by axis ticks.
 
 <table>
   <tbody>
@@ -78,15 +78,17 @@ Draw grid. If grid already exists, redraws it.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="removeGrid">#</a> *sg*.**removeGrid**()
+<a name="a-removegrid" href="a-removegrid">#</a> *sg*.**removeGrid**()
 
-Removes grid.
+Removes the grid.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
 #### Legend ####
 
-<a name="drawLegend">#</a> *sg*.**drawLegend**(*position*[, *options*])`**
+Legends are handled fairly automatically, with all data series present (even if not yet drawn on the graph) automatically added to the legend. Simply define where to place it along with some optional formatting parameters.
+
+<a name="a-drawlegend" href="a-drawlegend">#</a> *sg*.**drawLegend**(*position*[, *options*])`**
 
 Draw the legend onto the graph. If legend already exists, will redraw it.
 
@@ -115,12 +117,21 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
             <td>itemsPerColumn</td><td>number</td><td>Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.</td>
           </tr>
           <tr>
-            <td>rowHeight</td><td>number</td><td>The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
+            <td>rowHeight</td><td>number</td><td>Optional height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
+          </tr>
+          <tr>
+            <td>exclude</td><td>string[]</td><td>Can optionally name data series to exclude from adding to the legend. Provided as list or whitespace-separated string of data series names (though list is preferred as data series names may include spaces). Case sensitive and remove any matching data series by name from all types of data (points, lines, and areas).</td>
           </tr>
         </table>
       </td>
     </tr>
   </tbody>
 </table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removelegend" href="a-removelegend">#</a> *sg*.**removeLegend**()`**
+
+Removes the legend.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.

@@ -4,8 +4,9 @@ export default function(SimpleGraph) {
         if(!name) return null;
         if(name in this.customColors) return this.customColors[name];
         if(this.points) {
-            for(var p in this.points) {
-                var point = this.points[p];
+            let point;
+            for(let p in this.points) {
+                point = this.points[p];
                 if(name === point.series) {
                     // TODO, no style options yet available for points data
                     if(point.style && point.style.fill) {
@@ -18,8 +19,9 @@ export default function(SimpleGraph) {
             }
         }
         if(this.lines) {
-            for(var l in this.lines) {
-                var line = this.lines[l];
+            let line;
+            for(let l in this.lines) {
+                line = this.lines[l];
                 if(name === line.series) {
                     if(line.style && line.style.stroke) {
                         return line.style.stroke;
@@ -31,8 +33,9 @@ export default function(SimpleGraph) {
             }
         }
         if(this.areas) {
-            for(var a in this.areas) {
-                var area = this.areas[a];
+            let area;
+            for(let a in this.areas) {
+                area = this.areas[a];
                 if(name === area.series) {
                     if(area.style && area.style.fill) {
                         return area.style.fill;
