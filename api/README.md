@@ -1,69 +1,47 @@
-----------
-
 # API & Guide #
 
-----------
-
 * **Constructor, properties, and misc. functions**
-&nbsp; &nbsp; * [Constructor](#constructor)
-&nbsp; &nbsp; * [Properties](#properties)
-&nbsp; &nbsp; * [getSvgElement](#a-getsvgelement)
-&nbsp; &nbsp; * [getSvgGraphic](#a-getsvggraphic) 
-&nbsp; &nbsp; * [remove](#a-remove)
-&nbsp; &nbsp; * [destroy](#a-destroy)
-&nbsp; &nbsp; * [saveAsPng](#a-savegraphaspng) 
+  * [Constructor](#constructor)
+  * [Properties](#properties)
+  * [getSvgElement](#a-getsvgelement)
+  * [getSvgGraphic](#a-getsvggraphic)
+  * [remove](#a-remove)
+  * [destroy](#a-destroy)
+  * [saveAsPng](#a-savegraphaspng)
 * [Axis, grid, and legend](./axis-grid-legend.md)
-&nbsp; &nbsp; *[resetAxisOptions](./axis-grid-legend.md#a-resetaxisoptions)*  
-&nbsp; &nbsp; *[drawAxes](./axis-grid-legend.md#a-drawaxes)*  
-&nbsp; &nbsp; *[drawGrid](./axis-grid-legend.md#a-drawgrid)*  
-&nbsp; &nbsp; *[removeGrid](./axis-grid-legend.md#a-removegrid)*  
-&nbsp; &nbsp; *[drawLegend](./axis-grid-legend.md#a-drawlegend)*  
-&nbsp; &nbsp; *[removeLegend](./axis-grid-legend.md#a-removelegend)*  
 * [Color category functions](./color.md)
-&nbsp; &nbsp; *[getColorBySeriesName](./color.md#a-getcolorseriesbyname)*  
-&nbsp; &nbsp; *[resetColorScale](./color.md#a-resetcolorscale)*  
-&nbsp; &nbsp; *[setSeriesColor](./color.md#a-setseriescolor)*  
-&nbsp; &nbsp; *[removeSeriesColor](./color.md#a-removeseriescolor)*  
-* [Adding data](./add-data.md)
-&nbsp; &nbsp; *[addPointData](API.md#sg-add-point-data)*  
-&nbsp; &nbsp; *[addPointsData](API.md#sg-add-points-data)*  
-&nbsp; &nbsp; *[addPointsDataAsArray](API.md#sg-add-points-data-as-array)*  
-&nbsp; &nbsp; *[addLineDataAsCoordinates](API.md#sg-add-line-data-as-coordinates)*  
-&nbsp; &nbsp; *[addLineDataAsFunction](API.md#sg-add-line-data-as-function)*  
-&nbsp; &nbsp; *[addLinesDataFromPoints](API.md#sg-add-line-data-from-points)*  
-&nbsp; &nbsp; *[addAreaBetweenTwoLines](API.md#sg-add-area-between-two-lines)*  
-&nbsp; &nbsp; *[addAreaAsCoordinates](API.md#sg-area-as-coordinates)*  
+* [Adding and getting data](./add-data.md)
 * [Getting data](./get-data.md)
-&nbsp; &nbsp; *[getPointsDataBySeries](API.md#sg-get-points-data-by-series)*  
-&nbsp; &nbsp; *[getPointCoordinatesBySeries](API.md#sg-get-point-coordinates-by-series)*  
-&nbsp; &nbsp; *[getLinesDataBySeries](API.md#sg-get-line-data-by-series)*  
-&nbsp; &nbsp; *[getAreasDataBySeries](API.md#sg-get-area-data-by-series)*  
+  * [getPointsDataBySeries](API.md#sg-get-points-data-by-series)
+  * [getPointCoordinatesBySeries](API.md#sg-get-point-coordinates-by-series)
+  * [getLinesDataBySeries](API.md#sg-get-line-data-by-series)
+  * [getAreasDataBySeries](API.md#sg-get-area-data-by-series)
 * [Removing and updating data](./mod-data.md)
-&nbsp; &nbsp; *[clearPointsData](API.md#sg-clear-points-data)*  
-&nbsp; &nbsp; *[clearLinesData](API.md#sg-clear-lines-data)*  
-&nbsp; &nbsp; *[clearAreasData](API.md#sg-clear-areas-data)*  
-&nbsp; &nbsp; *[clearAllData](API.md#sg-clear-all-data)*  
+  * [clearPointsData](API.md#sg-clear-points-data)
+  * [clearLinesData](API.md#sg-clear-lines-data)
+  * [clearAreasData](API.md#sg-clear-areas-data)
+  * [clearAllData](API.md#sg-clear-all-data)
 * [Drawing data onto the graph](./draw.md)
-&nbsp; &nbsp; *[drawPoints](API.md#sg-draw-points)*  
-&nbsp; &nbsp; *[drawLines](API.md#sg-draw-lines)*  
-&nbsp; &nbsp; *[drawAreas](API.md#sg-draw-areas)*  
-&nbsp; &nbsp; *[removePoints](API.md#sg-remove-points)*  
-&nbsp; &nbsp; *[removeLines](API.md#sg-remove-lines)*  
-&nbsp; &nbsp; *[removeAreas](API.md#sg-remove-areas)*  
-&nbsp; &nbsp; *[removeAll](API.md#sg-remove-all)*  
+  * [drawPoints](API.md#sg-draw-points)
+  * [drawLines](API.md#sg-draw-lines)
+  * [drawAreas](API.md#sg-draw-areas)
+  * [removePoints](API.md#sg-remove-points)
+  * [removeLines](API.md#sg-remove-lines)
+  * [removeAreas](API.md#sg-remove-areas)
+  * [removeAll](API.md#sg-remove-all)
 * [Adding interactive features](./interactivity.md)
-&nbsp; &nbsp; *[addTooltipToPoints](API.md#sg-add-tooltip-to-points)*  
-&nbsp; &nbsp; *[addTooltipToLines](API.md#sg-add-tooltip-to-lines)*  
-&nbsp; &nbsp; *[addTooltipToAreas](API.md#sg-add-tooltip-to-areas)*  
-&nbsp; &nbsp; *[highlightPoints](API.md#sg-highlight-points)*  
-&nbsp; &nbsp; *[removeHighlightPoints](API.md#sg-remove-highlights-points)*  
-&nbsp; &nbsp; *[removeHighlights](API.md#sg-remove-highlights)*  
+  * [addTooltipToPoints](API.md#sg-add-tooltip-to-points)
+  * [addTooltipToLines](API.md#sg-add-tooltip-to-lines)
+  * [addTooltipToAreas](API.md#sg-add-tooltip-to-areas)
+  * [highlightPoints](API.md#sg-highlight-points)
+  * [removeHighlightPoints](API.md#sg-remove-highlights-points)
+  * [removeHighlights](API.md#sg-remove-highlights)
 * [Definitions](./defs.md)
-&nbsp; &nbsp; [Axis options](API.md#axis-options)  
-&nbsp; &nbsp; [Point data](API.md#point-data)  
-&nbsp; &nbsp; [Line data](API.md#line-data)  
-&nbsp; &nbsp; [Area data](API.md#area-data)  
-&nbsp; &nbsp; [Tooltip text function](API.md#tooltip-text-function)  
+  * [Axis options](API.md#axis-options)
+  * [Point data](API.md#point-data)
+  * [Line data](API.md#line-data)
+  * [Area data](API.md#area-data)
+  * [Tooltip text function](API.md#tooltip-text-function)
 
 ----------
 

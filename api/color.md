@@ -1,3 +1,18 @@
+# API & Guide #
+
+* [Constructor, properties, and misc. functions](./README.md)
+* [Axis, grid, and legend](./axis-grid-legend.md)
+* **Color category functions**
+  * [getColorBySeriesName](#a-getcolorseriesbyname)
+  * [resetColorScale](#a-resetcolorscale)
+  * [setSeriesColor](#a-setseriescolor)
+  * [removeSeriesColor](#a-removeseriescolor)
+* [Adding and getting data](./add-data.md)
+* [Removing and updating data](./mod-data.md)
+* [Drawing data onto the graph](./draw.md)
+* [Adding interactive features](./interactivity.md)
+* [Definitions](./defs.md)
+
 ## Color category functions ##
 
 Color handling is handled at two levels. At the bottom (the default) is the a [D3 color scale](https://github.com/d3/d3-scale-chromatic) (created in constructor, defaulting to `d3.scaleOrdinal(d3.schemeCategory10)`). You can manipulate this directly via the member variable `sg.color` or [`resetColorScale()`](#a-resetcolorscale). Above this, is a simple dictionary mapping of manually set color matchings by series names, which can be added and removed via [`setSeriesColor()`](#a-setseriescolor) and [`removeSeriesColor()`](#a-removeseriescolor). These levels never interact directly, SimpleGraph simply checks the dictionary mapping first, then if no match is found, defaults to the underlying D3 color scale.

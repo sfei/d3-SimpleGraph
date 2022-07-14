@@ -1,26 +1,14 @@
 export default function(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, xRange, options) {
-        if(!lineFunctionTop || typeof lineFunctionTop !== "function") return this;
-        if(!lineFunctionBottom || typeof lineFunctionBottom !== "function") return this;
-        options = options || {};
-        this.areas = this.areas || [];
-        this.areas.push({
-            series:      name, 
-            functions:   [lineFunctionBottom, lineFunctionTop], 
-            coords:      null, 
-            xRange:      xRange ? [...xRange] : null, 
-            y2:          !!options.y2Axis, 
-            style:       options.style || {}, 
-            interpolate: options.interpolation || d3.curveLinear, 
-            _bind:       {xRange: xRange}
-        });
-        return this;
-    };
-
     SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, options) {
         if(!areaCoordinates || !Array.isArray(areaCoordinates) || areaCoordinates.length < 2) return this;
         options = options || {};
+        var style = {};
+        if(options.style) {
+            for(let k in options.style) {
+                style[k] = options.style;
+            }
+        }
         this.areas = this.areas || [];
         this.areas.push({
             series:      name, 
@@ -31,48 +19,86 @@ export default function(SimpleGraph, d3) {
             y2:          !!options.y2Axis, 
             style:       options.style || {}, 
             interpolate: options.interpolation || d3.curveLinear, 
-            _bind:       {coords: areaCoordinates}
+            _bind:       {coords: areaCoordinates, style: style}
         });
         return this;
     };
 
-    SimpleGraph.prototype.getAreasDataBySeries = function(series) {
-        if(!this.areas) return [];
-        return this.areas
-            .filter(d => d.series === series)
-            .map(d => ({
-                series:      d.series, 
-                functions:   d.functions ? [...d.functions] : null, 
-                coords:      d.coords ? d.coords.map(c => [...c]) : null, 
-                xRange:      d.xRange ? [...d.xRange] : null, 
-                y2:          d.y2, 
-                style:       d.style, 
-                interpolate: d.interpolate
-            }));
+    SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, xRange, options) {
+        if(!lineFunctionTop || typeof lineFunctionTop !== "function") return this;
+        if(!lineFunctionBottom || typeof lineFunctionBottom !== "function") return this;
+        options = options || {};
+        var style = {};
+        if(options.style) {
+            for(let k in options.style) {
+                style[k] = options.style;
+            }
+        }
+        this.areas = this.areas || [];
+        this.areas.push({
+            series:      name, 
+            functions:   [lineFunctionBottom, lineFunctionTop], 
+            coords:      null, 
+            xRange:      xRange ? [...xRange] : null, 
+            y2:          !!options.y2Axis, 
+            style:       options.style || {}, 
+            interpolate: options.interpolation || d3.curveLinear, 
+            _bind:       {xRange: xRange, style: style}
+        });
+        return this;
     };
 
-    SimpleGraph.prototype.updateAreaData = function(series, index, update) {
-        if(!this.areas || !update) return this;
+    SimpleGraph.prototype._getAreaData = function(series, index) {
+        if(!this.areas) return [];
         var areas = this.areas.filter(d => d.series === series)
         if(!areas || !areas.length) return this;
         if(index || index === 0) {
             while(index < 0) { index = areas.length + index; }
             areas = [areas[index]];
         }
-        areas.forEach(area => {
+        return areas;
+    };
+
+    SimpleGraph.prototype.getAreasDataBySeries = function(series, index) {
+        return this._getAreaData(series, index).map(d => ({
+            series:      d.series, 
+            functions:   d.functions ? [...d.functions] : null, 
+            coords:      d.coords ? d.coords.map(c => [...c]) : null, 
+            xRange:      d.xRange ? [...d.xRange] : null, 
+            y2:          d.y2, 
+            style:       d.style, 
+            interpolate: d.interpolate
+        }));
+    };
+
+    SimpleGraph.prototype.updateAreaData = function(series, index, update) {
+        this._getAreaData(series, index).forEach(area => {
             if(area.functions && (update.lineFunctionTop || update.functionTop || update.lineFunctionBottom || update.functionBottom)) {
                 area.functions = [
                     update.lineFunctionBottom || update.functionBottom || area.functions[0], 
                     update.lineFunctionTop || update.functionTop || area.functions[1]
                 ];
-                area.xRange = update.xRange || area.xRange;
-            } else {
-                area.coords = update.coordinates || update.coords || area.coords;
+                if(update.xRange) {
+                    area.xRange = [...update.xRange];
+                    if(area._bind) {
+                        area._bind.xRange = update.xRange;
+                    }
+                }
+            } else if(update.coordinates || update.coords) {
+                let repCoords = update.coordinates || update.coords;
+                area.coords = [...repCoords];
+                if(area._bind) {
+                    area._bind.coords = repCoords;
+                }
             }
             area.interpolate = update.interpolate || area.interpolate;
             if(update.style) {
+                area.style = {};
                 for(let key in update.style) {
                     area.style[key] = update.style[key];
+                }
+                if(area._bind) {
+                    area._bind.style = update.style;
                 }
             }
         });
@@ -97,7 +123,7 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.updateAreasData = function() {
+    SimpleGraph.prototype.syncAreasData = function() {
         if(!this.areas) return this;
         this.areas.forEach(d => {
             if(d._bind.xRange) {
@@ -105,6 +131,12 @@ export default function(SimpleGraph, d3) {
             }
             if(d._bind.coords) {
                 d.coords = d._bind.coords.map(c => [...c]);
+            }
+            if(d._bind.style) {
+                d.style = {};
+                for(let key in update.style) {
+                    d.style[key] = update.style[key];
+                }
             }
         });
         return this;

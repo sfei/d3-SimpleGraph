@@ -37,7 +37,7 @@ graph.updatePointsData();"
           class="btn" 
           helptitle="Updating Lines Data"
           helptext="Lines created via coordinates are similarly bound to the original coordinate array supplied to create them, and can be updated via <code class='inline'>updateLinesData()</code>. However, there is another functional method to update lines data, which is necessary if the line data was created from a function.<br /><br />
-          <span class='func'><b>updateLineData</b>(series, index, ):</span>
+          <span class='func'><b>updateLinesData</b>(series, index, ):</span>
           <p class='param'>@param {string} series - Series name.</p>
           <p class='param'>@param {number} index - Index of item in series. Can be negative to traverse the array in reverse. Or null/undefined to apply to all in the series.</p>
           <p class='param'>@param {Object} update - The parameters of this area data to update.</p>
@@ -46,7 +46,7 @@ graph.updatePointsData();"
           <p class='param'>@param {number[][]} [update.coordinates | update.coords] - For lines defined as coordinates, update the coordinates.</p>
           <p class='param'>@param {d3.interpolation} [update.interpolate] - Update the interpolation type.</p>
           <p class='param'>@param {Object} [update.style] - Update any style parameters.</p>"
-          sampleCode="graph.updateLineData(
+          sampleCode="graph.updateLinesData(
     // from the data series 'Line' (already added)
     'Line', 
     // the first (index 0) item in the series since we only added one

@@ -19,7 +19,7 @@ export default function(SimpleGraph) {
             // specific axis options
             if(!axisOptions[a]) {
                 // if no second y-axis, just skip
-                if(a === "y2") continue;
+                if(a === "y2") return;
                 axisOptions[a] = {};
             }
             if(!axisOptions[a].scale) {
@@ -161,7 +161,7 @@ export default function(SimpleGraph) {
                     }
                 }
             }
-        }
+        });
         
         // for backwards compatibility
         this.minMax = {

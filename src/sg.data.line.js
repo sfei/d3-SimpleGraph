@@ -8,7 +8,12 @@ export default function(SimpleGraph, d3) {
         //coords.sort(function(a, b) { return a[0] - b[0]; });
         // defaults
         options = options || {};
-        var style = options.style || {};
+        var style = {};
+        if(options.style) {
+            for(let k in options.style) {
+                style[k] = options.style;
+            }
+        }
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
             style['stroke-width'] = 1.5;
         }
@@ -20,7 +25,7 @@ export default function(SimpleGraph, d3) {
             y2:           !!options.y2Axis, 
             style:        style, 
             interpolate:  options.interpolation || d3.curveLinear, 
-            _bind:        {coords: coords}
+            _bind:        {coords: coords, style: style}
         });
         return this;
     };
@@ -33,6 +38,11 @@ export default function(SimpleGraph, d3) {
         // defaults
         options = options || {};
         var style = options.style || {};
+        if(options.style) {
+            for(let k in options.style) {
+                style[k] = options.style;
+            }
+        }
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
             style['stroke-width'] = 1.5;
         }
@@ -45,7 +55,7 @@ export default function(SimpleGraph, d3) {
             y2:           !!options.y2Axis, 
             style:        style, 
             interpolate:  options.interpolation || d3.curveLinear, 
-            _bind:        {xRange: xRange}
+            _bind:        {xRange: xRange, style: style}
         });
         return this;
     };
@@ -56,7 +66,12 @@ export default function(SimpleGraph, d3) {
         options = options || {};
         var handleOverlap = !options.handleOverlap ? 'average' : options.handleOverlap.toLowerCase();
         // default styles
-        var style = options.style || {};
+        var style = {};
+        if(options.style) {
+            for(let k in options.style) {
+                style[k] = options.style;
+            }
+        }
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
             style['stroke-width'] = 1.5;
         }
@@ -102,7 +117,8 @@ export default function(SimpleGraph, d3) {
                     xRange:       null, 
                     y2:           pointsBySeries[series].y2, 
                     style:        style, 
-                    interpolate:  options.interpolation || d3.curveLinear
+                    interpolate:  options.interpolation || d3.curveLinear, 
+                    bind:         {style: style}
                 });
             }
         }
@@ -176,56 +192,64 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.getLinesDataBySeries = function(series) {
+    SimpleGraph.prototype._getLineData = function(series, index) {
         if(!this.lines) return [];
-        return this.lines
-            .filter(d => d.series === series)
-            .map(d => ({
-                series:       d.series, 
-                lineFunction: d.lineFunction, 
-                coords:       d.coords ? d.coords.map(c => [...c]) : null, 
-                xRange:       d.xRange ? [...d.xRange] : null, 
-                y2:           d.y2, 
-                style:        d.style, 
-                interpolate:  d.interpolate
-            }));
-    };
-
-    SimpleGraph.prototype.updateLineData = function(series, index, update) {
-        if(!this.lines || !update) return this;
-        var lines = this.lines.filter(d => d.series === series)
-        if(!lines || !lines.length) return this;
+        var lines = lines.filter(d => d.series === series);
+        if(!lines || !lines.length) return [];
         if(index || index === 0) {
             while(index < 0) { index = lines.length + index; }
             lines = [lines[index]];
         }
-        lines.forEach(line => {
+        return lines;
+    };
+
+    SimpleGraph.prototype.getLinesDataBySeries = function(series, index) {
+        return this._getLineData(series, index).map(d => ({
+            series:       d.series, 
+            lineFunction: d.lineFunction, 
+            coords:       d.coords ? d.coords.map(c => [...c]) : null, 
+            xRange:       d.xRange ? [...d.xRange] : null, 
+            y2:           d.y2, 
+            style:        d.style, 
+            interpolate:  d.interpolate
+        }));
+    };
+
+    SimpleGraph.prototype.updateLinesData = function(series, index, update) {
+        this._getLineData(series, index).forEach(line => {
             if(line.lineFunction && (update.lineFunction || update.function)) {
                 line.lineFunction = update.lineFunction || update.function || line.lineFunction;
-                line.xRange = update.xRange || line.xRange;
-            } else {
-                line.coords = update.coordinates || update.coords || line.coords;
+                if(update.xRange) {
+                    line.xRange = [...update.xRange];
+                    if(line._bind) {
+                        line._bind.xRange = update.xRange;
+                    }
+                }
+            } else if(update.coordinates || update.coords) {
+                let repCoords = update.coordinates || update.coords;
+                line.coords = [...repCoords];
+                if(line._bind) {
+                    line._bind.coords = repCoords;
+                }
             }
             line.interpolate = update.interpolate || line.interpolate;
             if(update.style) {
+                line.style = {};
                 for(let key in update.style) {
                     line.style[key] = update.style[key];
+                }
+                if(!line.style['stroke-width'] || typeof line.style['stroke-width'] !== "number") {
+                    line.style['stroke-width'] = 1.5;
+                }
+                if(line._bind) {
+                    line._bind.style = update.style;
                 }
             }
         });
         return this;
     };
 
-    SimpleGraph.prototype.updateLineInterpolation = function(series, interpolation) {
-        if(!this.lines) return this;
-        interpolation = interpolation || d3.curveLinear;
-        this.lines.forEach(d => {
-            if(d.series === series) d.interpolate = interpolation;
-        });
-        return this;
-    };
-
-    SimpleGraph.prototype.updateLinesData = function() {
+    SimpleGraph.prototype.syncLinesData = function() {
         if(!this.lines) return this;
         this.lines.forEach(d => {
             if(d._bind.xRange) {
@@ -234,8 +258,46 @@ export default function(SimpleGraph, d3) {
             if(d._bind.coords) {
                 d.coords = d._bind.coords.map(c => [...c]);
             }
+            if(d._bind.style) {
+                d.style = {};
+                for(let key in d._bind.style) {
+                    d.style[key] = d._bind.style[key];
+                }
+                if(!d.style['stroke-width'] || typeof d.style['stroke-width'] !== "number") {
+                    d.style['stroke-width'] = 1.5;
+                }
+            }
         });
         return this;
+    };
+
+    SimpleGraph.prototype._syncPointLines = function() {
+        if(!this.pointLines) return;
+        // first organize points by data series
+        var pointsBySeries = {};
+        this.points.forEach(point => {
+            let series = point.series;
+            if(series in pointsBySeries) {
+                pointsBySeries[series].push(this.points[i]);
+            } else {
+                pointsBySeries[series] = [this.points[i]];
+            }
+        });
+        // update existing point-line data
+        this.pointLines = this.pointLines.filter(d => {
+            if(!(d.series in pointsBySeries)) return false;
+            d.coords = this._getPointLine(pointsBySeries[d.series]);
+            if(d._bind.style) {
+                d.style = {};
+                for(let key in d._bind.style) {
+                    d.style[key] = d._bind.style[key];
+                }
+                if(!d.style['stroke-width'] || typeof d.style['stroke-width'] !== "number") {
+                    d.style['stroke-width'] = 1.5;
+                }
+            }
+            return true;
+        });
     };
 
 }
