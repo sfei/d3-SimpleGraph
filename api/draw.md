@@ -1,3 +1,21 @@
+# API & Guide #
+
+* [Constructor, properties, and misc. functions](./README.md)
+* [Axis, grid, and legend](./axis-grid-legend.md)
+* [Color category functions](./color.md)
+* [Adding and getting data](./add-data.md)
+* [Removing and updating data](./mod-data.md)
+* **Drawing data onto the graph**
+  * [drawPoints](API.md#sg-draw-points)
+  * [drawLines](API.md#sg-draw-lines)
+  * [drawAreas](API.md#sg-draw-areas)
+  * [removePoints](API.md#sg-remove-points)
+  * [removeLines](API.md#sg-remove-lines)
+  * [removeAreas](API.md#sg-remove-areas)
+  * [removeAll](API.md#sg-remove-all)
+* [Adding interactive features](./interactivity.md)
+* [Definitions](./defs.md)
+
 ## Drawing data ##
 
 After adding data, it must be explicitly drawn. As currently handled, data is reorganized and formatted before being sent to D3 to create elements. As such, data bindings are not tied to any persisting member variables of the SimpleGraph instance.

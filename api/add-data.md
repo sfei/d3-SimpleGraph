@@ -37,7 +37,7 @@ E.g., you may add several lines of the same data series, and if added separately
 
 ## Adding data ##
 
-Note that bindings of input data to data model in SimpleGraph, and from there to D3 objects, depend on the method the data was added. This becomes important when updating data via syncing is desired (a prerequisite to animated transitions). For more on this, see ["Removing and updating data"](./mod-data.md).
+Note that bindings of input data to data model in SimpleGraph, and from there to D3 objects, depend on the method the data was added. This becomes important when updating data via syncing is desired (a prerequisite to animated transitions). For more on this, see [Removing and updating data](./mod-data.md#syncing-data).
 
 Note that changes to the data will not be reflected until the data is [re]drawn. For more, see [Drawing data onto the graph](./draw.md).
 

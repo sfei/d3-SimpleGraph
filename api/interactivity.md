@@ -1,3 +1,20 @@
+# API & Guide #
+
+* [Constructor, properties, and misc. functions](./README.md)
+* [Axis, grid, and legend](./axis-grid-legend.md)
+* [Color category functions](./color.md)
+* [Adding and getting data](./add-data.md)
+* [Removing and updating data](./mod-data.md)
+* [Drawing data onto the graph](./draw.md)
+* **Adding interactive features**
+  * [addTooltipToPoints](API.md#sg-add-tooltip-to-points)
+  * [addTooltipToLines](API.md#sg-add-tooltip-to-lines)
+  * [addTooltipToAreas](API.md#sg-add-tooltip-to-areas)
+  * [highlightPoints](API.md#sg-highlight-points)
+  * [removeHighlightPoints](API.md#sg-remove-highlights-points)
+  * [removeHighlights](API.md#sg-remove-highlights)
+* [Definitions](./defs.md)
+
 ## Adding interactive features ##
 
 #### Tooltips ####

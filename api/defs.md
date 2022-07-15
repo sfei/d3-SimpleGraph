@@ -1,3 +1,19 @@
+# API & Guide #
+
+* [Constructor, properties, and misc. functions](./README.md)
+* [Axis, grid, and legend](./axis-grid-legend.md)
+* [Color category functions](./color.md)
+* [Adding and getting data](./add-data.md)
+* [Removing and updating data](./mod-data.md)
+* [Drawing data onto the graph](./draw.md)
+* [Adding interactive features](./interactivity.md)
+* **Definitions**
+  * [Axis options](API.md#axis-options)
+  * [Point data](API.md#point-data)
+  * [Line data](API.md#line-data)
+  * [Area data](API.md#area-data)
+  * [Tooltip text function](API.md#tooltip-text-function)
+
 ## Definitions ##
 
 #### Axis Options ####
