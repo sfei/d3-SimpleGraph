@@ -31,8 +31,11 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.drawLines = function(resolution, transition) {
         this.removeLines();
         // default and enforced minimum resolution for resolving from function
-        if(!resolution && resolution !== 0) resolution = 20;
-        if(resolution == 0 || resolution < 2) resolution = 2;
+        if(!resolution && resolution !== 0) {
+            resolution = 20;
+        } else if(resolution <= 2) {
+            resolution = 2;
+        }
         if(!this.lines) return this;
 
         var self = this;
@@ -81,9 +84,15 @@ export default function(SimpleGraph, d3) {
 
     SimpleGraph.prototype.drawUpdateLines = function(resolution, transition) {
         // defaults
-        if(!resolution && resolution !== 0) resolution = 20;
-        if(resolution == 0 || resolution < 2) resolution = 2;
+        if(!resolution && resolution !== 0) {
+            resolution = 20;
+        } else if(resolution <= 2) {
+            resolution = 2;
+        }
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
         }
@@ -113,6 +122,9 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.drawUpdatePointLines = function(transition) {
         // defaults
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
         }
@@ -170,6 +182,9 @@ export default function(SimpleGraph, d3) {
                 });
         // animate
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
             addedLines.transition().duration(transition.duration).ease(transition.ease)

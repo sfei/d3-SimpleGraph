@@ -6,23 +6,30 @@
 * [Adding and getting data](./add-data.md)
 * [Removing and updating data](./mod-data.md)
 * **Drawing data onto the graph**
-  * [drawPoints](API.md#sg-draw-points)
-  * [drawLines](API.md#sg-draw-lines)
-  * [drawAreas](API.md#sg-draw-areas)
-  * [removePoints](API.md#sg-remove-points)
-  * [removeLines](API.md#sg-remove-lines)
-  * [removeAreas](API.md#sg-remove-areas)
-  * [removeAll](API.md#sg-remove-all)
+  * [drawPoints](#a-drawpoints)
+  * [drawLines](#a-drawlines)
+  * [drawPointLines](#a-drawpointlines)
+  * [drawAllLines](#a-drawalllines)
+  * [drawAreas](#a-drawareas)
+  * [drawUpdatePoints](#a-drawupdatepoints)
+  * [drawUpdateLines](#a-drawupdatelines)
+  * [drawUpdateAreas](#a-drawupdateareas)
+  * [removePoints](#a-removepoints)
+  * [removeLines](#a-removelines)
+  * [removeAreas](#a-removeareas)
+  * [removeAll](#a-removeall)
 * [Adding interactive features](./interactivity.md)
 * [Definitions](./defs.md)
 
 ## Drawing data ##
 
-After adding data, it must be explicitly drawn. As currently handled, data is reorganized and formatted before being sent to D3 to create elements. As such, data bindings are not tied to any persisting member variables of the SimpleGraph instance.
+To visualize changes after adding or updating data, draw functions must be called explicitly. Draws must be called for each type of data separately (points, lines, areas, and point-lines). As such, the call-order will determine which type of data is drawn over the other.
 
-All data SVG nodes will be given the attribute `series`, which may be helpful in selecting or parsing the elements manually.
+There are two methods of drawing. The simple draw functions will erase and redraw all elements on the graph. A simple fade-in transition can be applied. Update draws (next section), will keep existing elements on the graph, instead animating their changes to align with the state of the data.
 
-<a name="drawPoints">#</a> *sg*.**drawPoints**(*showNull*)
+All data SVG nodes will be given the attribute `series` with the data series name, which may be helpful in selecting or parsing the elements manually.
+
+<a name="a-drawpoints" href="#a-drawpoints">#</a> *sg*.**drawPoints**([*showNull*[, *transition*]])
 
 (Re)draw all points data on graph. Points will have class `.sg-point`. Additionally, depending on shape drawn, will have additional class of `.sg-point-sd` (square/diamond), `.sg-point-cr` (circle), `.sg-point-tu` (triangle-up), or `.sg-point-td` (triangle-down).
 
@@ -32,28 +39,23 @@ All data SVG nodes will be given the attribute `series`, which may be helpful in
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>showNulls</td><td>boolean</td><td>If true, converts undefined/null y-values to 0. If false, undefined/null y-values are not drawn.</td>
+      <td>showNulls</td><td>boolean</td><td>If true, shows data with undefined/null y-values as y=0. If false, undefined/null y-values are not drawn.</td>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="drawLines">#</a> *sg*.**drawAllLines**(*resolution*)
-
-(Re)draw all lines data on graph. Lines will have class `.sg-line` or `.sg-point-line`.
-
-<table style="font-size:0.9em;">
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>resolution</td><td>number</td><td>How many coordinates to calculate when drawing a line defined from a function (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</td>
-    </tr>
-  </tbody>
-</table>
-<a name="drawLines">#</a> *sg*.**drawLines**(*resolution*)
+<a name="a-drawlines" href="#a-">#</a> *sg*.**drawLines**([*resolution*[, *transition*]])
 
 (Re)draw lines data on graph (excluding point-lines). Lines will have class `.sg-line`.
 
@@ -63,51 +65,218 @@ All data SVG nodes will be given the attribute `series`, which may be helpful in
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>resolution</td><td>number</td><td>How many coordinates to calculate when drawing a line defined from a function (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</td>
+      <td>resolution</td><td>number</td><td>For lines defined as functions, determines the resolution (as evenly spaced horizontal sampling points across the graph) in which to draw the line. Defaults to 20 and a minimum of 2 is enforced.</td>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
     </tr>
   </tbody>
 </table>
 
-<a name="drawPointLines">#</a> *sg*.**drawPointLines**()
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-drawpointlines" href="#a-">#</a> *sg*.**drawPointLines**([*transition*])
 
 (Re)draw all point-lines data on graph. Lines will have class `.sg-point-line`.
 
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
+    </tr>
+  </tbody>
+</table>
+
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="drawAreas">#</a> *sg*.**drawAreas**()
+<a name="a-drawalllines" href="#a-">#</a> *sg*.**drawAllLines**([*resolution*[, *transition*]])
+
+(Re)draw all lines data on graph. Lines will have class `.sg-line` or `.sg-point-line`.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>resolution</td><td>number</td><td>For lines defined as functions, determines the resolution (as evenly spaced horizontal sampling points across the graph) in which to draw the line. Defaults to 20 and a minimum of 2 is enforced.</td>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-drawareas" href="#a-drawareas">#</a> *sg*.**drawAreas**([*resolution*[, *transition*]])
 
 (Re)draw all area data on graph. Areas will have class `.sg-areas`.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="removePoints">#</a> *sg*.**removePoints**()
-
-Remove all drawn points on graph. Does not remove the underlying data.
-
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="removeLines">#</a> *sg*.**removeAllLines**()
-
-Remove all drawn lines (including point-lines) on graph. Does not remove the underlying data.
-
-<a name="removeLines">#</a> *sg*.**removeLines**()
-
-Remove all drawn lines (excluding point-lines) on graph. Does not remove the underlying data.
-
-<a name="removePointLines">#</a> *sg*.**removeLines**()
-
-Remove all drawn point-lines on graph. Does not remove the underlying data.
-
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="removeAreas">#</a> *sg*.**removeAreas**()
-
-Remove all drawn areas on graph. Does not remove the underlying data.
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>resolution</td><td>number</td><td>For areas defined as functions, determines the resolution (as evenly spaced horizontal sampling points across the graph) in which to draw the area boundaries. Defaults to 20 and a minimum of 2 is enforced.</td>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
+    </tr>
+  </tbody>
+</table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="removeAll">#</a> *sg*.**removeAll**()
+## Updating drawn data ##
 
-Remove all drawn data series on graph. Does not remove the underlying data.
+Update draws can be called in tandem with transitions to animate changes to the graph. New data will be faded in and existing data that was updated (for updating data, see [Removing and updating data](./mod-data.md)) will be animated to change to the new position and styles.
+
+As existing data is kept and transitioned while new data is drawn on top, this may have odd effects on the resulting layer order if mixed.
+
+At current, data that no longer exists is simply removed without a transition.
+
+<a name="a-drawupdatepoints" href="#a-drawupdatepoints">#</a> *sg*.**drawUpdatePoints**([*showNull*[, *transition*]])
+
+Draw-update points on the graph (which will also draw-update any existing point lines).
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>showNulls</td><td>boolean</td><td>If true, shows data with undefined/null y-values as y=0. If false, undefined/null y-values are not drawn.</td>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-drawupdatelines" href="#a-drawupdatelines">#</a> *sg*.**drawUpdateLines**([*resolution*[, *transition*]])
+
+Draw-update lines on the graph.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-drawupdateareas" href="#adrawupdateareas-">#</a> *sg*.**drawUpdateAreas**([*resolution*[, *transition*]])
+
+Draw-update areas on the graph.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>resolution</td><td>number</td><td>For areas defined as functions, determines the resolution (as evenly spaced horizontal sampling points across the graph) in which to draw the area boundaries. Defaults to 20 and a minimum of 2 is enforced.</td>
+    </tr>
+    <tr>
+      <td>transition</td><td>object</td><td>Optional transition options. Can just supply a truthy value or an empty object to use defaults.</td>
+    </tr>
+    <tr>
+      <td>transition.duration</td><td>number</td><td>Transition duration in milliseconds. Defaults to 200.</td>
+    </tr>
+    <tr>
+      <td>transition.ease</td><td>d3.ease</td><td><a href="https://github.com/d3/d3-ease" target="_blank">D3 easing function</a> for transition. Defaults to d3.easePolyOut.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+## Removing drawn data ##
+
+The remove functions remove the drawn elements on the graph (using class selections). It does not remove the underlying data.
+
+At current, no transition options are available.
+
+<a name="a-removepoints" href="#a-removepoints">#</a> *sg*.**removePoints**()
+
+Remove all drawn points on graph.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removelines" href="#a-removelines">#</a> *sg*.**removeLines**()
+
+Remove all drawn lines (excluding point-lines) on graph.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removepointlines" href="#a-removepointlines">#</a> *sg*.**removePointsLines**()
+
+Remove all drawn point-lines on graph.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removealllines" href="#a-removealllines">#</a> *sg*.**removeAllLines**()
+
+Remove all drawn lines (including point-lines) on graph.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removeareas" href="#a-removeareas">#</a> *sg*.**removeAreas**()
+
+Remove all drawn areas on graph.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removeall" href="#a-removeall">#</a> *sg*.**removeAll**()
+
+Remove all drawn data series on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.

@@ -10,8 +10,11 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.drawAreas = function(resolution, transition) {
         this.removeAreas();
         // default and enforced minimum resolution for resolving from function
-        if(!resolution && resolution !== 0) resolution = 20;
-        if(resolution < 2) resolution = 2;
+        if(!resolution && resolution !== 0) {
+            resolution = 20;
+        } else if(resolution <= 2) {
+            resolution = 2;
+        }
         if(!this.areas) return this;
 
         this.areas.forEach(area => {
@@ -37,8 +40,11 @@ export default function(SimpleGraph, d3) {
     };
 
     SimpleGraph.prototype.drawUpdateAreas = function(resolution, transition) {
-        if(!resolution && resolution !== 0) resolution = 20;
-        if(resolution < 2) resolution = 2;
+        if(!resolution && resolution !== 0) {
+            resolution = 20;
+        } else if(resolution <= 2) {
+            resolution = 2;
+        }
 
         this.areas.forEach(area => {
             if(area.functions) {
@@ -102,6 +108,9 @@ export default function(SimpleGraph, d3) {
                 });
         // animate
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
             addedAreas.transition().duration(transition.duration).ease(transition.ease)
@@ -115,6 +124,9 @@ export default function(SimpleGraph, d3) {
         if(!this.areas) return;
 
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
         }

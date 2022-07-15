@@ -56,6 +56,9 @@ export default function(SimpleGraph, d3) {
         }
 
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
         }
@@ -133,6 +136,9 @@ export default function(SimpleGraph, d3) {
         }
         items = this._formatPoint(items, shape, transition);
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
             items.transition().duration(transition.duration).ease(transition.ease)
@@ -145,6 +151,9 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype._updatePoints = function(selection, shape, transition) {
         if(!selection.size()) return;
         if(transition) {
+            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+                transition = {};
+            }
             transition.duration = transition.duration || 200;
             transition.ease = transition.ease || d3.easePolyOut;
             selection = selection.transition().duration(transition.duration).ease(transition.ease);
