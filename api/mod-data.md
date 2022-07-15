@@ -5,35 +5,30 @@
 * [Color category functions](./color.md)
 * [Adding and getting data](./add-data.md)
 * **Removing and updating data**
+  * [clearPointsData](#a-clearpointsdata)
+  * [clearLinesData](#a-clearlinesdata)
+  * [clearPointLinesData](#a-clearpointlinesdata)
+  * [clearAreasData](#a-clearareasdata)
+  * [clearAllData](#a-clearalldata)
+  * [updatePointsData](#a-updatepointsdata)
+  * [updateLinesData](#a-updatelinesdata)
+  * [updateAreasData](#a-updateareasdata)
+  * [syncPointsData](#a-syncpointsdata)
+  * [syncLiensData](#a-synclinesdata)
+  * [syncAreasData](#a-syncareasdata)
 * [Drawing data onto the graph](./draw.md)
 * [Adding interactive features](./interactivity.md)
 * [Definitions](./defs.md)
 
 ## Removing data ##
 
-<a name="clearPointsData">#</a> *sg*.**clearPointsData**([*series*])
+Data is removed by series names. Or, if the series name is null or undefined, it will remove all relevant data.
 
-Remove all points data.
+Note that changes to the data will not be reflected until the data is [re]drawn. For more, see [Drawing data onto the graph](./draw.md).
 
-<table style="font-size:0.9em;">
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
-      <td>series</td><td>string</td><td>If provided, only removes data series matching this name.</td>
-    </tr>
-  </tbody>
-</table>
+<a name="a-clearpointsdata" href="a-clearpointsdata">#</a> *sg*.**clearPointsData**([*series*])
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="clearLinesData">#</a> *sg*.**clearLinesData**([*series*])
-
-Remove all lines data.
+Remove points data. 
 
 <table style="font-size:0.9em;">
   </tbody>
@@ -51,9 +46,9 @@ Remove all lines data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="clearLinesData">#</a> *sg*.**clearPointLinesData**([*series*])
+<a name="a-clearlinesdata" href="a-clearlinesdata">#</a> *sg*.**clearLinesData**([*series*])
 
-Remove all lines data.
+Remove lines data.
 
 <table style="font-size:0.9em;">
   </tbody>
@@ -71,7 +66,27 @@ Remove all lines data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="clearAreasData">#</a> *sg*.**clearAreasData**([*series*])
+<a name="a-clearpointlinesdata" href="a-clearpointlinesdata">#</a> *sg*.**clearPointLinesData**([*series*])
+
+Remove lines data.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>name</td><td>string</td><td>The name of the data series.</td>
+    </tr>
+    <tr>
+      <td>series</td><td>string</td><td>If provided, only removes data series matching this name.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-clearareasdata" href="a-clearareasdata">#</a> *sg*.**clearAreasData**([*series*])
 
 Remove all areas data.
 
@@ -91,7 +106,7 @@ Remove all areas data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="clearAllData">#</a> *sg*.**clearAllData**([*series*])
+<a name="a-clearalldata" href="a-clearalldata">#</a> *sg*.**clearAllData**([*series*])
 
 Remove all data.
 
@@ -111,7 +126,146 @@ Remove all data.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-## Data binding ##
+## Updating data ##
+
+Updating data manually is somewhat tricky if there are multiple datasets attached to a data series. The data can be updated for all datasets of the same type of data series name, or the update can be specified by a specific index. 
+
+However, figuring out what index this is may be tricky. While lines and areas are added one at a time, the function `addPointsData()` and `addPointsDataAsArray()` may be adding multiple points, with the former even potentially adding multiple points to different data series. In such a case, it may be helpful to [get the data series](./add-data.md#get-data-functions) and determine the specific index of the datum from the returned dataset.
+
+Any updated values will change or break the data bindings.
+
+Note that changes to the data will not be reflected until the data is [re]drawn. For more, see [Drawing data onto the graph](./draw.md).
+
+<a name="a-updatepointsdata" href="a-updatepointsdata">#</a> *sg*.**updatePointsData**(*series*, *index*, *update*)
+
+Update points data. Will also sync-update point lines data.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>series</td><td>string</td><td>The name of the data series.</td>
+    </tr>
+    <tr>
+      <td>index</td><td>number</td><td>The specific index of the datum to change. May be negative to traverse the list in reverse. Or null/undefined to apply to all data in the series.</td>
+    </tr>
+    <tr>
+      <td>update</td><td>object</td><td>An object literal of the selected values to update.</td>
+    </tr>
+    <tr>
+      <td>update.x</td><td>number</td><td>The updated x-coordinate. Will break any previous data binding on this.</td>
+    </tr>
+    <tr>
+      <td>update.y</td><td>number</td><td>The updated y-coordinate. Will break any previous data binding on this.</td>
+    </tr>
+    <tr>
+      <td>update.y2</td><td>boolean</td><td>The updated flag on whether this point is to be mapped on the y2 axis.</td>
+    </tr>
+    <tr>
+      <td>update.size</td><td>number|callback</td><td>The updated number of callback determining the point sizes.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-updatelinesdata" href="a-updatelinesdata">#</a> *sg*.**updateLinesData**(*series*, *index*, *update*)
+
+Update lines data.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>series</td><td>string</td><td>The name of the data series.</td>
+    </tr>
+    <tr>
+      <td>index</td><td>number</td><td>The specific index of the datum to change. May be negative to traverse the list in reverse. Or null/undefined to apply to all data in the series.</td>
+    </tr>
+    <tr>
+      <td>update</td><td>object</td><td>An object literal of the selected values to update.</td>
+    </tr>
+    <tr>
+      <td>update.lineFunction</td><td>callback</td><td>If callback for the function defining the line's shape. If the line was previously defined by coordinates, the coordinates will be erased.</td>
+    </tr>
+    <tr>
+      <td>update.function</td><td>callback</td><td>Another alias for the above.</td>
+    </tr>
+    <tr>
+      <td>update.coordinates</td><td>number[][]</td><td>The updated line coordinates If the line was previously defined by a function, the function will be unreferenced.</td>
+    </tr>
+    <tr>
+      <td>update.coords</td><td>number[][]</td><td>Another alias for the above.</td>
+    </tr>
+    <tr>
+      <td>update.interpolate</td><td>d3.curve</td><td>The updated D3 curve interpolation function.</td>
+    </tr>
+    <tr>
+      <td>update.style</td><td>object</td><td>The updated style object. Will replace the original style dictionary and bindings.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-updateareasdata" href="a-updateareasdata">#</a> *sg*.**updateAreasData**(*series*, *index*, *update*)
+
+Update areas data.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>series</td><td>string</td><td>The name of the data series.</td>
+    </tr>
+    <tr>
+      <td>index</td><td>number</td><td>The specific index of the datum to change. May be negative to traverse the list in reverse. Or null/undefined to apply to all data in the series.</td>
+    </tr>
+    <tr>
+      <td>update</td><td>object</td><td>An object literal of the selected values to update.</td>
+    </tr>
+    <tr>
+      <td>update.lineFunctionTop</td><td>callback</td><td>If callback for the function defining the area's upper boundary. If the area was previously defined by coordinates, the coordinates will be erased. If the bottom boundary function is not provided, it will be assumed to be a function where the returned value is always 0.</td>
+    </tr>
+    <tr>
+      <td>update.functionTop</td><td>callback</td><td>Another alias for the above.</td>
+    </tr>
+    <tr>
+      <td>update.lineFunctionBottom</td><td>callback</td><td>If callback for the function defining the area's upper boundary. If the area was previously defined by coordinates, the coordinates will be erased. If the top boundary function is not provided, it will be assumed to be a function where the returned value is always 0.</td>
+    </tr>
+    <tr>
+      <td>update.functionBottom</td><td>callback</td><td>Another alias for the above.</td>
+    </tr>
+    <tr>
+      <td>update.coordinates</td><td>number[][]</td><td>The updated area coordinates If the area was previously defined by functions, the functions will be unreferenced.</td>
+    </tr>
+    <tr>
+      <td>update.coords</td><td>number[][]</td><td>Another alias for the above.</td>
+    </tr>
+    <tr>
+      <td>update.interpolate</td><td>d3.curve</td><td>The updated D3 curve interpolation function.</td>
+    </tr>
+    <tr>
+      <td>update.style</td><td>object</td><td>The updated style object. Will replace the original style dictionary and bindings.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+## Syncing data ##
+
+Data can also be updated by synchronizing the values to coincide with the data bindings.
+
+Note that changes to the data will not be reflected until the data is [re]drawn. For more, see [Drawing data onto the graph](./draw.md).
+
+#### Data bindings ####
 
 Binding of data is only done in a few simplistic ways, which are not always consistent.
 
@@ -136,3 +290,24 @@ Binding of data is only done in a few simplistic ways, which are not always cons
 * Areas defined by functions, added via [`addAreaBetweenTwoLines()`](#a-addareabetweentwolines()), only bind the `xRange` and the optional styles, if provided. The functions themselves cannot be bound.
 
 Bindings are not automatically checked or updated. Synchronization must be manually triggered via sync functions.
+
+#### Sync data functions ####
+
+<a name="a-syncpointsdata" href="a-syncpointsdata">#</a> *sg*.**syncPointsData**()
+
+Syncs all points data, updating all data-bound values. Will also sync-update all point lines data.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-synclinesdata" href="a-synclinesdata">#</a> *sg*.**syncLinesData**()
+
+Syncs all lines data, updating all data-bound values.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-syncareasdata" href="a-syncareasdata">#</a> *sg*.**syncAreasData**()
+
+Syncs all areas data, updating all data-bound values.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+

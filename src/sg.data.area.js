@@ -73,22 +73,28 @@ export default function(SimpleGraph, d3) {
 
     SimpleGraph.prototype.updateAreaData = function(series, index, update) {
         this._getAreaData(series, index).forEach(area => {
-            if(area.functions && (update.lineFunctionTop || update.functionTop || update.lineFunctionBottom || update.functionBottom)) {
+            if(update.lineFunctionTop || update.functionTop || update.lineFunctionBottom || update.functionBottom) {
                 area.functions = [
-                    update.lineFunctionBottom || update.functionBottom || area.functions[0], 
-                    update.lineFunctionTop || update.functionTop || area.functions[1]
+                    update.lineFunctionBottom || update.functionBottom || (area.functions && area.functions[0]), 
+                    update.lineFunctionTop || update.functionTop || (area.functions && area.functions[1])
                 ];
+                if(!area.functions[0]) area.functions[0] = (x => 0);
+                if(!area.functions[1]) area.functions[1] = (x => 0);
                 if(update.xRange) {
                     area.xRange = [...update.xRange];
                     if(area._bind) {
                         area._bind.xRange = update.xRange;
                     }
                 }
+                area.coords = null;
+                if(area._bind) delete area._bind.coords;
             } else if(update.coordinates || update.coords) {
                 let repCoords = update.coordinates || update.coords;
                 area.coords = [...repCoords];
+                area.functions = null;
                 if(area._bind) {
                     area._bind.coords = repCoords;
+                    delete area._bind.xRange;
                 }
             }
             area.interpolate = update.interpolate || area.interpolate;
@@ -106,20 +112,11 @@ export default function(SimpleGraph, d3) {
     };
     
     SimpleGraph.prototype.clearAreasData = function(series) {
-        if(!series) {
+        if(series === null || typeof series === "undefined") {
             this.areas = null;
         } else {
             this.areas = this.areas.filter(d => d.series !== series);
         }
-        return this;
-    };
-
-    SimpleGraph.prototype.updateAreaInterpolation = function(series, interpolation) {
-        if(!this.areas) return this;
-        interpolation = interpolation || d3.curveLinear;
-        this.areas.forEach(d => {
-            if(d.series === series) d.interpolate = interpolation;
-        });
         return this;
     };
 

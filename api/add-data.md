@@ -39,6 +39,8 @@ E.g., you may add several lines of the same data series, and if added separately
 
 Note that bindings of input data to data model in SimpleGraph, and from there to D3 objects, depend on the method the data was added. This becomes important when updating data via syncing is desired (a prerequisite to animated transitions). For more on this, see ["Removing and updating data"](./mod-data.md).
 
+Note that changes to the data will not be reflected until the data is [re]drawn. For more, see [Drawing data onto the graph](./draw.md).
+
 #### Adding points ####
 
 <a name="a-addpointdata" href="#a-addpointdata">#</a> *sg*.**addPointData**(*series*, *xValue*, *yValue*[, *options*])
@@ -475,8 +477,6 @@ Get line data series by name.
 
 Note line data returns a copy of the underlying data object (including shallow copy of any array values). As such, any changes in the returned data should have no effect on the underlying data the in SimpleGraph instance.
 
-The one exception to the above is the style object, this is passed by reference, so changing it will update the styles on the next draw of lines data.
-
 <table style="font-size:0.9em;">
   </tbody>
     <tr>
@@ -491,7 +491,11 @@ The one exception to the above is the style object, this is passed by reference,
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](./defs.md#defs-line-data).
 
 
-<a name="a-getareasdatabyseries" href="#a-getareasdatabyseries">#</a> *sg*.**getAreasDataBySeries**(*series*) Get area data series by name.
+<a name="a-getareasdatabyseries" href="#a-getareasdatabyseries">#</a> *sg*.**getAreasDataBySeries**(*series*) 
+
+Get area data series by name.
+
+Note point data returns a shallow copy of the underlying data object. As such, any changes in the returned data should have no effect on the underlying data the in SimpleGraph instance.
 
 <table style="font-size:0.9em;">
   </tbody>

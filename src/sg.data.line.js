@@ -175,7 +175,7 @@ export default function(SimpleGraph, d3) {
     };
     
     SimpleGraph.prototype.clearLinesData = function(series) {
-        if(!series) {
+        if(series === null || typeof series === "undefined") {
             this.lines = null;
         } else {
             this.lines = this.lines.filter(d => d.series !== series);
@@ -184,7 +184,7 @@ export default function(SimpleGraph, d3) {
     };
     
     SimpleGraph.prototype.clearPointLinesData = function(series) {
-        if(!series) {
+        if(series === null || typeof series === "undefined") {
             this.pointLines = null;
         } else {
             this.pointLines = pointLines.lines.filter(d => d.series !== series);
@@ -217,7 +217,7 @@ export default function(SimpleGraph, d3) {
 
     SimpleGraph.prototype.updateLinesData = function(series, index, update) {
         this._getLineData(series, index).forEach(line => {
-            if(line.lineFunction && (update.lineFunction || update.function)) {
+            if(update.lineFunction || update.function) {
                 line.lineFunction = update.lineFunction || update.function || line.lineFunction;
                 if(update.xRange) {
                     line.xRange = [...update.xRange];
@@ -225,11 +225,14 @@ export default function(SimpleGraph, d3) {
                         line._bind.xRange = update.xRange;
                     }
                 }
+                line.coords = null;
+                if(line._bind) delete line._bind.coords;
             } else if(update.coordinates || update.coords) {
                 let repCoords = update.coordinates || update.coords;
                 line.coords = [...repCoords];
                 if(line._bind) {
                     line._bind.coords = repCoords;
+                    delete line._bind.xRange;
                 }
             }
             line.interpolate = update.interpolate || line.interpolate;

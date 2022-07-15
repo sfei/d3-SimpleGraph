@@ -116,7 +116,7 @@ export default function(SimpleGraph) {
     };
 
     SimpleGraph.prototype.clearPointsData = function(series) {
-        if(!series) {
+        if(series === null || typeof series === "undefined") {
             this.points = null;
         } else {
             this.points = this.points.filter(d => d.series !== series);
