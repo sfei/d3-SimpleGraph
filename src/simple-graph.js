@@ -7,35 +7,43 @@
  ************************************************************************************************************/
 import * as d3 from 'd3';
 
-function SimpleGraph(options) {
-    // default options
-    if(!options)             { options = {}; }
-    if(!options.container)   { options.container = "body"; }
-    if(!options.margins)     { options.margins = {}; }
-    if(!options.axis)        { options.axis = {}; }
-    if(!options.styles)      { options.styles = {}; }
+function SimpleGraph(params) {
+    // default params
+    params           = params || {};
+    params.container = params.container || "body";
+    params.margins   = params.margins || {};
+    params.axis      = params.axis || {};
+    params.styles    = params.styles || {};
     
     // Option to allow drawing outside graph range.
-    this.allowDrawBeyondGraph = options.allowDrawBeyondGraph;
+    this.allowDrawBeyondGraph = !!params.allowDrawBeyondGraph;
 
     // adjust width and height by margins
+    if(Array.isArray(params.margins)) {
+        params.margins = {
+            top:    params.margins[0], 
+            right:  params.margins[1],
+            bottom: params.margins[2], 
+            left:   params.margins[3]
+        };
+    }
     this.margins = {
-        left: (!options.margins.left && options.margins.left !== 0) ? 40 : options.margins.left, 
-        right: (!options.margins.right && options.margins.right !== 0) ? 20 : options.margins.right, 
-        top: (!options.margins.top && options.margins.top !== 0) ? 20 : options.margins.top, 
-        bottom: (!options.margins.bottom && options.margins.bottom !== 0) ? 40 : options.margins.bottom
+        left:   (!params.margins.left && params.margins.left !== 0)     ? 40 : params.margins.left, 
+        right:  (!params.margins.right && params.margins.right !== 0)   ? 20 : params.margins.right, 
+        top:    (!params.margins.top && params.margins.top !== 0)       ? 20 : params.margins.top, 
+        bottom: (!params.margins.bottom && params.margins.bottom !== 0) ? 40 : params.margins.bottom
     };
-    this.containerWidth = ((options.width) ?  options.width : 600);
-    this.containerHeight = ((options.height) ?  options.height : 400);
-    this.width = this.containerWidth - this.margins.left - this.margins.right;
-    this.height = this.containerHeight - this.margins.top - this.margins.bottom;
+    this.containerWidth  = params.width || 600;
+    this.containerHeight = params.height || 400;
+    this.width           = this.containerWidth - this.margins.left - this.margins.right;
+    this.height          = this.containerHeight - this.margins.top - this.margins.bottom;
     
     // category color scale
-    this.color = (options.colorScale) ? options.colorScale : d3.scaleOrdinal(d3.schemeCategory10);
+    this.color = (params.colorScale) ? params.colorScale : d3.scaleOrdinal(d3.schemeCategory10);
     this.customColors = {};
     
     // create the SVG
-    this.svg = d3.select(options.container).append("svg")
+    this.svg = d3.select(params.container).append("svg")
         .attr("width", this.containerWidth)
         .attr("height", this.containerHeight)
         .style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
@@ -45,11 +53,11 @@ function SimpleGraph(options) {
         .attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
     
     // append styles, save to instance the default text-size
-    for(let style in options.styles) {
-        this.svg.style(style, options.styles[style]);
+    for(let style in params.styles) {
+        this.svg.style(style, params.styles[style]);
     }
     
-    this.resetAxisOptions(options.axis);
+    this.resetAxisOptions(params.axis);
     
     return this;
 };
