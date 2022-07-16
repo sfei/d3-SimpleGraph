@@ -2,10 +2,10 @@
 
 * [Constructor, properties, and misc. functions](./README.md)
 * [Axis, grid, and legend](./axis-grid-legend.md)
-* [Color category functions](./color.md)
 * [Adding and getting data](./add-data.md)
 * [Removing and updating data](./mod-data.md)
 * [Drawing data onto the graph](./draw.md)
+* [Color and point shape](./color.md)
 * **Adding interactive features**
   * [addTooltipToPoints](#a-add-tooltiptopoints)
   * [addTooltipToLines](#a-addtooltiptolines)
@@ -39,7 +39,7 @@ Add tooltip function to points on the graph. Does not add tooltips to the point-
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
+      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">Tooltip Text Function</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
       <td>options</td><td>object</td><td>Additional options to apply to tooltips.</td>
@@ -74,7 +74,7 @@ Add tooltip function to lines (including point-lines) on the graph.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
+      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">Tooltip Text Function</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
       <td>options</td><td>object</td><td>Additional options to apply to tooltips.</td>
@@ -109,7 +109,7 @@ Add tooltip function to areas on the graph.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
+      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">Tooltip Text Function</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
       <td>options</td><td>object</td><td>Additional options to apply to tooltips.</td>

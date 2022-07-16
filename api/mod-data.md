@@ -2,7 +2,6 @@
 
 * [Constructor, properties, and misc. functions](./README.md)
 * [Axis, grid, and legend](./axis-grid-legend.md)
-* [Color category functions](./color.md)
 * [Adding and getting data](./add-data.md)
 * **Removing and updating data**
   * [clearPointsData](#a-clearpointsdata)
@@ -17,6 +16,7 @@
   * [syncLinesData](#a-synclinesdata)
   * [syncAreasData](#a-syncareasdata)
 * [Drawing data onto the graph](./draw.md)
+* [Color and point shape](./color.md)
 * [Adding interactive features](./interactivity.md)
 * [Definitions](./defs.md)
 

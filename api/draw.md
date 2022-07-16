@@ -2,7 +2,6 @@
 
 * [Constructor, properties, and misc. functions](./README.md)
 * [Axis, grid, and legend](./axis-grid-legend.md)
-* [Color category functions](./color.md)
 * [Adding and getting data](./add-data.md)
 * [Removing and updating data](./mod-data.md)
 * **Drawing data onto the graph**
@@ -19,6 +18,7 @@
   * [removeAreas](#a-removeareas)
   * [removeAll](#a-removeall)
 * [Adding interactive features](./interactivity.md)
+* [Color and point shape](./color.md)
 * [Definitions](./defs.md)
 
 ## Drawing data ##
@@ -252,6 +252,9 @@ Remove drawn points on graph.
 <table style="font-size:0.9em;">
   </tbody>
     <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
@@ -265,6 +268,9 @@ Remove drawn lines (excluding point-lines) on graph.
 
 <table style="font-size:0.9em;">
   </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
     <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
@@ -280,6 +286,9 @@ Remove drawn point-lines on graph.
 <table style="font-size:0.9em;">
   </tbody>
     <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
@@ -293,6 +302,9 @@ Remove drawn lines (including point-lines) on graph.
 
 <table style="font-size:0.9em;">
   </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
     <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
@@ -308,6 +320,9 @@ Remove drawn areas on graph.
 <table style="font-size:0.9em;">
   </tbody>
     <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
@@ -321,6 +336,9 @@ Remove drawn data series on graph.
 
 <table style="font-size:0.9em;">
   </tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
     <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>

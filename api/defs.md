@@ -2,10 +2,10 @@
 
 * [Constructor, properties, and misc. functions](./README.md)
 * [Axis, grid, and legend](./axis-grid-legend.md)
-* [Color category functions](./color.md)
 * [Adding and getting data](./add-data.md)
 * [Removing and updating data](./mod-data.md)
 * [Drawing data onto the graph](./draw.md)
+* [Color and point shape](./color.md)
 * [Adding interactive features](./interactivity.md)
 * **Definitions**
   * [Axis options](#axis-options)
@@ -24,49 +24,27 @@
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>break</td>
-      <td>object</td>
-      <td>
-        Optional. Places an x-axis break.
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>domain</td><td>number[]</td><td>Places an axis break across this range.</td>
-            </tr>
-            <tr>
-              <td>rangegap</td><td>number</td><td>The pixel width to draw for this axis break.</td>
-            </tr>
-          </tbody>
-        </table>
+      <td>break</td><td>object</td><td>Optional. Places an x-axis break.</td>
+    </tr>
+    <tr>
+      <td>break.domain</td><td>number[]</td><td>Places an axis break across this range.</td>
+    </tr>
+    <tr>
+      <td>break.rangegap</td><td>number</td><td>The pixel width to draw for this axis break.</td>
+    </tr>
       </td>
     </tr>
     <tr>
       <td>format</td><td>string</td><td>String formatter for tick labels. Defaults to ".0f" if numeric scale or "%Y-%m-%d" if date scale.</td>
     </tr>
     <tr>
-      <td>grid</td>
-      <td>object</td>
-      <td>
-        Optional. Specify ticks for grid differently than axis bar/label.
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>ticks</td><td>number</td><td>Tick intervals for grid. (See ticks).</td>
-            </tr>
-            <tr>
-              <td>tickValues</td><td>number[]</td><td>Tick values for grid. (See tickValues).</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
+      <td>grid</td><td>object</td><td>Optional. Specify ticks for grid differently than axis bar/label.</td>
+    </tr>
+    <tr>
+      <td>grid.ticks</td><td>number</td><td>Tick intervals for grid. (See ticks).</td>
+    </tr>
+    <tr>
+      <td>grid.tickValues</td><td>number[]</td><td>Tick values for grid. (See tickValues).</td>
     </tr>
     <tr>
       <td>label</td><td>string</td><td>Axis name/label.</td>

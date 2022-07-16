@@ -2,13 +2,10 @@
 
 * [Constructor, properties, and misc. functions](./README.md)
 * [Axis, grid, and legend](./axis-grid-legend.md)
-* [Color category functions](./color.md)
 * **Adding and getting data**
   * [addPointData](#a-addpointdata)
   * [addPointsData](#a-addpointsdata)
   * [addPointsDataAsArray](#a-addpointsdataasarray)
-  * [setPointSeriesShape](#a-setpointseriesshape)
-  * [getPointSeriesShape](#a-getpointseriesshape)
   * [addLinesDataFromPoints](#a-addlinedatafrompoints)
   * [addLineDataAsCoordinates](#a-addlinedataascoordinates)
   * [addLineDataAsFunction](#a-addlinedataasfunction)
@@ -20,6 +17,7 @@
   * [getAreasDataBySeries](#a-getareadatabyseries)
 * [Removing and updating data](./mod-data.md)
 * [Drawing data onto the graph](./draw.md)
+* [Color and point shape](./color.md)
 * [Adding interactive features](./interactivity.md)
 * [Definitions](./defs.md)
 
@@ -164,54 +162,6 @@ For each point, each x,y coordinate pair from the data array will be bound.
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-#### Getting/setting point shapes ####
-
-By default, points will be drawn as circles, but other shapes may be provided. As the legend needs to be consistent by data series, shapes must be set for the entire data series. Setting a shape in the options when adding point data (using any of the functions from the previous subsection), will override any existing shape specified for the entire data series.
-
-<a name="a-setpointseriesshape" href="#a-setpointseriesshape">#</a> *SimpleGraph*.**setPointSeriesShape**(*series*, *shape*)
-
-Get the shape assigned to a data series.
-
-Supported shapes are:
-
-* **circle**
-* **diamond**
-* **square**
-* **triangle**
-* **triangle-up** (same as triangle)
-* **triangle-down**
-
-Point shape changes will have to be redrawn to propagate changes. 
-
-Point shape changes may not work well with draw-updates. It is recommended to change the shapes first with an instant draw, then proceed with updates and draw-update calls, if required, to animation their positional changes.
-
-<table style="font-size:0.9em;">
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>series</td><td>string</td><td>The name of the data series.</td>
-      <td>shape</td><td>string</td><td>The shape of the data series.</td>
-    </tr>
-  </tbody>
-</table>
-
-<a name="a-getpointseriesshape" href="#a-getpointseriesshape">#</a> *SimpleGraph*.**getPointSeriesShape**(*series*)
-
-Get the shape assigned to a data series.
-
-<table style="font-size:0.9em;">
-  </tbody>
-    <tr>
-      <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>series</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-  </tbody>
-</table>
 
 #### Creating point lines ####
 

@@ -8,10 +8,10 @@
   * [removeGrid](#a-removegrid)
   * [drawLegend](#a-drawlegend)
   * [removeLegend](#a-removelegend)
-* [Color category functions](./color.md)
 * [Adding and getting data](./add-data.md)
 * [Removing and updating data](./mod-data.md)
 * [Drawing data onto the graph](./draw.md)
+* [Color and point shape](./color.md)
 * [Adding interactive features](./interactivity.md)
 * [Definitions](./defs.md)
 

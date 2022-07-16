@@ -9,10 +9,10 @@
   * [destroy](#a-destroy)
   * [saveAsPng](#a-savegraphaspng)
 * [Axis, grid, and legend](./axis-grid-legend.md)
-* [Color category functions](./color.md)
 * [Adding and getting data](./add-data.md)
 * [Removing and updating data](./mod-data.md)
 * [Drawing data onto the graph](./draw.md)
+* [Color and point shape](./color.md)
 * [Adding interactive features](./interactivity.md)
 * [Definitions](./defs.md)
 
@@ -71,6 +71,7 @@ new **SimpleGraph**(*options*)
     </tr>
     <tr>
       <td>params.axis.styles</td>
+      <td>object</td>
       <td>
         Optional key-value object of shared axis styles. Values filled in by default below:
         <table>
