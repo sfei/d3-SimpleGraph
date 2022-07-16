@@ -19,7 +19,7 @@ Color handling is handled at two levels. At the bottom (the default) is the a [D
 
 Colors are based on series names, which must be provided with all data added to the SimpleGraph instance (see [adding and manipulating data](./add-data.md)).
 
-<a name="a-getcolorbyseriesname" href="#a-getcolorbyseriesname">#</a> *sg*.**getColorBySeriesName**(*name*, *create*)
+<a name="a-getcolorbyseriesname" href="#a-getcolorbyseriesname">#</a> *SimpleGraph*.**getColorBySeriesName**(*name*, *create*)
 
 Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
 
@@ -39,7 +39,7 @@ Get the color or style related to a data series. Attempts to return the style fi
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Color value, or null.
 
-<a name="a-resetcolorscale" href="#a-resetcolorscale">#</a> *sg*.**resetColorScale**(*colorScale*)
+<a name="a-resetcolorscale" href="#a-resetcolorscale">#</a> *SimpleGraph*.**resetColorScale**(*colorScale*)
 
 Reset domain on color scale, or replace with provided.
 
@@ -56,7 +56,7 @@ Reset domain on color scale, or replace with provided.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-setseriescolor" href="#a-setseriescolor">#</a> *sg*.**setSeriesColor**(*series*, *color*)
+<a name="a-setseriescolor" href="#a-setseriescolor">#</a> *SimpleGraph*.**setSeriesColor**(*series*, *color*)
 
 Sets a custom color (overriding the color scale) for a given series name.
 
@@ -76,7 +76,7 @@ Sets a custom color (overriding the color scale) for a given series name.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removeseriescolor" href="#a-removeseriescolor">#</a> *sg*.**removeSeriesColor**(*series*)
+<a name="a-removeseriescolor" href="#a-removeseriescolor">#</a> *SimpleGraph*.**removeSeriesColor**(*series*)
 
 Remove custom color for series name.
 

@@ -7,13 +7,13 @@ export default function(SimpleGraph, d3) {
     };
 
     SimpleGraph.prototype.addTooltipToLines = function(tooltipFunction, options) {
-        this.svgGraph.selectAll(".sg-line, .sg-plotted-line")
+        this.svgGraph.selectAll(".sg-line, .sg-point-line")
             .call(this._constructTooltipFunctionality(tooltipFunction, options));
         return this;
     };
 
     SimpleGraph.prototype.addTooltipToAreas = function(tooltipFunction, options) {
-        this.svgGraph.selectAll(".sg-plotted-area")
+        this.svgGraph.selectAll(".sg-area")
             .call(this._constructTooltipFunctionality(tooltipFunction, options));
         return this;
     };
@@ -25,7 +25,13 @@ export default function(SimpleGraph, d3) {
             if(!selection) return null;
             if(!options) options = {};
 
-            var d3Body = d3.select('body'), 
+            if(options.series) {
+                Array.isArray(options.series) || (options.series = [options.series]);
+                selection = selection.filter(d => ~series.indexOf(d.series));
+            }
+
+            var svgs = selection._groups[0], 
+                d3Body = d3.select('body'), 
                 tooltipDiv;
 
             selection.on("mouseover.sg-tooltip", function(evt, d) {
@@ -69,9 +75,10 @@ export default function(SimpleGraph, d3) {
                         tooltipDiv.style(styleKey, options.style[styleKey]);
                     }
                 }
+                options.mouseover && options.mouseover(d, d3.pointer(evt, svgNode), svgs, svgs.indexOf(evt.target));
             })
 
-            .on('mousemove.sg-tooltip', function(evt, d, i) {
+            .on('mousemove.sg-tooltip', function(evt, d) {
                 if(tooltipDiv) {
                     // Move tooltip
                     let absMousePos = d3.pointer(evt, d3Body.node()), 
@@ -83,7 +90,7 @@ export default function(SimpleGraph, d3) {
                     if(textFunction) {
                         // TODO: selection is no longer array-like, hides it in _groups var
                         // this seems less than ideal, update/change when able
-                        tooltipText = textFunction(d, d3.pointer(evt, svgNode), selection._groups[0], i);
+                        tooltipText = textFunction(d, d3.pointer(evt, svgNode), svgs, svgs.indexOf(evt.target));
                     }
                     // If no text, remove tooltip
                     if(!tooltipText) {
@@ -101,6 +108,7 @@ export default function(SimpleGraph, d3) {
                     tooltipDiv.remove();
                     tooltipDiv = null;
                 }
+                options.mouseout && options.mouseout(d, d3.pointer(evt, svgNode), svgs, svgs.indexOf(evt.target));
             });
         };
     };

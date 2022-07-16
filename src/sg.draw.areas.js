@@ -108,7 +108,7 @@ export default function(SimpleGraph, d3) {
                 });
         // animate
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;
@@ -124,7 +124,7 @@ export default function(SimpleGraph, d3) {
         if(!this.areas) return;
 
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;

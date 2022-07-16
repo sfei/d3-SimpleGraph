@@ -90,7 +90,7 @@ export default function(SimpleGraph, d3) {
             resolution = 2;
         }
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;
@@ -122,7 +122,7 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.drawUpdatePointLines = function(transition) {
         // defaults
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;
@@ -153,9 +153,9 @@ export default function(SimpleGraph, d3) {
                 .style("opacity", transition ? 0 : 1)
                 .style("fill", 'none')
                 .attr("d", d => {
-                    var yAxis = d.y2 ? self.y2 : self.y, 
+                    let yAxis = d.y2 ? this.y2 : this.y, 
                         d3line = d3.line()
-                            .x(c => self.x.scale(c[0]))
+                            .x(c => this.x.scale(c[0]))
                             .y(c => yAxis.scale(c[1]))
                             .curve(d.interpolate);
                     return d._segments.reduce(
@@ -165,9 +165,9 @@ export default function(SimpleGraph, d3) {
                 })
                 .each(function(d) {
                     // add styles
-                    var nLine = d3.select(this), 
+                    let nLine = d3.select(this), 
                         styles = d.style || {};
-                    for(var key in styles) {
+                    for(let key in styles) {
                         if(!transition || (key && key.toLowerCase() != "opacity")) {
                             nLine.style(key, styles[key]);
                         }
@@ -182,7 +182,7 @@ export default function(SimpleGraph, d3) {
                 });
         // animate
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;

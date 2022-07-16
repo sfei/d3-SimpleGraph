@@ -43,7 +43,7 @@ Note that changes to the data will not be reflected until the data is [re]drawn.
 
 #### Adding points ####
 
-<a name="a-addpointdata" href="#a-addpointdata">#</a> *sg*.**addPointData**(*series*, *xValue*, *yValue*[, *options*])
+<a name="a-addpointdata" href="#a-addpointdata">#</a> *SimpleGraph*.**addPointData**(*series*, *xValue*, *yValue*[, *options*])
 
 Add a single point data. 
 
@@ -87,7 +87,7 @@ Due to nature of coordinates provided as primitive types, no data binding will o
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-addpointsdata" href="#a-addpointsdata">#</a> *sg*.**addPointsData**(*data*, *seriesName*, *xValueName*, *yValueName*[, *options*])
+<a name="a-addpointsdata" href="#a-addpointsdata">#</a> *SimpleGraph*.**addPointsData**(*data*, *seriesName*, *xValueName*, *yValueName*[, *options*])
 
 Add multiple point data from an array of object literals. 
 
@@ -142,7 +142,7 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-addpointsdataasarray" href="#a-">#</a> *sg*.**addpointsdataasarray**(*series*, *data*[, *options*]]])
+<a name="a-addpointsdataasarray" href="#a-">#</a> *SimpleGraph*.**addpointsdataasarray**(*series*, *data*[, *options*]]])
 
 Add multiple point data from an array of x,y coordinates. 
 
@@ -187,7 +187,7 @@ For each point, each x,y coordinate pair from the data array will be bound.
 
 By default, points will be drawn as circles, but other shapes may be provided. As the legend needs to be consistent by data series, shapes must be set for the entire data series. Setting a shape in the options when adding point data (using any of the functions from the previous subsection), will override any existing shape specified for the entire data series.
 
-<a name="a-setpointseriesshape" href="#a-setpointseriesshape">#</a> *sg*.**setPointSeriesShape**(*series*, *shape*)
+<a name="a-setpointseriesshape" href="#a-setpointseriesshape">#</a> *SimpleGraph*.**setPointSeriesShape**(*series*, *shape*)
 
 Get the shape assigned to a data series.
 
@@ -199,6 +199,10 @@ Supported shapes are:
 * **triangle**
 * **triangle-up** (same as triangle)
 * **triangle-down**
+
+Point shape changes will have to be redrawn to propagate changes. 
+
+Point shape changes may not work well with draw-updates. It is recommended to change the shapes first with an instant draw, then proceed with updates and draw-update calls, if required, to animation their positional changes.
 
 <table style="font-size:0.9em;">
   </tbody>
@@ -212,7 +216,7 @@ Supported shapes are:
   </tbody>
 </table>
 
-<a name="a-getpointseriesshape" href="#a-getpointseriesshape">#</a> *sg*.**getPointSeriesShape**(*series*)
+<a name="a-getpointseriesshape" href="#a-getpointseriesshape">#</a> *SimpleGraph*.**getPointSeriesShape**(*series*)
 
 Get the shape assigned to a data series.
 
@@ -231,7 +235,7 @@ Get the shape assigned to a data series.
 
 A special type of dataset, lines created as the connections between points of the same data series, may be created as well.
 
-<a name="a-addlinesdatafrompoints" href="#a-addlinesdatafrompoints">#</a> *sg*.**addLinesDataFromPoints**([*forSeries**[, *options*]])
+<a name="a-addlinesdatafrompoints" href="#a-addlinesdatafrompoints">#</a> *SimpleGraph*.**addLinesDataFromPoints**([*forSeries**[, *options*]])
 
 Add line data from existing point data series as lines connecting points in the same series.
 
@@ -273,7 +277,7 @@ For overlaps (i.e. where multiple points lie on the same x-value), the default b
 
 #### Adding line data ####
 
-<a name="a-addlinedataascoordinates" href="#a-addlinedataascoordinates">#</a> *sg*.**addLineDataAsCoordinates**(*name*, *coords*[, *options*])
+<a name="a-addlinedataascoordinates" href="#a-addlinedataascoordinates">#</a> *SimpleGraph*.**addLineDataAsCoordinates**(*name*, *coords*[, *options*])
 
 Add line data as an array of coordinates.
 
@@ -312,7 +316,7 @@ Add line data as an array of coordinates.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-addlinedataasfunction" href="#a-addlinedataasfunction">#</a> *sg*.**addLineDataAsFunction**(*name*, *lineFunction*[, *xRange*[, *options*]]]]])
+<a name="a-addlinedataasfunction" href="#a-addlinedataasfunction">#</a> *SimpleGraph*.**addLineDataAsFunction**(*name*, *lineFunction*[, *xRange*[, *options*]]]]])
 
 Add line data as a function.
 
@@ -358,7 +362,7 @@ The function cannot be bound in anyway that syncs changes, as it is provided dir
 
 #### Adding area data ####
 
-<a name="a-addareaascoordinates" href="#a-addareaascoordinates">#</a> *sg*.**addAreaAsCoordinates**(*name*, *areaCoordinates*[, *style*[, *interpolation*[, *y2Axis*]]])
+<a name="a-addareaascoordinates" href="#a-addareaascoordinates">#</a> *SimpleGraph*.**addAreaAsCoordinates**(*name*, *areaCoordinates*[, *style*[, *interpolation*[, *y2Axis*]]])
 
 Add area data series as array of area coordinates.
 
@@ -389,7 +393,7 @@ The coordinate array and optional styles will be bound.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-addareabetweentwolines" href="#a-addareabetweentwolines">#</a> *sg*.**addAreaBetweenTwoLines**(*name*, *lineFunctionBottom*, *lineFunctionTop*[, *style*[, *resolution*[, *interpolation*[, *xRange*[, *y2Axis*]]]]])
+<a name="a-addareabetweentwolines" href="#a-addareabetweentwolines">#</a> *SimpleGraph*.**addAreaBetweenTwoLines**(*name*, *lineFunctionBottom*, *lineFunctionTop*[, *style*[, *resolution*[, *interpolation*[, *xRange*[, *y2Axis*]]]]])
 
 Add area data series with function pair defining bottom and top bounds of area.
 
@@ -433,7 +437,7 @@ The functions cannot be bound in anyway that syncs changes, as they are provided
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** The name of the shape assigned, or null, if no shape has been assigned.
 
-<a name="a-getpointsdatanyseries" href="#a-getpointsdatanyseries">#</a> *sg*.**getPointsDataBySeries**(*series*)
+<a name="a-getpointsdatanyseries" href="#a-getpointsdatanyseries">#</a> *SimpleGraph*.**getPointsDataBySeries**(*series*)
 
 Get point data series by name.
 
@@ -452,7 +456,7 @@ Note point data returns a shallow copy of the underlying data object. As such, a
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](./defs.md#defs-point-data).
 
-<a name="a-getpointcoordinatesbyseries" href="#a-getpointcoordinatesbyseries">#</a> *sg*.**getPointCoordinatesBySeries**(*series*)
+<a name="a-getpointcoordinatesbyseries" href="#a-getpointcoordinatesbyseries">#</a> *SimpleGraph*.**getPointCoordinatesBySeries**(*series*)
 
 Get point coordinates by data series name.
 
@@ -471,7 +475,7 @@ Note point data returns a shallow copy of the underlying data object. As such, a
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `number[][]` - Array of point coordinates.
 
-<a name="a-getlinesdatabyseries" href="#a-getlinesdatabyseries">#</a> *sg*.**getLinesDataBySeries**(*series*)
+<a name="a-getlinesdatabyseries" href="#a-getlinesdatabyseries">#</a> *SimpleGraph*.**getLinesDataBySeries**(*series*)
 
 Get line data series by name.
 
@@ -491,7 +495,7 @@ Note line data returns a copy of the underlying data object (including shallow c
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](./defs.md#defs-line-data).
 
 
-<a name="a-getareasdatabyseries" href="#a-getareasdatabyseries">#</a> *sg*.**getAreasDataBySeries**(*series*) 
+<a name="a-getareasdatabyseries" href="#a-getareasdatabyseries">#</a> *SimpleGraph*.**getAreasDataBySeries**(*series*) 
 
 Get area data series by name.
 

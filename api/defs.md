@@ -8,11 +8,11 @@
 * [Drawing data onto the graph](./draw.md)
 * [Adding interactive features](./interactivity.md)
 * **Definitions**
-  * [Axis options](API.md#axis-options)
-  * [Point data](API.md#point-data)
-  * [Line data](API.md#line-data)
-  * [Area data](API.md#area-data)
-  * [Tooltip text function](API.md#tooltip-text-function)
+  * [Axis options](#axis-options)
+  * [Point data](#point-data)
+  * [Line data](#line-data)
+  * [Area data](#area-data)
+  * [Tooltip text function](#tooltip-text-function)
 
 ## Definitions ##
 

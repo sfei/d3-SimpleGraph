@@ -23,21 +23,64 @@
 
       <span 
           class="btn" 
-          helptitle="Updating Points Data"
-          helptext="Points are fairly straight-forward to update if created via <code class='inline'>addPointsData()</code>. In such a case, they are bound to the original dataset supplied in creating them. Updates can simply be made through <code class='inline'>updatePointsData()</code>.<br /><br />Here, we the data create was in the variable <code class='inline'>scores</code> (same as first tutorial), and we can edit that data and propagate updates. (Note that no changes will render until we redraw, which we will save until the last step.)"
-          sampleCode="scores.forEach(function(d) {
-    d.score = (4*Math.sin(0.5*d.age) + 0.02*d.age*d.age + 40);
-});
-graph.updatePointsData();"
+          helptitle="Add an Area"
+          helptext="Let's add an area to this graph, which we already covered, but with one added twist that will become important later. The functions will be stored in an object called `areaFunctions`, and instead of passing the functions themselves, we will again wrap the callbacks passed to our area creation function in yet another arrow function.<br /><br />
+            This means that at any point we can redefine the functions in `areaFunctions` and the references will also update in SimpleGraph.<br /><br />
+            As a final step, we'll redraw the points and lines so they lay on top of the area."
+          sampleCode="var areaFunctions = {
+    upper: x => 25, 
+    lower: x => -0.008*Math.pow(x-10,2)+65
+};
+graph.addAreaBetweenTwoLines(
+    'Area',
+    x => areaFunctions.lower(x), 
+    x => areaFunctions.upper(x), 
+    null, 
+    {style: {opacity: 0.4}}
+);
+graph.setSeriesColor('Area', '#9ab');
+graph.drawAreas();
+graph.drawLines();
+graph.drawPoints();" 
           onclick="openHelp(this)">
-        Updating Points
+        Add an Area
+      </span>
+
+      <span 
+          class="btn" 
+          helptitle="Updating Area Data"
+          helptext="Using the extended series of callbacks before, one way we can update the area is simply to update the function being pointed at by the final variable reference.<br /><br />
+          There is also another functional method to update data, which we can use to additionally update the style. <br /><br />
+          Note that no changes will be rendered until we redraw, which we could call with `graph.drawAreas()`. But we'll hold for now so that the last step can demonstrate transition animations via draw update functions.<br /><br />
+          <span class='func'><b>updateAreaData</b>(series, index, update):</span>
+          <p class='param'>@param {string} series - Series name.</p>
+          <p class='param'>@param {number} index - Index of item in series. Can be negative. Can be negative to traverse the array in reverse. Or null/undefined to apply to all in the series.</p>
+          <p class='param'>@param {Object} update - The parameters of this area data to update.</p>
+          <p class='param'>@param {Callback} [update.lineFunctionBottom | update.functionBottom] - For areas defined via functions, update the lower boundary function.</p>
+          <p class='param'>@param {Callback} [update.lineFunctionTop | update.functionTop] - For areas defined via functions, update the upper boundary function.</p>
+          <p class='param'>@param {number[]} [update.xRange] - For areas defined via functions, update the bounding x-range.</p>
+          <p class='param'>@param {number[][]} [update.coordinates | update.coords] - For areas defined as coordinates, update the coordinates.</p>
+          <p class='param'>@param {d3.interpolation} [update.interpolate] - Update the interpolation type.</p>
+          <p class='param'>@param {Object} [update.style] - Update any style parameters.</p>"
+          sampleCode="// update the function by updating the reference
+areaFunctions.upper = x => -0.03*Math.pow(x-20,2)+60;
+graph.updateAreaData(
+    // from the data series 'Area' we just added
+    'Area', 
+    // the first (index 0) item in the series since we only added one area
+    0, 
+    // decrease the opacity of the area
+    {style: {opacity: 0.2}}
+);" 
+          onclick="openHelp(this)">
+        Updating Areas
       </span>
 
       <span 
           class="btn" 
           helptitle="Updating Lines Data"
-          helptext="Lines created via coordinates are similarly bound to the original coordinate array supplied to create them, and can be updated via <code class='inline'>updateLinesData()</code>. However, there is another functional method to update lines data, which is necessary if the line data was created from a function.<br /><br />
-          <span class='func'><b>updateLinesData</b>(series, index, ):</span>
+          helptext="Lines created via coordinates are bound to the original coordinate array supplied to create them, such that when we call <code class='inline'>updateLinesData()</code>, any bound data is sync-ed up. However, since this is a line created from a function, we will update manually update the line function.<br /><br />
+          <span class='func'><b>updateLinesData</b>(series, index, update):</span>
           <p class='param'>@param {string} series - Series name.</p>
           <p class='param'>@param {number} index - Index of item in series. Can be negative to traverse the array in reverse. Or null/undefined to apply to all in the series.</p>
           <p class='param'>@param {Object} update - The parameters of this area data to update.</p>
@@ -49,12 +92,11 @@ graph.updatePointsData();"
           sampleCode="graph.updateLinesData(
     // from the data series 'Line' (already added)
     'Line', 
-    // the first (index 0) item in the series since we only added one
-    0, 
+    // null/undefined updates all lines with the above data series, which since we only have one line..
+    null, 
     // update the function
     {
-        function: function(x) {
-            return (4*Math.sin(0.5*x) + 0.02*x*x + 40);
+        function: x => 4*Math.sin(0.5*x) + 0.02*x*x + 40;
         }
     }
 );" 
@@ -64,39 +106,20 @@ graph.updatePointsData();"
 
       <span 
           class="btn" 
-          helptitle="Updating Area Data"
-          helptext="Updating areas data works similary to lines.<br /><br />
-          <span class='func'><b>updateAreaData</b>(series, index, ):</span>
-          <p class='param'>@param {string} series - Series name.</p>
-          <p class='param'>@param {number} index - Index of item in series. Can be negative. Can be negative to traverse the array in reverse. Or null/undefined to apply to all in the series.</p>
-          <p class='param'>@param {Object} update - The parameters of this area data to update.</p>
-          <p class='param'>@param {Callback} [update.lineFunctionBottom | update.functionBottom] - For areas defined via functions, update the lower boundary function.</p>
-          <p class='param'>@param {Callback} [update.lineFunctionTop | update.functionTop] - For areas defined via functions, update the upper boundary function.</p>
-          <p class='param'>@param {number[]} [update.xRange] - For areas defined via functions, update the bounding x-range.</p>
-          <p class='param'>@param {number[][]} [update.coordinates | update.coords] - For areas defined as coordinates, update the coordinates.</p>
-          <p class='param'>@param {d3.interpolation} [update.interpolate] - Update the interpolation type.</p>
-          <p class='param'>@param {Object} [update.style] - Update any style parameters.</p>"
-          sampleCode="graph.updateAreaData(
-    // from the data series 'Area' (already added)
-    'Area', 
-    // could supply the index, but null works as well since there is only one item in this series
-    null,  
-    // update the functions
-    {
-        functionTop: function(x) {
-            return -0.03*Math.pow(x-20,2)+60;
-        }, 
-        style: {opacity: 0.2}
-    }
-);" 
+          helptitle="Updating Points Data"
+          helptext="Points are fairly straight-forward to update if created via <code class='inline'>addPointsData()</code>. In such a case, they are bound to the original dataset supplied in creating them.<br /><br />Here, the data created was in the variable <code class='inline'>scores</code> (same as first tutorial), and we can edit that data and propagate updates via a call to <code class='inline'>syncPointsData()</code>, which syncs the bound data for all points of any data series."
+          sampleCode="scores.forEach(d => {
+    d.score = (4*Math.sin(0.5*d.age) + 0.02*d.age*d.age + 40);
+});
+graph.syncPointsData();"
           onclick="openHelp(this)">
-        Updating Areas
+        Updating Points
       </span>
 
       <span 
           class="btn" 
           helptitle="Transition Update"
-          helptext="Simply calling the draw functions would not handle transitions of existing data. By default, everything is removed and redrawn. Using a draw-update command however, we can adjust the behavior to transition datasets that are already rendered."
+          helptext="Simply calling the draw functions would remove and redraw the SVGs as data dictates. At most, we could add a fade in transition, but it would not appear seamless. By instead using a draw-update command, we can animate changes to the datasets which are already drawn. The draw-update draws new data (with fade-in transition) if it exists, but retains renders of data already drawn and modifies them as necessary."
           sampleCode="// set area color to change
 graph.setSeriesColor('Area', '#ff00c4');
 // draw updates with transition
@@ -136,8 +159,6 @@ graph.drawUpdatePoints(false, {duration: 1000});"
         { name: "Mirage", wetlandclass: "illusionary", age: 35, score: 79 },
         { name: "YMCA", wetlandclass: "public pool", age: 26, score: 28 }
       ];
-      displayScores(scores);
-      
       var graph = new SimpleGraph({
         container: '#simple-chart',
         width: 700,
@@ -157,32 +178,17 @@ graph.drawUpdatePoints(false, {duration: 1000});"
           }
         }
       });
-      
-      graph.addAreaBetweenTwoLines(
-          'Area',
-          function(x) { return 25; }, 
-          function(x) { return -0.008*Math.pow(x-10,2)+65; }, 
-          null, 
-          {style: {opacity: 0.4}}
-      );
-      var lineFunction = function(x) {
-        return (15*Math.sin(0.2*x) + 0.02*x*x + 40);
-      };
+      graph.addPointsData(scores, 'name', 'age', 'score');
       graph.addLineDataAsFunction(
         'Line', 
-        lineFunction, 
+        x => 15*Math.sin(0.2*x) + 0.02*x*x + 40, 
         null, 
         {
           interpolation: d3.curveBasis, 
           style: {'stroke-width':3.0} 
         }
       );
-      graph.addPointsData(scores, 'name', 'age', 'score');
-
-      graph.setSeriesColor('Area', '#9ab');
       graph.setSeriesColor('Line', '#000');
-      
-      graph.drawAreas();
       graph.drawLines();
       graph.drawPoints();
     </script>

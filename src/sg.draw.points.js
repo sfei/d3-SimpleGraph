@@ -56,7 +56,7 @@ export default function(SimpleGraph, d3) {
         }
 
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;
@@ -136,7 +136,7 @@ export default function(SimpleGraph, d3) {
         }
         items = this._formatPoint(items, shape, transition);
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;
@@ -151,7 +151,7 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype._updatePoints = function(selection, shape, transition) {
         if(!selection.size()) return;
         if(transition) {
-            if(Object.getPrototypeOf(obj) !== Object.prototype) {
+            if(Object.getPrototypeOf(transition) !== Object.prototype) {
                 transition = {};
             }
             transition.duration = transition.duration || 200;
@@ -177,17 +177,8 @@ export default function(SimpleGraph, d3) {
                             y = isNaN(d.y) ? 0 : d.y;
                         y = (d.y2 ? this.y2.scale : this.y.scale)(y);
                         return `${x-hl},${y+hh} ${x},${y-hh} ${x+hl},${y+hh}`;
-                    })
-                    .style("fill", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
-                    })
-                    .style("stroke", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
                     });
                 break;
-
             case "triangle":
             case "triangle-up":
                 selc.attr("series", d => d.series)
@@ -203,17 +194,8 @@ export default function(SimpleGraph, d3) {
                             y = isNaN(d.y) ? 0 : d.y;
                         y = (d.y2 ? this.y2.scale : this.y.scale)(y);
                         return `${x-hl},${y-hh} ${x},${y+hh} ${x+hl},${y-hh}`;
-                    })
-                    .style("fill", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
-                    })
-                    .style("stroke", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
                     });
                 break;
-
             case "square":
             case "diamond":
                 selc.attr("series", d => d.series)
@@ -234,40 +216,31 @@ export default function(SimpleGraph, d3) {
                         if(shape !== "diamond") return "";
                         let y = isNaN(d.y) ? 0 : d.y;
                         return `rotate(45,${this.x.scale(d.x)},${(d.y2 ? this.y2.scale : this.y.scale)(y)})`
-                    })
-                    .style("fill", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
-                    })
-                    .style("stroke", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
                     });
                 break;
-
             default:
             case "circle":
                 selc.style("opacity", fadeIn ? 0 : 1)
                     .attr("series", d => d.series)
                     .attr("class", "sg-point sg-point-cr")
                     .attr("r", d => (
-                        0.5*(typeof d.size === "function" ? d.size(d, d._bind) : d.size)
+                        0.5*(typeof d.size === "function" ? d.size(d) : d.size)
                     ))
                     .attr("cx", d => this.x.scale(d.x))
                     .attr("cy", d => {
                         let y = isNaN(d.y) ? 0 : d.y;
                         return (d.y2 ? this.y2.scale : this.y.scale)(y);
-                    })
-                    .style("fill", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
-                    })
-                    .style("stroke", d => {
-                        let color = this.getColorBySeriesName(d.series, true);
-                        return typeof color === "function" ? color(d) : color;
                     });
                 break;
         }
+        selc.style("fill", d => {
+                let color = this.getColorBySeriesName(d.series, true);
+                return typeof color === "function" ? color(d) : color;
+            })
+            .style("stroke", d => {
+                let color = this.getColorBySeriesName(d.series, true);
+                return typeof color === "function" ? color(d) : color;
+            });
         return selc;
     };
 

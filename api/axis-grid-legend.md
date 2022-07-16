@@ -21,7 +21,7 @@
 
 There are three fixed axes available: the mandatory x and y axes, and an optional y2 axis. Axes are handled as a dictionary of [axis options](./defs.md#axis-options), to be enacted once drawing the axis. You may also potentially manually access the axis objects within the SimpleGraph instance's [axis properties](./README.md#axis).
 
-<a name="a-resetaxisoptions" href="#a-resetaxisoptions">#</a> *sg*.**resetAxisOptions**(*axisOptions*)
+<a name="a-resetaxisoptions" href="#a-resetaxisoptions">#</a> *SimpleGraph*.**resetAxisOptions**(*axisOptions*)
 
 Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
 
@@ -55,7 +55,7 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawaxes" href="a-drawaxes">#</a> *sg*.**drawAxes**([*labelPosition*[, *xAxisPosition*[, *axisLabelMargin*]]])
+<a name="a-drawaxes" href="a-drawaxes">#</a> *SimpleGraph*.**drawAxes**([*labelPosition*[, *xAxisPosition*[, *axisLabelMargin*]]])
 
 Redraws the axes on the graph. Often useful for redrawing the axes on top of any objects on the graph.
 
@@ -78,7 +78,7 @@ Redraws the axes on the graph. Often useful for redrawing the axes on top of any
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawgrid" href="a-drawgrid">#</a> *sg*.**drawGrid**([*style*])
+<a name="a-drawgrid" href="a-drawgrid">#</a> *SimpleGraph*.**drawGrid**([*style*])
 
 Draws a grid. If grid already exists, redraws it. Grid spacing is determined by axis ticks.
 
@@ -95,7 +95,7 @@ Draws a grid. If grid already exists, redraws it. Grid spacing is determined by 
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removegrid" href="a-removegrid">#</a> *sg*.**removeGrid**()
+<a name="a-removegrid" href="a-removegrid">#</a> *SimpleGraph*.**removeGrid**()
 
 Removes the grid.
 
@@ -105,7 +105,7 @@ Removes the grid.
 
 Legends are handled fairly automatically, with all data series present (even if not yet drawn on the graph) automatically added to the legend. Simply define where to place it along with some optional formatting parameters.
 
-<a name="a-drawlegend" href="a-drawlegend">#</a> *sg*.**drawLegend**(*position*[, *options*])`**
+<a name="a-drawlegend" href="a-drawlegend">#</a> *SimpleGraph*.**drawLegend**(*position*[, *options*])`**
 
 Draw the legend onto the graph. If legend already exists, will redraw it.
 
@@ -147,7 +147,7 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removelegend" href="a-removelegend">#</a> *sg*.**removeLegend**()`**
+<a name="a-removelegend" href="a-removelegend">#</a> *SimpleGraph*.**removeLegend**()`**
 
 Removes the legend.
 

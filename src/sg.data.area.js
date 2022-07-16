@@ -59,8 +59,8 @@ export default function(SimpleGraph, d3) {
         return areas;
     };
 
-    SimpleGraph.prototype.getAreasDataBySeries = function(series, index) {
-        return this._getAreaData(series, index).map(d => ({
+    SimpleGraph.prototype._cloneAreaData = function(d) {
+        return {
             series:      d.series, 
             functions:   d.functions ? [...d.functions] : null, 
             coords:      d.coords ? d.coords.map(c => [...c]) : null, 
@@ -68,7 +68,11 @@ export default function(SimpleGraph, d3) {
             y2:          d.y2, 
             style:       d.style, 
             interpolate: d.interpolate
-        }));
+        };
+    };
+
+    SimpleGraph.prototype.getAreasDataBySeries = function(series, index) {
+        return this._getAreaData(series, index).map(d => this._cloneAreaData(d));
     };
 
     SimpleGraph.prototype.updateAreaData = function(series, index, update) {

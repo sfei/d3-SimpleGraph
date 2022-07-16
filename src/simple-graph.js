@@ -40,6 +40,7 @@ function SimpleGraph(options) {
         .attr("height", this.containerHeight)
         .style('font-family', "'Century Gothic', CenturyGothic, Geneva, AppleGothic, sans-serif")
         .style('overflow', 'visible');
+    this.svgDefs = this.svg.append("defs");
     this.svgGraph = this.svg.append("g")
         .attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
     

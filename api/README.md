@@ -153,13 +153,13 @@ A few (but not comprehensive) list of the important variables in an initialized 
 
 #### Getting elements ####
 
-<a name="a-getsvgelement" href="#a-getsvgelement">#</a> *sg*.**getSvgElement**()
+<a name="a-getsvgelement" href="#a-getsvgelement">#</a> *SimpleGraph*.**getSvgElement**()
 
 Returns D3 wrapper for SVG node.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `sg.svg`
 
-<a name="a-getsvggraphic" href="#a-getsvggraphic">#</a> *sg*.**getSvgGraphic**()
+<a name="a-getsvggraphic" href="#a-getsvggraphic">#</a> *SimpleGraph*.**getSvgGraphic**()
 
 Returns D3 wrapper for graphic node in SVG node.
 
@@ -167,19 +167,19 @@ Returns D3 wrapper for graphic node in SVG node.
 
 #### Remove and destroy ####
 
-<a name="a-remove" href="#a-remove">#</a> *sg*.**remove()**
+<a name="a-remove" href="#a-remove">#</a> *SimpleGraph*.**remove()**
 
 Removes SVG node from container.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-destory" href="#a-destory">#</a> **`SimpleGraph.destroy()`**
+<a name="a-destory" href="#a-destory">#</a> **sg.destroy()**
 
 Removes and destroys SVG and this object. Irreversible.
 
 #### Saving the graph ####
 
-<a name="a-saveaspng" href="#a-saveaspng">#</a> *sg*.**saveAsPng**(*pngName*)
+<a name="a-saveaspng" href="#a-saveaspng">#</a> *SimpleGraph*.**saveAsPng**(*pngName*)
 
 Save graph as a PNG. Note, in non-Edge Internet Explorer, the [canvg library](https://github.com/canvg/canvg) is required due to security error. This library is not  packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, function will simply error on IE.
 

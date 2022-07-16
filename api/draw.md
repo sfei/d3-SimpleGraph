@@ -29,7 +29,7 @@ There are two methods of drawing. The simple draw functions will erase and redra
 
 All data SVG nodes will be given the attribute `series` with the data series name, which may be helpful in selecting or parsing the elements manually.
 
-<a name="a-drawpoints" href="#a-drawpoints">#</a> *sg*.**drawPoints**([*showNull*[, *transition*]])
+<a name="a-drawpoints" href="#a-drawpoints">#</a> *SimpleGraph*.**drawPoints**([*showNull*[, *transition*]])
 
 (Re)draw all points data on graph. Points will have class `.sg-point`. Additionally, depending on shape drawn, will have additional class of `.sg-point-sd` (square/diamond), `.sg-point-cr` (circle), `.sg-point-tu` (triangle-up), or `.sg-point-td` (triangle-down).
 
@@ -55,7 +55,7 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawlines" href="#a-">#</a> *sg*.**drawLines**([*resolution*[, *transition*]])
+<a name="a-drawlines" href="#a-">#</a> *SimpleGraph*.**drawLines**([*resolution*[, *transition*]])
 
 (Re)draw lines data on graph (excluding point-lines). Lines will have class `.sg-line`.
 
@@ -81,7 +81,7 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawpointlines" href="#a-">#</a> *sg*.**drawPointLines**([*transition*])
+<a name="a-drawpointlines" href="#a-">#</a> *SimpleGraph*.**drawPointLines**([*transition*])
 
 (Re)draw all point-lines data on graph. Lines will have class `.sg-point-line`.
 
@@ -104,7 +104,7 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawalllines" href="#a-">#</a> *sg*.**drawAllLines**([*resolution*[, *transition*]])
+<a name="a-drawalllines" href="#a-">#</a> *SimpleGraph*.**drawAllLines**([*resolution*[, *transition*]])
 
 (Re)draw all lines data on graph. Lines will have class `.sg-line` or `.sg-point-line`.
 
@@ -130,7 +130,7 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawareas" href="#a-drawareas">#</a> *sg*.**drawAreas**([*resolution*[, *transition*]])
+<a name="a-drawareas" href="#a-drawareas">#</a> *SimpleGraph*.**drawAreas**([*resolution*[, *transition*]])
 
 (Re)draw all area data on graph. Areas will have class `.sg-areas`.
 
@@ -164,7 +164,7 @@ As existing data is kept and transitioned while new data is drawn on top, this m
 
 At current, data that no longer exists is simply removed without a transition.
 
-<a name="a-drawupdatepoints" href="#a-drawupdatepoints">#</a> *sg*.**drawUpdatePoints**([*showNull*[, *transition*]])
+<a name="a-drawupdatepoints" href="#a-drawupdatepoints">#</a> *SimpleGraph*.**drawUpdatePoints**([*showNull*[, *transition*]])
 
 Draw-update points on the graph (which will also draw-update any existing point lines).
 
@@ -190,7 +190,7 @@ Draw-update points on the graph (which will also draw-update any existing point 
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawupdatelines" href="#a-drawupdatelines">#</a> *sg*.**drawUpdateLines**([*resolution*[, *transition*]])
+<a name="a-drawupdatelines" href="#a-drawupdatelines">#</a> *SimpleGraph*.**drawUpdateLines**([*resolution*[, *transition*]])
 
 Draw-update lines on the graph.
 
@@ -213,7 +213,7 @@ Draw-update lines on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-drawupdateareas" href="#adrawupdateareas-">#</a> *sg*.**drawUpdateAreas**([*resolution*[, *transition*]])
+<a name="a-drawupdateareas" href="#adrawupdateareas-">#</a> *SimpleGraph*.**drawUpdateAreas**([*resolution*[, *transition*]])
 
 Draw-update areas on the graph.
 
@@ -241,41 +241,41 @@ Draw-update areas on the graph.
 
 ## Removing drawn data ##
 
-The remove functions remove the drawn elements on the graph (using class selections). It does not remove the underlying data.
+The remove functions remove the drawn elements on the graph (using class selections). 
 
-At current, no transition options are available.
+The remove functions do not remove the underlying data. For actually removing the data itself, see the clear data functions in [Removing and updating data](./mod-data.md).
 
-<a name="a-removepoints" href="#a-removepoints">#</a> *sg*.**removePoints**()
+<a name="a-removepoints" href="#a-removepoints">#</a> *SimpleGraph*.**removePoints**()
 
 Remove all drawn points on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removelines" href="#a-removelines">#</a> *sg*.**removeLines**()
+<a name="a-removelines" href="#a-removelines">#</a> *SimpleGraph*.**removeLines**()
 
 Remove all drawn lines (excluding point-lines) on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removepointlines" href="#a-removepointlines">#</a> *sg*.**removePointsLines**()
+<a name="a-removepointlines" href="#a-removepointlines">#</a> *SimpleGraph*.**removePointsLines**()
 
 Remove all drawn point-lines on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removealllines" href="#a-removealllines">#</a> *sg*.**removeAllLines**()
+<a name="a-removealllines" href="#a-removealllines">#</a> *SimpleGraph*.**removeAllLines**()
 
 Remove all drawn lines (including point-lines) on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removeareas" href="#a-removeareas">#</a> *sg*.**removeAreas**()
+<a name="a-removeareas" href="#a-removeareas">#</a> *SimpleGraph*.**removeAreas**()
 
 Remove all drawn areas on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removeall" href="#a-removeall">#</a> *sg*.**removeAll**()
+<a name="a-removeall" href="#a-removeall">#</a> *SimpleGraph*.**removeAll**()
 
 Remove all drawn data series on graph.
 

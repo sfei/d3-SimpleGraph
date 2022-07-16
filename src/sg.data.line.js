@@ -194,7 +194,7 @@ export default function(SimpleGraph, d3) {
 
     SimpleGraph.prototype._getLineData = function(series, index) {
         if(!this.lines) return [];
-        var lines = lines.filter(d => d.series === series);
+        var lines = this.lines.filter(d => d.series === series);
         if(!lines || !lines.length) return [];
         if(index || index === 0) {
             while(index < 0) { index = lines.length + index; }
@@ -203,8 +203,8 @@ export default function(SimpleGraph, d3) {
         return lines;
     };
 
-    SimpleGraph.prototype.getLinesDataBySeries = function(series, index) {
-        return this._getLineData(series, index).map(d => ({
+    SimpleGraph.prototype._cloneLineData = function(d) {
+        return {
             series:       d.series, 
             lineFunction: d.lineFunction, 
             coords:       d.coords ? d.coords.map(c => [...c]) : null, 
@@ -212,7 +212,11 @@ export default function(SimpleGraph, d3) {
             y2:           d.y2, 
             style:        d.style, 
             interpolate:  d.interpolate
-        }));
+        };
+    };
+
+    SimpleGraph.prototype.getLinesDataBySeries = function(series, index) {
+        return this._getLineData(series, index).map(d => this._cloneLineData(d));
     };
 
     SimpleGraph.prototype.updateLinesData = function(series, index, update) {

@@ -135,13 +135,18 @@ export default function(SimpleGraph) {
         return points;
     };
 
-    SimpleGraph.prototype.getPointsDataBySeries = function(series) {
-        return this._getPointData.map(d => ({
+    SimpleGraph.prototype._clonePointData = function(d) {
+        return {
+            series: d.series, 
             x: d.x, 
             y: d.y, 
             y2: d.y2, 
             size: d.size
-        }));
+        };
+    };
+
+    SimpleGraph.prototype.getPointsDataBySeries = function(series) {
+        return this._getPointData(series).map(d => this._clonePointData(d));
     };
 
     SimpleGraph.prototype.getPointCoordinatesBySeries = function(series) {

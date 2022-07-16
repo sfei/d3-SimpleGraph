@@ -7,25 +7,31 @@
 * [Removing and updating data](./mod-data.md)
 * [Drawing data onto the graph](./draw.md)
 * **Adding interactive features**
-  * [addTooltipToPoints](API.md#sg-add-tooltip-to-points)
-  * [addTooltipToLines](API.md#sg-add-tooltip-to-lines)
-  * [addTooltipToAreas](API.md#sg-add-tooltip-to-areas)
-  * [highlightPoints](API.md#sg-highlight-points)
-  * [removeHighlightPoints](API.md#sg-remove-highlights-points)
-  * [removeHighlights](API.md#sg-remove-highlights)
+  * [addTooltipToPoints](#a-add-tooltiptopoints)
+  * [addTooltipToLines](#a-addtooltiptolines)
+  * [addTooltipToAreas](#a-addtooltiptoareas)
+  * [highlightPoints](#a-highlightpoints)
+  * [highlightLines](#a-highlightlines)
+  * [highlightAreas](#a-highlightareas)
+  * [removeHighlightPoints](#a-removehighlightpoints)
+  * [removeHighlightLines](#a-removehighlightlines)
+  * [removeHighlightAreass](#a-removehighlightareas)
+  * [removeHighlights](#a-removehighlights)
 * [Definitions](./defs.md)
 
-## Adding interactive features ##
+## Adding tooltips ##
 
-#### Tooltips ####
+Tooltips are attached as event listeners to the SVG elements drawn on the graph. Event listeners are attached to mouse events suffixed by `.sg-tooltip`.
 
-Tooltips are attached as event listeners to the SVG objects, tied to the data, drawn on the graph. Event listeners are attached to mouse events suffixed by `.sg-tooltip`.
+To create the tooltip itself, a div is created and appended to the document body with absolute positioning to have the least conflict possible with existing HTML and CSS layouts.
 
-To create a the tooltip itself, a div is created and appended to the document body with absolute positioning to have the least conflict possible with existing HTML and CSS layouts.
+Most of the tooltip functionality is handled via the supplied [tooltipTextFunction](./defs.md#tooltip-text-function) callback, which is passed the data, mouse position, and svg elements, and is expected to return the HTML filling the tooltip itself. The callback is called for every mousemove event over elements of the data type.
 
-<a name="addTooltipToPoints">#</a> *sg*.**addTooltipToPoints**(*tooltipFunction*[, *forSeries*[, *options*]])
+To remove tooltip functionality, simply redraw the elements on the graph. As the event listeners are attached to the SVG elements
 
-Add tooltip function to points on the graph. Does not add tooltips to the lines connecting points, if they were added. That is handled by addTooltipToLines(). You can check the series name in the callback's returned SVG element or the class to determine type, regular lines are `.sg-plotted-line` and lines drawn from connecting points are `.sg-line`.
+<a name="a-addtooltiptopoints" href="a-">#</a> *SimpleGraph*.**addTooltipToPoints**(*tooltipFunction*[, *options*])
+
+Add tooltip function to points on the graph. Does not add tooltips to the point-lines. (For point-lines, use [`addTooltipToLines()`](#a-addtooltipstolines).)
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -33,10 +39,7 @@ Add tooltip function to points on the graph. Does not add tooltips to the lines 
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>textFunction</td><td><a href="./defs.md#tooltip-text-function">textFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip. Note this is called on `mousemove` events.</td>
-    </tr>
-    <tr>
-      <td>forSeries</td><td>string|string[]</td><td>If provided, only applies tooltips to series matching this name (or within list of names, if array).</td>
+      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
       <td>options</td>
@@ -49,16 +52,19 @@ Add tooltip function to points on the graph. Does not add tooltips to the lines 
               <th>Name</th><th>Type</th><th>Description</th>
             </tr>
             <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [15,15] places the tooltip to the bottom right of the cursor).</td>
+              <td>series</td><td>string[]</td><td>If provided, only applies to elements matching this data series name. May be a single value or an array of series names.</td>
+            </tr>
+            <tr>
+              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
             </tr>
             <tr>
               <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
             </tr>
             <tr>
-              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
             </tr>
             <tr>
-              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
             </tr>
           </tbody>
         </table>
@@ -70,9 +76,9 @@ Add tooltip function to points on the graph. Does not add tooltips to the lines 
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="addTooltipToLines">#</a> *sg*.**addTooltipToLines**(*textFunction*[, *forSeries*[, *options*]])
+<a name="addTooltipToLines" href="a-">#</a> *SimpleGraph*.**addTooltipToLines**(*textFunction*[, *options*])
 
-Add tooltip function to lines on the graph.
+Add tooltip function to lines (including point-lines) on the graph.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -80,10 +86,7 @@ Add tooltip function to lines on the graph.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>textFunction</td><td><a href="./defs.md#tooltip-text-function">textFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip. Note this is called on `mousemove` events.</td>
-    </tr>
-    <tr>
-      <td>forSeries</td><td>string|string[]</td><td>If provided, only applies tooltips to series matching this name (or within list of names, if array).</td>
+      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
       <td>options</td>
@@ -96,16 +99,19 @@ Add tooltip function to lines on the graph.
               <th>Name</th><th>Type</th><th>Description</th>
             </tr>
             <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).</td>
+              <td>series</td><td>string[]</td><td>If provided, only applies to elements matching this data series name. May be a single value or an array of series names.</td>
+            </tr>
+            <tr>
+              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
             </tr>
             <tr>
               <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
             </tr>
             <tr>
-              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
             </tr>
             <tr>
-              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
             </tr>
           </tbody>
         </table>
@@ -117,7 +123,7 @@ Add tooltip function to lines on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="addTooltipToAreas">#</a> *sg*.**addTooltipToAreas**(*textFunction*[, *forSeries*[, *options*]])
+<a name="addTooltipToAreas" href="a-">#</a> *SimpleGraph*.**addTooltipToAreas**(*textFunction*[, *options*])
 
 Add tooltip function to areas on the graph.
 
@@ -127,10 +133,7 @@ Add tooltip function to areas on the graph.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>forSeries</td><td>string|string[]</td><td>If provided, only applies tooltips to series matching this name (or within list of names, if array).</td>
-    </tr>
-    <tr>
-      <td>textFunction</td><td><a href="./defs.md#tooltip-text-function">textFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip. Note this is called on `mousemove` events.</td>
+      <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
       <td>options</td>
@@ -143,16 +146,19 @@ Add tooltip function to areas on the graph.
               <th>Name</th><th>Type</th><th>Description</th>
             </tr>
             <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default [10,-15] places the tooltip to the bottom right of the cursor).</td>
+              <td>series</td><td>string[]</td><td>If provided, only applies to elements matching this data series name. May be a single value or an array of series names.</td>
+            </tr>
+            <tr>
+              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
             </tr>
             <tr>
               <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
             </tr>
             <tr>
-              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
             </tr>
             <tr>
-              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">textFunction</a>, except is not expected to return any value.</td>
+              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
             </tr>
           </tbody>
         </table>
@@ -164,14 +170,15 @@ Add tooltip function to areas on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+## Highlighting ##
 
-### Highlighting ###
+Highlight functionality is still somewhat rough. It does not, on it's own, add any event listeners or direct interactions with user events. Instead, event handlers defined outside should call these functions dynamically to highlight/unhighlight elements as needed.
 
-Highlight functionality is still somewhat rough. It does not, on it's own, add any event listeners or direct interactions with user events. Instead, event handlers defined outside should call these functions dynamically to highlight/unhighlight points as needed.
+The original SVG element tied to the highlighted data is given the class `sg-highlight-hide`, which hides the SVG by setting the element's inline style to `opacity:0` (thus still preserving mouse events). The highlight itself is a clone of that SVG (or two) with the highlight effects applied.
 
-<a name="highlightPoints">#</a> *sg*.**highlightPoints**(*series*[, *validationCallback*[, *size*[, *fill*[, *stylesDict*]]]])
+<a name="a-highlightpoints" href="a-highlightpoints">#</a> *SimpleGraph*.**highlightPoints**(*options*)
 
-Highlights points by drawing new SVG over points. Highlights a given data series, using optional `validationCallback` to filter points within data series. Note that while `size`, `fill`, and `stylesDict` are all optional, if none are supplied, the highlight will look exactly like the point and no difference will be noticeable.
+Highlights points by drawing a new SVG over highlighted points. By default, the highlight style enlarges the points, but this can be overwritten via the options.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -179,33 +186,93 @@ Highlights points by drawing new SVG over points. Highlights a given data series
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>The name of the data series.</td>
+      <td>series</td><td>string[]</td><td>The name of the data series to highlight. May be single value or array of data series names. If not supplied, assumes all data series of data type is to be highlighted.</td>
     </tr>
     <tr>
-      <td>validationCallback</td><td>function</td><td>The callback function to validate whether to highlight given point. Passed argument of <a href="./defs.md#defs-pointdata">point data</a> for given point. Return true to include point. If callback is null, assumes all points to be included.</td>
+      <td>filter</td><td>function</td><td>The callback function to validate whether to highlight given point. Passed argument of <a href="./defs.md#defs-pointdata">point data</a> for given point and the SVG element. Return true to include the point for highlighting. If callback is undefined or null, assumes all points to be included.</td>
     </tr>
     <tr>
       <td>size</td><td>number|function</td><td>Point size or callback function to determine point size. Called in scope such that `this` will refer to the <a href="./defs.md#defs-pointdata">point data</a>. If null, uses assigned `pointsize` for point data.</td>
     </tr>
     <tr>
-      <td>fill</td><td>string</td><td>Fill value. If null, uses same as for data series.</td>
+      <td>style</td><td>object</td><td>Optional key-value dictionary of styles to apply to SVG.</td>
+    </tr>
+  </tbody>
+</table>
+
+<a name="a-highlightlines" href="a-highlightlines">#</a> *SimpleGraph*.**highlightLines**(*options*)
+
+Highlights lines by drawing new SVGs over highlighted lines. By default, the highlight is to add a brightened and blurred background to the line (with a new copy of the line drawn over to have the effect of the blur behind).
+
+<table style="font-size:0.9em;">
+  <tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>stylesDict</td><td>object</td><td>Optional key-value dictionary of styles to apply to SVG.</td>
+      <td>series</td><td>string[]</td><td>The name of the data series to highlight. May be single value or array of data series names. If not supplied, assumes all data series of data type is to be highlighted.</td>
+    </tr>
+    <tr>
+      <td>filter</td><td>function</td><td>The callback function to validate whether to highlight given line. Passed argument of <a href="./defs.md#defs-linedata">line data</a> for given line and the SVG element. Return true to include the line for highlighting. If callback is undefined or null, assumes all points to be included.</td>
+    </tr>
+    <tr>
+      <td>noblur</td><td>boolean</td><td>If true, does not add the blur effect.</td>
+    </tr>
+    <tr>
+      <td>style</td><td>object</td><td>Optional key-value dictionary of styles to apply to SVG. Styles are added to the overdrawn line.</td>
+    </tr>
+    <tr>
+      <td>blurstyle</td><td>object</td><td>Optional key-value dictionary of styles to apply to SVG. Styles are added to the blur effect.</td>
+    </tr>
+  </tbody>
+</table>
+
+<a name="a-highlightareas" href="a-highlightareas">#</a> *SimpleGraph*.**highlightAreas**(*options*)
+
+Highlights areas by drawing new SVGs over highlighted areas. By default, the highlight is to set the opacity to 1 and add a black outline.
+
+<table style="font-size:0.9em;">
+  <tbody>
+    <tr>
+      <th>Name</th><th>Type</th><th>Description</th>
+    </tr>
+    <tr>
+      <td>series</td><td>string[]</td><td>The name of the data series to highlight. May be single value or array of data series names. If not supplied, assumes all data series of data type is to be highlighted.</td>
+    </tr>
+    <tr>
+      <td>filter</td><td>function</td><td>The callback function to validate whether to highlight given line. Passed argument of <a href="./defs.md#defs-linedata">line data</a> for given line and the SVG element. Return true to include the line for highlighting. If callback is undefined or null, assumes all points to be included.</td>
+    </tr>
+    <tr>
+      <td>nooutline</td><td>boolean</td><td>If true, does not add the outline.</td>
+    </tr>
+    <tr>
+      <td>style</td><td>object</td><td>Optional key-value dictionary of styles to apply to SVG. Styles are added to the overdrawn line.</td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="removeHighlightPoints">#</a> *sg*.**removeHighlightPoints**()
+<a name="removehighlightpoints" href="a-removehighlightpoints">#</a> *SimpleGraph*.**removeHighlightPoints**()
 
 Remove any highlights on points.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="removeHighlights">#</a> *sg*.**removeHighlights**()
+<a name="removehighlightlines" href="a-removehighlightlines">#</a> *SimpleGraph*.**removeHighlightLines**()
 
-Remove all highlights.
+Remove any highlights on points.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="removehighlightareas" href="a-removehighlightareas">#</a> *SimpleGraph*.**removeHighlightAreas**()
+
+Remove any highlights on points.
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="removehighlights" href="a-">#</a> *SimpleGraph*.**removeHighlights**()
+
+Remove all highlight effects.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.

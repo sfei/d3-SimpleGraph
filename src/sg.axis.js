@@ -262,15 +262,15 @@ export default function(SimpleGraph) {
                 y: -(tickMargin.y2 + 10 + axisLabelMargin)
             };
         // determine label position
+        // split by keys
+        let xparallel       = "center", 
+            yparallel       = "center", 
+            y2parallel      = "center", 
+            xperpendicular  = "outside", 
+            yperpendicular  = "outside", 
+            y2perpendicular = "outside";
         if(labelPosition) {
-            // split by keys
-            let lpKeys          = labelPosition.toLowerCase().split(/[ ,]+/), 
-                xparallel       = "center", 
-                yparallel       = "center", 
-                y2parallel      = "center", 
-                xperpendicular  = "outside", 
-                yperpendicular  = "outside", 
-                y2perpendicular = "outside";
+            let lpKeys = (labelPosition || "").toLowerCase().split(/[ ,]+/);
             lpKeys.forEach(directive => {
                 let parts = directive.trim().split("-"), 
                     axis = parts.length > 1 ? parts[0] : false;
