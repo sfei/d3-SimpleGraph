@@ -245,38 +245,86 @@ The remove functions remove the drawn elements on the graph (using class selecti
 
 The remove functions do not remove the underlying data. For actually removing the data itself, see the clear data functions in [Removing and updating data](./mod-data.md).
 
-<a name="a-removepoints" href="#a-removepoints">#</a> *SimpleGraph*.**removePoints**()
+<a name="a-removepoints" href="#a-removepoints">#</a> *SimpleGraph*.**removePoints**([*series*])
 
-Remove all drawn points on graph.
+Remove drawn points on graph.
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="a-removelines" href="#a-removelines">#</a> *SimpleGraph*.**removeLines**()
-
-Remove all drawn lines (excluding point-lines) on graph.
-
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
-
-<a name="a-removepointlines" href="#a-removepointlines">#</a> *SimpleGraph*.**removePointsLines**()
-
-Remove all drawn point-lines on graph.
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+  </tbody>
+</table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removealllines" href="#a-removealllines">#</a> *SimpleGraph*.**removeAllLines**()
+<a name="a-removelines" href="#a-removelines">#</a> *SimpleGraph*.**removeLines**([*series*])
 
-Remove all drawn lines (including point-lines) on graph.
+Remove drawn lines (excluding point-lines) on graph.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+  </tbody>
+</table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removeareas" href="#a-removeareas">#</a> *SimpleGraph*.**removeAreas**()
+<a name="a-removepointlines" href="#a-removepointlines">#</a> *SimpleGraph*.**removePointsLines**([*series*])
 
-Remove all drawn areas on graph.
+Remove drawn point-lines on graph.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+  </tbody>
+</table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removeall" href="#a-removeall">#</a> *SimpleGraph*.**removeAll**()
+<a name="a-removealllines" href="#a-removealllines">#</a> *SimpleGraph*.**removeAllLines**([*series*])
 
-Remove all drawn data series on graph.
+Remove drawn lines (including point-lines) on graph.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removeareas" href="#a-removeareas">#</a> *SimpleGraph*.**removeAreas**([*series*])
+
+Remove drawn areas on graph.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+  </tbody>
+</table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+<a name="a-removeall" href="#a-removeall">#</a> *SimpleGraph*.**removeAll**([*series*])
+
+Remove drawn data series on graph.
+
+<table style="font-size:0.9em;">
+  </tbody>
+    <tr>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+  </tbody>
+</table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.

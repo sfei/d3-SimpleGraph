@@ -55,8 +55,20 @@ Interactive tutorials are provided as HTML pages where one can following along b
 
 ## Change Log ##
 
-* **v3.0.0**
+#### v3.0.0 ####
+  * Modularized packages.
+  * Migrated to webpack for build.
   * Updated to be compatible with D3 v7.
-  * Modularized packages and migrated to webpack for build.
-  * Adding a few shape options to points.
-  * *Breaking change*: Moved length add data parameters into `option`.
+  * Complete revision of readme and tutorials.
+  * **New functionality**
+    * Added a few more shape options to points.
+    * Data-bindings and data updates organized. Adds functionality for modifying/changing data added to SimpleGraph.
+    * Added transitions to draw functions, which allow fade-in effect.
+    * Added draw-update functions, with options to animate data changes with transitions.
+    * Highlight functionality.
+  * **Breaking changes**
+    * Constructor simplified to single `options` parameter.
+    * Drawing legend, several parameters moved to `options` object to simplify.
+    * Adding data, several parameters moved to `options` object to simplify.
+    * Adding points, `showNulls` parameter moved to be specified on drawing.
+    * Adding areas and lines, `resolution` parameter moved to be specified on drawing.

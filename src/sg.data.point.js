@@ -5,6 +5,7 @@ export default function(SimpleGraph) {
     SimpleGraph.prototype.addPointData = function(series, xValue, yValue, options) {
         this.points = this.points || [];
         this.ptSeriesShapes = this.ptSeriesShapes || {};
+        series = (series === null) ? "" : String(series);
         options = options || {};
         options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
         options.y2Axis = !!options.y2Axis;
@@ -37,10 +38,11 @@ export default function(SimpleGraph) {
         // first we gotta comb through the data and organize it nicely
         data.forEach((d, i) => {
             // get data series name, if it exists, otherwise assume seriesName is series name
-            let snIsIn = !options.forceSeriesName && (seriesName in d) && d[seriesName], 
+            let snIsIn = !options.forceSeriesName && !options.forceSeries && (seriesName in d) && d[seriesName], 
                 series = snIsIn ? d[seriesName] : ((!seriesName && seriesName !== 0) ? i : seriesName), 
                 xValue = d[xValueName], 
                 yValue = d[yValueName];
+            series = (series === null) ? "" : String(series);
             // add shape if provided as constant string
             if(options.shape) this.ptSeriesShapes[series] = options.shape;
             // nicely organize data
@@ -83,6 +85,7 @@ export default function(SimpleGraph) {
         if(!data || data.length === 0) return this;
         this.points = this.points || [];
         this.ptSeriesShapes = this.ptSeriesShapes || {};
+        series = (series === null) ? "" : String(series);
         options = options || {};
         options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
         options.y2Axis = !!options.y2Axis;
@@ -118,6 +121,8 @@ export default function(SimpleGraph) {
     SimpleGraph.prototype.clearPointsData = function(series) {
         if(series === null || typeof series === "undefined") {
             this.points = null;
+        } else if(Array.isArray(series)) {
+            this.points = this.points.filter(d => ~series.indexOf(d.series));
         } else {
             this.points = this.points.filter(d => d.series !== series);
         }

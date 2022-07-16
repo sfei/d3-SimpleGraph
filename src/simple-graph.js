@@ -137,8 +137,8 @@ SimpleGraph.prototype.clearAllData = function(series) {
     return this;
 };
 
-SimpleGraph.prototype.removeAll = function() {
-    this.removePoints().removeAllLines().removeAreas();
+SimpleGraph.prototype.removeAll = function(series) {
+    this.removePoints(series).removeAllLines(series).removeAreas(series);
     return this;
 };
 

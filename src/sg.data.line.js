@@ -1,6 +1,6 @@
 export default function(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.addLineDataAsCoordinates = function(name, coords, options) {
+    SimpleGraph.prototype.addLineDataAsCoordinates = function(series, coords, options) {
         if(!coords || coords.length === 0) {
             return this;
         }
@@ -18,7 +18,7 @@ export default function(SimpleGraph, d3) {
             style['stroke-width'] = 1.5;
         }
         this.lines.push({
-            series:       name, 
+            series:       (series === null) ? "" : String(series), 
             lineFunction: null, 
             coords:       coords.map(c => [...c]), 
             xRange:       null, 
@@ -30,7 +30,7 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.addLineDataAsFunction = function(name, lineFunction, xRange, options) {
+    SimpleGraph.prototype.addLineDataAsFunction = function(series, lineFunction, xRange, options) {
         if(!lineFunction || typeof lineFunction !== "function" || typeof lineFunction(0) !== "number") {
             return this;
         }
@@ -48,7 +48,7 @@ export default function(SimpleGraph, d3) {
         }
         var interpolation = interpolation || d3.curveLinear;
         this.lines.push({
-            series:       name, 
+            series:       (series === null) ? "" : String(series), 
             lineFunction: lineFunction, 
             coords:       null, 
             xRange:       xRange ? [...xRange] : null, 
@@ -177,6 +177,8 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.clearLinesData = function(series) {
         if(series === null || typeof series === "undefined") {
             this.lines = null;
+        } else if(Array.isArray(series)) {
+            this.lines = this.lines.filter(d => ~series.indexOf(d.series));
         } else {
             this.lines = this.lines.filter(d => d.series !== series);
         }
@@ -186,6 +188,8 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.clearPointLinesData = function(series) {
         if(series === null || typeof series === "undefined") {
             this.pointLines = null;
+        } else if(Array.isArray(series)) {
+            this.pointLines = this.pointLines.filter(d => ~series.indexOf(d.series));
         } else {
             this.pointLines = pointLines.lines.filter(d => d.series !== series);
         }

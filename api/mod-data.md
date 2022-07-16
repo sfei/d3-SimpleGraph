@@ -39,7 +39,7 @@ Remove points data.
       <td>name</td><td>string</td><td>The name of the data series.</td>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>If provided, only removes data series matching this name.</td>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
 </table>
@@ -59,7 +59,7 @@ Remove lines data.
       <td>name</td><td>string</td><td>The name of the data series.</td>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>If provided, only removes data series matching this name.</td>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
 </table>
@@ -79,7 +79,7 @@ Remove lines data.
       <td>name</td><td>string</td><td>The name of the data series.</td>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>If provided, only removes data series matching this name.</td>
+      <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
 </table>
@@ -99,7 +99,7 @@ Remove all areas data.
       <td>name</td><td>string</td><td>The name of the data series.</td>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>If provided, only removes data series matching this name.</td>
+      <td>series</td><td>string</td><td>If provided, only removes data series matching this name. If null or undefined, removes all data. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
 </table>
@@ -119,7 +119,7 @@ Remove all data.
       <td>name</td><td>string</td><td>The name of the data series.</td>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>If provided, only removes data series matching this name.</td>
+      <td>series</td><td>string</td><td>If provided, only removes data series matching this name. If null or undefined, removes all data. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
 </table>

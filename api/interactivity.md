@@ -42,34 +42,22 @@ Add tooltip function to points on the graph. Does not add tooltips to the point-
       <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>series</td><td>string[]</td><td>If provided, only applies to elements matching this data series name. May be a single value or an array of series names.</td>
-            </tr>
-            <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
-            </tr>
-            <tr>
-              <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
-            </tr>
-            <tr>
-              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
-            </tr>
-            <tr>
-              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to apply to tooltips.</td>
+    </tr>
+    <tr>
+      <td>options.series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+    <tr>
+      <td>options.offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
+    </tr>
+    <tr>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
+    </tr>
+    <tr>
+      <td>options.mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
+    </tr>
+    <tr>
+      <td>options.mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
     </tr>
   </tbody>
 </table>
@@ -89,34 +77,22 @@ Add tooltip function to lines (including point-lines) on the graph.
       <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>series</td><td>string[]</td><td>If provided, only applies to elements matching this data series name. May be a single value or an array of series names.</td>
-            </tr>
-            <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
-            </tr>
-            <tr>
-              <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
-            </tr>
-            <tr>
-              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
-            </tr>
-            <tr>
-              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to apply to tooltips.</td>
+    </tr>
+    <tr>
+      <td>options.series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+    <tr>
+      <td>options.offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
+    </tr>
+    <tr>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
+    </tr>
+    <tr>
+      <td>options.mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
+    </tr>
+    <tr>
+      <td>options.mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
     </tr>
   </tbody>
 </table>
@@ -136,34 +112,22 @@ Add tooltip function to areas on the graph.
       <td>tooltipFunction</td><td><a href="./defs.md#tooltip-text-function">tooltipTextFunction</a></td><td>Callback function that handles the dynamic text appearing in the tooltip.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        <h5>Properties</h5>
-        <table>
-          <tbody>
-            <tr>
-              <th>Name</th><th>Type</th><th>Description</th>
-            </tr>
-            <tr>
-              <td>series</td><td>string[]</td><td>If provided, only applies to elements matching this data series name. May be a single value or an array of series names.</td>
-            </tr>
-            <tr>
-              <td>offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
-            </tr>
-            <tr>
-              <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
-            </tr>
-            <tr>
-              <td>mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
-            </tr>
-            <tr>
-              <td>mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
-            </tr>
-          </tbody>
-        </table>
-      </td>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to apply to tooltips.</td>
+    </tr>
+    <tr>
+      <td>options.series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+    <tr>
+      <td>options.offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
+    </tr>
+    <tr>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the tooltip div's CSS style.</td>
+    </tr>
+    <tr>
+      <td>options.mouseover</td><td>function</td><td>Callback function that will be called on `mouseover`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
+    </tr>
+    <tr>
+      <td>options.mouseout</td><td>function</td><td>Callback function that will be called on `mouseout`. Provided same parameters as <a href="./defs.md#tooltip-text-function">tooltipTextFunction</a>, except is not expected to return any value.</td>
     </tr>
   </tbody>
 </table>
@@ -186,7 +150,7 @@ Highlights points by drawing a new SVG over highlighted points. By default, the 
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>series</td><td>string[]</td><td>The name of the data series to highlight. May be single value or array of data series names. If not supplied, assumes all data series of data type is to be highlighted.</td>
+      <td>series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
     <tr>
       <td>filter</td><td>function</td><td>The callback function to validate whether to highlight given point. Passed argument of <a href="./defs.md#defs-pointdata">point data</a> for given point and the SVG element. Return true to include the point for highlighting. If callback is undefined or null, assumes all points to be included.</td>
@@ -210,7 +174,7 @@ Highlights lines by drawing new SVGs over highlighted lines. By default, the hig
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>series</td><td>string[]</td><td>The name of the data series to highlight. May be single value or array of data series names. If not supplied, assumes all data series of data type is to be highlighted.</td>
+      <td>series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
     <tr>
       <td>filter</td><td>function</td><td>The callback function to validate whether to highlight given line. Passed argument of <a href="./defs.md#defs-linedata">line data</a> for given line and the SVG element. Return true to include the line for highlighting. If callback is undefined or null, assumes all points to be included.</td>
@@ -237,7 +201,7 @@ Highlights areas by drawing new SVGs over highlighted areas. By default, the hig
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>series</td><td>string[]</td><td>The name of the data series to highlight. May be single value or array of data series names. If not supplied, assumes all data series of data type is to be highlighted.</td>
+      <td>series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
     <tr>
       <td>filter</td><td>function</td><td>The callback function to validate whether to highlight given line. Passed argument of <a href="./defs.md#defs-linedata">line data</a> for given line and the SVG element. Return true to include the line for highlighting. If callback is undefined or null, assumes all points to be included.</td>

@@ -1,6 +1,6 @@
 export default function(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.addAreaAsCoordinates = function(name, areaCoordinates, options) {
+    SimpleGraph.prototype.addAreaAsCoordinates = function(series, areaCoordinates, options) {
         if(!areaCoordinates || !Array.isArray(areaCoordinates) || areaCoordinates.length < 2) return this;
         options = options || {};
         var style = {};
@@ -11,7 +11,7 @@ export default function(SimpleGraph, d3) {
         }
         this.areas = this.areas || [];
         this.areas.push({
-            series:      name, 
+            series:      (series === null) ? "" : String(series), 
             functions:   null, 
             coords:      areaCoordinates, 
             resolution:  null, 
@@ -24,7 +24,7 @@ export default function(SimpleGraph, d3) {
         return this;
     };
 
-    SimpleGraph.prototype.addAreaBetweenTwoLines = function(name, lineFunctionBottom, lineFunctionTop, xRange, options) {
+    SimpleGraph.prototype.addAreaBetweenTwoLines = function(series, lineFunctionBottom, lineFunctionTop, xRange, options) {
         if(!lineFunctionTop || typeof lineFunctionTop !== "function") return this;
         if(!lineFunctionBottom || typeof lineFunctionBottom !== "function") return this;
         options = options || {};
@@ -36,7 +36,7 @@ export default function(SimpleGraph, d3) {
         }
         this.areas = this.areas || [];
         this.areas.push({
-            series:      name, 
+            series:      (series === null) ? "" : String(series), 
             functions:   [lineFunctionBottom, lineFunctionTop], 
             coords:      null, 
             xRange:      xRange ? [...xRange] : null, 
@@ -118,6 +118,8 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.clearAreasData = function(series) {
         if(series === null || typeof series === "undefined") {
             this.areas = null;
+        } else if(Array.isArray(series)) {
+            this.areas = this.areas.filter(d => ~series.indexOf(d.series));
         } else {
             this.areas = this.areas.filter(d => d.series !== series);
         }

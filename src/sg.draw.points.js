@@ -2,8 +2,15 @@ import shapes from "./sg.point.shapes";
 
 export default function(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.removePoints = function() {
-        this.svgGraph.selectAll(".sg-point").remove();
+    SimpleGraph.prototype.removePoints = function(series) {
+        if(series === null || typeof series === "undefined") {
+            this.svgGraph.selectAll(".sg-point").remove();
+        } else {
+            series = Array.isArray(series) ? series : [series];
+            this.svgGraph.selectAll(".sg-point")
+                .filter(d => ~series.indexOf(d.series))
+                .remove();
+        }
         return this;
     };
 

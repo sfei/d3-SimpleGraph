@@ -31,24 +31,19 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>axisOptions</td>
-      <td>object</td>
-      <td>
-        Map of axis options by axis name.
-        <h5>Properties</h5>
-        <table>
-          <tr><th>Name</th><th>Description</th></tr>
-          <tr><td>x</td><td>Literal of x-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td></tr>
-          <tr><td>y</td><td>Literal of y-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td></tr>
-          <tr><td>y2</td><td>Optional literal of y2-Axis options (see <a href="./defs.md#axis-options">Axis Options</a>).</td></tr>
-          <tr>
-            <td>styles</td>
-            <td>
-              Optional key-value object of shared axis styles. Defaults to `fill="none"`, `stroke="black"`, and `'stroke-width'=0.5`.
-            </td>
-          </tr>
-        </table>   
-      </td>
+      <td>axisOptions</td><td>object</td><td>Map of axis options by axis name.</td>
+    </tr>
+    <tr>
+      <td>axisOptions.x</td><td><a href="./defs.md#axis-options">Axis Options</a></td><td>Object literal of x-Axis options.</td>
+    </tr>
+    <tr>
+      <td>axisOptions.y</td><td><a href="./defs.md#axis-options">Axis Options</a></td><td>Object literal of y-Axis options.</td>
+    </tr>
+    <tr>
+      <td>axisOptions.y2</td><td><a href="./defs.md#axis-options">Axis Options</a></td><td>Object literal of y2-Axis options.</td>
+    </tr>
+    <tr>
+      <td>axisOptions.styles</td><td>object</td><td>Optional key-value object of shared axis styles. Defaults to `fill="none"`, `stroke="black"`, and `'stroke-width'=0.5`.</td>
     </tr>
   </tbody>
 </table>
@@ -105,7 +100,7 @@ Removes the grid.
 
 Legends are handled fairly automatically, with all data series present (even if not yet drawn on the graph) automatically added to the legend. Simply define where to place it along with some optional formatting parameters.
 
-<a name="a-drawlegend" href="a-drawlegend">#</a> *SimpleGraph*.**drawLegend**(*position*[, *options*])`**
+<a name="a-drawlegend" href="a-drawlegend">#</a> *SimpleGraph*.**drawLegend**(*position*[, *options*])
 
 Draw the legend onto the graph. If legend already exists, will redraw it.
 
@@ -118,36 +113,29 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
       <td>position</td><td>number[]</td><td>x,y coordinate position from top-left corner of SVG.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        Additional options for the legend.
-        <h5>Properties</h5>
-        <table>
-          <tr>
-            <td>anchor</td><td>string</td><td>Optional anchor for the coordinate x-position (left, middle, or right). Defaults "left".</td>
-          </tr>
-          <tr>
-            <td>bgstyle</td><td>object</td><td>Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</td>
-          </tr>
-          <tr>
-            <td>itemsPerColumn</td><td>number</td><td>Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.</td>
-          </tr>
-          <tr>
-            <td>rowHeight</td><td>number</td><td>Optional height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
-          </tr>
-          <tr>
-            <td>exclude</td><td>string[]</td><td>Can optionally name data series to exclude from adding to the legend. Provided as list or whitespace-separated string of data series names (though list is preferred as data series names may include spaces). Case sensitive and remove any matching data series by name from all types of data (points, lines, and areas).</td>
-          </tr>
-        </table>
-      </td>
+      <td>options</td><td>object</td><td>Additional options for the legend.</td>
+    </tr>
+    <tr>
+      <td>options.anchor</td><td>string</td><td>Optional anchor for the coordinate x-position (left, middle, or right). Defaults "left".</td>
+    </tr>
+    <tr>
+      <td>options.bgstyle</td><td>object</td><td>Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</td>
+    </tr>
+    <tr>
+      <td>options.itemsPerColumn</td><td>number</td><td>Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.</td>
+    </tr>
+    <tr>
+      <td>options.rowHeight</td><td>number</td><td>Optional height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
+    </tr>
+    <tr>
+      <td>options.exclude</td><td>string[]</td><td>Can optionally name data series to exclude from adding to the legend. Provided as list or whitespace-separated string of data series names (though list is preferred as data series names may include spaces). Case sensitive and remove any matching data series by name from all types of data (points, lines, and areas).</td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-removelegend" href="a-removelegend">#</a> *SimpleGraph*.**removeLegend**()`**
+<a name="a-removelegend" href="a-removelegend">#</a> *SimpleGraph*.**removeLegend**()
 
 Removes the legend.
 

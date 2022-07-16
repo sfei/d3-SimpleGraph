@@ -55,7 +55,7 @@ Due to nature of coordinates provided as primitive types, no data binding will o
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>The series name of the data series this point belongs to.</td>
+      <td>series</td><td>string</td><td>The series name of the data series this point belongs to. Will be converted to string value. Undefined and nulls will be assigned as empty string.</td>
     </tr>
     <tr>
       <td>xValue</td><td>number</td><td>The x-value.</td>
@@ -64,23 +64,16 @@ Due to nature of coordinates provided as primitive types, no data binding will o
       <td>yValue</td><td>number</td><td>The y-value.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        Additional options defining the point data.
-        <h5>Properties</h5>
-        <table>
-          <tr>
-            <td>shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
-          </tr>
-          <tr>
-            <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
-          </tr>
-          <tr>
-            <td>y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
-          </tr>
-        </table>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
+    </tr>
+    <tr>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
+    </tr>
+    <tr>
+      <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
+    </tr>
+    <tr>
+      <td>options.y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
     </tr>
   </tbody>
 </table>
@@ -104,7 +97,7 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
       <td>data</td><td>object[]</td><td>The plot data as an array of objects. Use the seriesName, xValueName, and yValueName parameters to tell the function how to parse the data.</td>
     </tr>
     <tr>
-      <td>seriesName</td><td>string</td><td>The key name in each data object to retrieve the data point or data series name. If it cannot find the given key in the data object, assumes the given string is the series name for all points. If it is null or undefined, uses the index position (thus all points will be of unique series).</td>
+      <td>seriesName</td><td>string</td><td>The key name in each data object to retrieve the data point or data series name. If it cannot find the given key in the data object, assumes the given string is the series name for all points. If it is null or undefined, uses the index position (thus all points will be of unique series). All series name values will be converted to string. Undefined and nulls will be assigned as empty string.</td>
     </tr>
     <tr>
       <td>xValueName</td><td>string</td><td>The key name in each data object to retrieve the x-value.</td>
@@ -113,29 +106,25 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
       <td>yValueName</td><td>string</td><td>The key name in each data object to retrieve the y-value.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        Additional options defining the point data.
-        <h5>Properties</h5>
-        <table>
-          <tr>
-            <td>forceSeriesName</td><td>boolean</td><td>If set and true, this forces the provided `seriesName` parameter to be used as-is, never checking if it exists as a data key.</td>
-          </tr>
-          <tr>
-            <td>shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
-          </tr>
-          <tr>
-            <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
-          </tr>
-          <tr>
-            <td>y2Axis</td><td>boolean</td><td>If true, points area assigned to y2 axis.</td>
-          </tr>
-          <tr>
-            <td>additionalDataKeys</td><td>string[]</td><td>Additional keys for data you want to store for each point.</td>
-          </tr>
-        </table>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
+    </tr>
+    <tr>
+      <td>options.forceSeriesName</td><td>boolean</td><td>If set and true, this forces the provided `seriesName` parameter to be used as the series name value for all added data.</td>
+    </tr>
+    <tr>
+      <td>options.forceSeries</td><td>boolean</td><td>Alias for the above.</td>
+    </tr>
+    <tr>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
+    </tr>
+    <tr>
+      <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
+    </tr>
+    <tr>
+      <td>options.y2Axis</td><td>boolean</td><td>If true, points area assigned to y2 axis.</td>
+    </tr>
+    <tr>
+      <td>options.additionalDataKeys</td><td>string[]</td><td>Additional keys for data you want to store for each point.</td>
     </tr>
   </tbody>
 </table>
@@ -154,29 +143,22 @@ For each point, each x,y coordinate pair from the data array will be bound.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>series</td><td>string</td><td>The series name of the data series.</td>
+      <td>series</td><td>string</td><td>The series name of the data series this point belongs to. Will be converted to string value. Undefined and nulls will be assigned as empty string.</td>
     </tr>
     <tr>
       <td>data</td><td>number[][]</td><td>The plot data as an array of [x,y] arrays.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        Additional options defining the point data.
-        <h5>Properties</h5>
-        <table>
-          <tr>
-            <td>shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [`setPointSeriesShape()`](#a-setpointseriesshape)).</td>
-          </tr>
-          <tr>
-            <td>size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
-          </tr>
-          <tr>
-            <td>y2Axis</td><td>boolean</td><td>If true, points are assigned to y2 axis.</td>
-          </tr>
-        </table>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
+    </tr>
+    <tr>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [`setPointSeriesShape()`](#a-setpointseriesshape)).</td>
+    </tr>
+    <tr>
+      <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
+    </tr>
+    <tr>
+      <td>options.y2Axis</td><td>boolean</td><td>If true, points are assigned to y2 axis.</td>
     </tr>
   </tbody>
 </table>
@@ -252,23 +234,16 @@ For overlaps (i.e. where multiple points lie on the same x-value), the default b
       <td>forSeries</td><td>string|string[]|function</td><td>To filter series on which to add connecting lines, either provide a series name, an array of series names, or a callback function which will be provided the name of the series to check. If null/undefined, draws point-lines for all point series.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        Additional options defining the line data.
-        <h5>Properties</h5>
-        <table>
-          <tr>
-            <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
-          </tr>
-          <tr>
-            <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-          </tr>
-          <tr>
-            <td>handleOverlap</td><td>string</td><td>If there are 2 or more points overlapped for a given x-value, how to handle the y-value for the line. Options are "average", "mean", "median", "highest", "max", "lowest", "min". Defaults to average/mean.</td>
-          </tr>
-        </table>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
+    </tr>
+    <tr>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
+    </tr>
+    <tr>
+      <td>options.interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
+    </tr>
+    <tr>
+      <td>options.handleOverlap</td><td>string</td><td>If there are 2 or more points overlapped for a given x-value, how to handle the y-value for the line. Options are "average", "mean", "median", "highest", "max", "lowest", "min". Defaults to average/mean.</td>
     </tr>
   </tbody>
 </table>
@@ -277,7 +252,7 @@ For overlaps (i.e. where multiple points lie on the same x-value), the default b
 
 #### Adding line data ####
 
-<a name="a-addlinedataascoordinates" href="#a-addlinedataascoordinates">#</a> *SimpleGraph*.**addLineDataAsCoordinates**(*name*, *coords*[, *options*])
+<a name="a-addlinedataascoordinates" href="#a-addlinedataascoordinates">#</a> *SimpleGraph*.**addLineDataAsCoordinates**(*series*, *coords*[, *options*])
 
 Add line data as an array of coordinates.
 
@@ -287,36 +262,29 @@ Add line data as an array of coordinates.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
+      <td>series</td><td>string</td><td>The series name of the data series this point belongs to. Will be converted to string value. Undefined and nulls will be assigned as empty string.</td>
     </tr>
     <tr>
       <td>coords</td><td>number[][]</td><td>Array of x,y coordinates defining the line.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        Additional options defining the line data.
-        <h5>Properties</h5>
-        <table>
-          <tr>
-            <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
-          </tr>
-          <tr>
-            <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-          </tr>
-          <tr>
-            <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
-          </tr>
-        </table>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
+    </tr>
+    <tr>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
+    </tr>
+    <tr>
+      <td>options.interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
+    </tr>
+    <tr>
+      <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-addlinedataasfunction" href="#a-addlinedataasfunction">#</a> *SimpleGraph*.**addLineDataAsFunction**(*name*, *lineFunction*[, *xRange*[, *options*]]]]])
+<a name="a-addlinedataasfunction" href="#a-addlinedataasfunction">#</a> *SimpleGraph*.**addLineDataAsFunction**(*series*, *lineFunction*[, *xRange*[, *options*]]]]])
 
 Add line data as a function.
 
@@ -328,7 +296,7 @@ The function cannot be bound in anyway that syncs changes, as it is provided dir
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
+      <td>series</td><td>string</td><td>The series name of the data series this point belongs to. Will be converted to string value. Undefined and nulls will be assigned as empty string.</td>
     </tr>
     <tr>
       <td>lineFunction</td><td>function</td><td>Callback function such that function(x) returns y.</td>
@@ -337,23 +305,16 @@ The function cannot be bound in anyway that syncs changes, as it is provided dir
       <td>xRange</td><td>number</td><td>The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</td>
     </tr>
     <tr>
-      <td>options</td>
-      <td>object</td>
-      <td>
-        Additional options defining the line data.
-        <h5>Properties</h5>
-        <table>
-          <tr>
-            <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
-          </tr>
-          <tr>
-            <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-          </tr>
-          <tr>
-            <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
-          </tr>
-        </table>
-      </td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
+    </tr>
+    <tr>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
+    </tr>
+    <tr>
+      <td>options.interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
+    </tr>
+    <tr>
+      <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
   </tbody>
 </table>
@@ -362,7 +323,7 @@ The function cannot be bound in anyway that syncs changes, as it is provided dir
 
 #### Adding area data ####
 
-<a name="a-addareaascoordinates" href="#a-addareaascoordinates">#</a> *SimpleGraph*.**addAreaAsCoordinates**(*name*, *areaCoordinates*[, *style*[, *interpolation*[, *y2Axis*]]])
+<a name="a-addareaascoordinates" href="#a-addareaascoordinates">#</a> *SimpleGraph*.**addAreaAsCoordinates**(*series*, *areaCoordinates*[, *options*])
 
 Add area data series as array of area coordinates.
 
@@ -374,26 +335,29 @@ The coordinate array and optional styles will be bound.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
+      <td>series</td><td>string</td><td>The series name of the data series this point belongs to. Will be converted to string value. Undefined and nulls will be assigned as empty string.</td>
     </tr>
     <tr>
       <td>areaCoordinates</td><td>number[][]</td><td>Array of area coordinate triplets (i.e. [x, y0, y1]).</td>
     </tr>
     <tr>
-      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to fill="#ccc".</td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
     </tr>
     <tr>
-      <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
     </tr>
     <tr>
-      <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
+      <td>options.interpolation</td><td>d3.curve</td><td>Type of interpolation for drawing the area boundaries. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
+    </tr>
+    <tr>
+      <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-addareabetweentwolines" href="#a-addareabetweentwolines">#</a> *SimpleGraph*.**addAreaBetweenTwoLines**(*name*, *lineFunctionBottom*, *lineFunctionTop*[, *style*[, *resolution*[, *interpolation*[, *xRange*[, *y2Axis*]]]]])
+<a name="a-addareabetweentwolines" href="#a-addareabetweentwolines">#</a> *SimpleGraph*.**addAreaBetweenTwoLines**(*series*, *lineFunctionBottom*, *lineFunctionTop*[, *xRange*[, *options*]])
 
 Add area data series with function pair defining bottom and top bounds of area.
 
@@ -405,7 +369,7 @@ The functions cannot be bound in anyway that syncs changes, as they are provided
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
+      <td>series</td><td>string</td><td>The series name of the data series this point belongs to. Will be converted to string value. Undefined and nulls will be assigned as empty string.</td>
     </tr>
     <tr>
       <td>lineFunctionBottom</td><td>function</td><td>Callback function for bottom border of the area such that function(x) returns y0.</td>
@@ -414,19 +378,19 @@ The functions cannot be bound in anyway that syncs changes, as they are provided
       <td>lineFunctionTop</td><td>function</td><td>Callback function for top border of the area such that function(x) returns y1.</td>
     </tr>
     <tr>
-      <td>style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to fill="#ccc".</td>
-    </tr>
-    <tr>
-      <td>resolution</td><td>number</td><td>How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</td>
-    </tr>
-    <tr>
-      <td>interpolation</td><td>d3.curve</td><td>Type of interpolation for line curve. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
-    </tr>
-    <tr>
       <td>xRange</td><td>number[]|Date[]</td><td>The [min, max] x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</td>
     </tr>
     <tr>
-      <td>y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
+      <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
+    </tr>
+    <tr>
+      <td>options.style</td><td>object</td><td>Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style. Defaults to stroke-width=1.5.</td>
+    </tr>
+    <tr>
+      <td>options.interpolation</td><td>d3.curve</td><td>Type of interpolation for drawing the area boundaries. See <a href="https://github.com/d3/d3-shape#curves" target="_blank">D3 Curve Factories</a></td>
+    </tr>
+    <tr>
+      <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
   </tbody>
 </table>

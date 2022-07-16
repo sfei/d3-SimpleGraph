@@ -2,22 +2,38 @@ import shapes from "./sg.point.shapes";
 
 export default function(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.removeAllLines = function() {
-        return this.removeLines().removePointLines();
+    SimpleGraph.prototype.removeAllLines = function(series) {
+        return this.removeLines(series).removePointLines(series);
     };
 
-    SimpleGraph.prototype.removeLines = function() {
-        this.svgGraph.selectAll(".sg-line").remove();
-        if(this.lines) this.lines.forEach(d => {
+    SimpleGraph.prototype.removeLines = function(series) {
+        let removed;
+        if(series === null || typeof series === "undefined") {
+            removed = this.svgGraph.selectAll(".sg-line").remove();
+        } else {
+            removed = Array.isArray(series) ? series : [series];
+            this.svgGraph.selectAll(".sg-line")
+                .filter(d => ~series.indexOf(d.series))
+                .remove();
+        }
+        removed.each(d => {
             d._segments = null;
             d._d3s = null;
         });
         return this;
     };
 
-    SimpleGraph.prototype.removePointLines = function() {
-        this.svgGraph.selectAll(".sg-point-line").remove();
-        if(this.pointLines) this.pointLines.forEach(d => {
+    SimpleGraph.prototype.removePointLines = function(series) {
+        let removed;
+        if(series === null || typeof series === "undefined") {
+            removed = this.svgGraph.selectAll(".sg-point-line").remove();
+        } else {
+            removed = Array.isArray(series) ? series : [series];
+            this.svgGraph.selectAll(".sg-point-line")
+                .filter(d => ~series.indexOf(d.series))
+                .remove();
+        }
+        removed.each(d => {
             d._segments = null;
             d._d3s = null;
         });
