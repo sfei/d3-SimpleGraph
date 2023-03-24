@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "author": "Lawrence Sim",
   "license": "LGPL-3.0",
-  "main": "interaction-handler.min.js",
+  "main": "d3.simplegraph.min.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sfei/d3-SimpleGraph"
