@@ -7,7 +7,7 @@
 D3-SimpleGraph is an abstraction of the D3 library for quickly creating and adding functionality of basic, 2-dimensional plots.
 
 **Lawrence Sim** -- lawrences@sfei.org<br />
-**San Francisco Estuary Institute** -- 2022
+**San Francisco Estuary Institute** -- 2023
 
 ## License ##
 
@@ -15,7 +15,7 @@ This project is licensed under the GNU Lesser General Public License. See [LICEN
 
 ## Usage ##
 
-Library is dependent on D3. Tested on D3 v7.6.1. [https://d3js.org](https://d3js.org)
+Library is dependent on D3. Tested on D3 v7.8.2. [https://d3js.org](https://d3js.org)
 
 Simply import `d3.simplegraph.min.js` to your application. Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or simply regular instantiation. 
 
