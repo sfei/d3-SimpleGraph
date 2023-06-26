@@ -65,7 +65,7 @@ Due to nature of coordinates provided as primitive types, no data binding will o
       <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
     </tr>
     <tr>
-      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">`setPointSeriesShape()`</a>.</td>
     </tr>
     <tr>
       <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
@@ -116,7 +116,7 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
       <td>options.forceSeries</td><td>boolean</td><td>Alias for the above.</td>
     </tr>
     <tr>
-      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [setPointSeriesShape](#setPointSeriesShape)().</td>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">`setPointSeriesShape()`</a>.</td>
     </tr>
     <tr>
       <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
@@ -156,7 +156,7 @@ For each point, each x,y coordinate pair from the data array will be bound.
       <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
     </tr>
     <tr>
-      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see [`setPointSeriesShape()`](#a-setpointseriesshape)).</td>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">`setPointSeriesShape()`</a>).</td>
     </tr>
     <tr>
       <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>

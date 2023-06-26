@@ -141,13 +141,21 @@ export default function(SimpleGraph) {
     };
 
     SimpleGraph.prototype._clonePointData = function(d) {
-        return {
+        let data = {
             series: d.series, 
             x: d.x, 
             y: d.y, 
             y2: d.y2, 
             size: d.size
         };
+        if(d._keys) {
+            if(d._keys.x) data[d._keys.x] = d.x;
+            if(d._keys.y) data[d._keys.y] = d.y;
+            d._keys.additional && d._keys.additional.forEach(a => {
+                data[a.name] = d[a.name];
+            });
+        }
+        return data;
     };
 
     SimpleGraph.prototype.getPointsDataBySeries = function(series) {

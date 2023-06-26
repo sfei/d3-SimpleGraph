@@ -9,7 +9,7 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.removeHighlightPoints = function() {
         this.svgGraph.selectAll(".sg-point-highlight").remove();
         this.svgGraph.selectAll(".sg-point.sg-highlight-hide")
-                     .style("visibility", "")
+                     .style("opacity", "")
                      .classed("sg-highlight-hide", false);
         return this;
     };
@@ -17,7 +17,7 @@ export default function(SimpleGraph, d3) {
     SimpleGraph.prototype.removeHighlightLines = function() {
         this.svgGraph.selectAll(".sg-line-highlight").remove();
         this.svgGraph.selectAll(".sg-line.sg-highlight-hide")
-                     .style("visibility", "")
+                     .style("opacity", "")
                      .classed("sg-highlight-hide", false);
         return this;
     };
@@ -48,14 +48,14 @@ export default function(SimpleGraph, d3) {
         this.svgGraph.selectAll(".sg-point").each((d, i, s) => {
             if(options.series && !~options.series.indexOf(d.series)) return;
             if(options.filter && !options.filter(this._clonePointData(d), s[i])) return;
-            let highlight = d3(s[i].node().cloneNode(true)).attr("class", "sg-point-highlight"), 
+            let highlight = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight"), 
                 xScale    = this.x.scale, 
                 yScale    = d.y2 ? this.y2.scale : this.y.scale, 
                 x         = xScale(d.x), 
                 y         = yScale(isNaN(d.y) ? 0 : d.y), 
                 size      = options.size || d.size;
             if(typeof size === "function") size = size.call(d);
-            switch(this.ptSeriesShapes[series]) {
+            switch(this.ptSeriesShapes[d.series]) {
                 case "triangle":
                 case "triangle-up":
                     size *= 2.0;
@@ -90,13 +90,13 @@ export default function(SimpleGraph, d3) {
                     highlight.attr("r", size);
                     break;
             }
-            this.svgGraph.append(highlight);
             if(options.style) {
                 for(let sk in options.style) {
                     highlight.style(sk, options.style[sk]);
                 }
             }
-            s[i].classed("sg-highlight-hide", true)
+            this.svgGraph.node().append(highlight.node());
+            d3.select(s[i]).classed("sg-highlight-hide", true)
                 .style("opacity", "0");
         });
         return this;
@@ -111,29 +111,29 @@ export default function(SimpleGraph, d3) {
         this.svgGraph.selectAll(".sg-line").each((d, i, s) => {
             if(options.series && !~options.series.indexOf(d.series)) return;
             if(options.filter && !options.filter(this._cloneLineData(d), s[i])) return;
-            let front = d3(s[i].node().cloneNode(true)).attr("class", "sg-point-highlight"), 
+            let front = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight"), 
                 behind = null;
             if(!options.noblur) {
-                behind = d3(s[i].node().cloneNode(true))
+                behind = d3.select(s[i].cloneNode(true))
                     .attr("class", "sg-line-highlight")
                     .attr("filter", "url('#sg-effect-blur')")
                     .style("fill", 'none')
                     .style("filter", 'brightness(135%)')
                     .style("opacity", "0.7");
-                this.svgGraph.append(behind);
+                if(options.noblur && options.blurstyle) {
+                    for(let sk in options.blurstyle) {
+                        behind.style(sk, options.blurstyle[sk]);
+                    }
+                }
+                this.svgGraph.node().append(behind.node());
             }
-            this.svgGraph.append(front);
             if(options.style) {
                 for(let sk in options.style) {
                     front.style(sk, options.style[sk]);
                 }
             }
-            if(options.noblur && options.blurstyle) {
-                for(let sk in options.blurstyle) {
-                    behind.style(sk, options.blurstyle[sk]);
-                }
-            }
-            s[i].classed("sg-highlight-hide", true)
+            this.svgGraph.node().append(front.node());
+            d3.select(s[i]).classed("sg-highlight-hide", true)
                 .style("opacity", "0");
         });
         return this;
@@ -147,10 +147,9 @@ export default function(SimpleGraph, d3) {
         this.svgGraph.selectAll(".sg-area").each((d, i, s) => {
             if(options.series && !~options.series.indexOf(d.series)) return;
             if(options.filter && !options.filter(this._cloneAreaData(d), s[i])) return;
-            let highlight = d3(s[i].node().cloneNode(true))
+            let highlight = d3.select(s[i].cloneNode(true))
                 .attr("class", "sg-point-highlight")
                 .style("opacity", "1");
-            this.svgGraph.append(highlight);
             if(!options.nooutline) {
                 highlight.style("stroke", "#000");
                 highlight.style("stroke-width", "1.5")
@@ -160,7 +159,8 @@ export default function(SimpleGraph, d3) {
                     highlight.style(sk, options.style[sk]);
                 }
             }
-            s[i].classed("sg-highlight-hide", true)
+            this.svgGraph.node().append(highlight.node());
+            d3.select(s[i]).classed("sg-highlight-hide", true)
                 .style("opacity", "0");
         });
         return this;
