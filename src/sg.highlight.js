@@ -95,6 +95,7 @@ export default function(SimpleGraph, d3) {
                     highlight.style(sk, options.style[sk]);
                 }
             }
+            highlight.style('pointer-events', 'none');
             this.svgGraph.node().append(highlight.node());
             d3.select(s[i]).classed("sg-highlight-hide", true)
                 .style("opacity", "0");
@@ -125,6 +126,7 @@ export default function(SimpleGraph, d3) {
                         behind.style(sk, options.blurstyle[sk]);
                     }
                 }
+                behind.style('pointer-events', 'none');
                 this.svgGraph.node().append(behind.node());
             }
             if(options.style) {
@@ -132,6 +134,7 @@ export default function(SimpleGraph, d3) {
                     front.style(sk, options.style[sk]);
                 }
             }
+            front.style('pointer-events', 'none');
             this.svgGraph.node().append(front.node());
             d3.select(s[i]).classed("sg-highlight-hide", true)
                 .style("opacity", "0");
@@ -159,6 +162,7 @@ export default function(SimpleGraph, d3) {
                     highlight.style(sk, options.style[sk]);
                 }
             }
+            highlight.style('pointer-events', 'none');
             this.svgGraph.node().append(highlight.node());
             d3.select(s[i]).classed("sg-highlight-hide", true)
                 .style("opacity", "0");
