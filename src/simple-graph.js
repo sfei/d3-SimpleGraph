@@ -1,145 +1,128 @@
 /*************************************************************************************************************
  * D3-Simple-Graph
- * @version v2.2.2
+ * @version v2.3.0
  * @author Lawrence Sim
- * @copyright 2022 - San Francisco Estuary Institute
+ * @copyright 2023 - San Francisco Estuary Institute
  * @license This project is licensed under the GNU Lesser General Public License.
  ************************************************************************************************************/
 
-// START IIFE (Immediately-Invoked Function Expression) Constructor
-!function(root, factory) {
-    // Because Internet Explorer.. All credit due to Mathias Bynens <https://mathiasbynens.be/>
-    if(!String.prototype.startsWith) {
-        (function() {
-            'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
-            var defineProperty = (function() {
-                // IE 8 only supports `Object.defineProperty` on DOM elements
-                try {
-                    var object = {};
-                    var $defineProperty = Object.defineProperty;
-                    var result = $defineProperty(object, object, object) && $defineProperty;
-                } catch(error) {}
-                return result;
-            }());
-            var toString = {}.toString;
-            var startsWith = function(search) {
-                if (this == null) {
-                    throw TypeError();
-                }
-                var string = String(this);
-                if (search && toString.call(search) == '[object RegExp]') {
-                    throw TypeError();
-                }
-                var stringLength = string.length;
-                var searchString = String(search);
-                var searchLength = searchString.length;
-                var position = arguments.length > 1 ? arguments[1] : undefined;
-                // `ToInteger`
-                var pos = position ? Number(position) : 0;
-                if (pos != pos) { // better `isNaN`
-                    pos = 0;
-                }
-                var start = Math.min(Math.max(pos, 0), stringLength);
-                // Avoid the `indexOf` call if no match is possible
-                if (searchLength + start > stringLength) {
+// Because Internet Explorer.. All credit due to Mathias Bynens <https://mathiasbynens.be/>
+if(!String.prototype.startsWith) {
+    (function() {
+        'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
+        var defineProperty = (function() {
+            // IE 8 only supports `Object.defineProperty` on DOM elements
+            try {
+                var object = {};
+                var $defineProperty = Object.defineProperty;
+                var result = $defineProperty(object, object, object) && $defineProperty;
+            } catch(error) {}
+            return result;
+        }());
+        var toString = {}.toString;
+        var startsWith = function(search) {
+            if (this == null) {
+                throw TypeError();
+            }
+            var string = String(this);
+            if (search && toString.call(search) == '[object RegExp]') {
+                throw TypeError();
+            }
+            var stringLength = string.length;
+            var searchString = String(search);
+            var searchLength = searchString.length;
+            var position = arguments.length > 1 ? arguments[1] : undefined;
+            // `ToInteger`
+            var pos = position ? Number(position) : 0;
+            if (pos != pos) { // better `isNaN`
+                pos = 0;
+            }
+            var start = Math.min(Math.max(pos, 0), stringLength);
+            // Avoid the `indexOf` call if no match is possible
+            if (searchLength + start > stringLength) {
+                return false;
+            }
+            var index = -1;
+            while (++index < searchLength) {
+                if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
                     return false;
                 }
-                var index = -1;
-                while (++index < searchLength) {
-                    if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
-                        return false;
-                    }
-                }
-                return true;
-            };
-            if (defineProperty) {
-                defineProperty(String.prototype, 'startsWith', {
-                    'value': startsWith,
-                    'configurable': true,
-                    'writable': true
-                });
-            } else {
-                String.prototype.startsWith = startsWith;
             }
-        }());
-    }
-    if(!String.prototype.endsWith) {
-        (function() {
-            'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
-            var defineProperty = (function() {
-                // IE 8 only supports `Object.defineProperty` on DOM elements
-                try {
-                    var object = {};
-                    var $defineProperty = Object.defineProperty;
-                    var result = $defineProperty(object, object, object) && $defineProperty;
-                } catch(error) {}
-                return result;
-            }());
-            var toString = {}.toString;
-            var endsWith = function(search) {
-                if (this == null) {
-                    throw TypeError();
-                }
-                var string = String(this);
-                if (search && toString.call(search) == '[object RegExp]') {
-                    throw TypeError();
-                }
-                var stringLength = string.length;
-                var searchString = String(search);
-                var searchLength = searchString.length;
-                var pos = stringLength;
-                if (arguments.length > 1) {
-                    var position = arguments[1];
-                    if (position !== undefined) {
-                        // `ToInteger`
-                        pos = position ? Number(position) : 0;
-                        if (pos != pos) { // better `isNaN`
-                            pos = 0;
-                        }
-                    }
-                }
-                var end = Math.min(Math.max(pos, 0), stringLength);
-                var start = end - searchLength;
-                if (start < 0) {
-                    return false;
-                }
-                var index = -1;
-                while (++index < searchLength) {
-                    if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
-                        return false;
-                    }
-                }
-                return true;
-            };
-            if (defineProperty) {
-                defineProperty(String.prototype, 'endsWith', {
-                    'value': endsWith,
-                    'configurable': true,
-                    'writable': true
-                });
-            } else {
-                String.prototype.endsWith = endsWith;
-            }
-        }());
-    }
-    
-    // CommonJS-based (e.g. NodeJS) API
-    if(typeof module === "object" && module.exports) {
-        module.exports = factory(require("d3"));
-    // AMD-based (e.g. RequireJS) API
-    } else if(typeof define === "function" && define.amd) {
-        define(["d3"], factory);
-    // Regular instantiation 
-    } else {
-        root.SimpleGraph = factory(root.d3);
-    }
-    
+            return true;
+        };
+        if (defineProperty) {
+            defineProperty(String.prototype, 'startsWith', {
+                'value': startsWith,
+                'configurable': true,
+                'writable': true
+            });
+        } else {
+            String.prototype.startsWith = startsWith;
+        }
+    }());
 }
-/** @class SimpleGraph */
-(this, function(d3) {
+if(!String.prototype.endsWith) {
+    (function() {
+        'use strict'; // needed to support `apply`/`call` with `undefined`/`null`
+        var defineProperty = (function() {
+            // IE 8 only supports `Object.defineProperty` on DOM elements
+            try {
+                var object = {};
+                var $defineProperty = Object.defineProperty;
+                var result = $defineProperty(object, object, object) && $defineProperty;
+            } catch(error) {}
+            return result;
+        }());
+        var toString = {}.toString;
+        var endsWith = function(search) {
+            if (this == null) {
+                throw TypeError();
+            }
+            var string = String(this);
+            if (search && toString.call(search) == '[object RegExp]') {
+                throw TypeError();
+            }
+            var stringLength = string.length;
+            var searchString = String(search);
+            var searchLength = searchString.length;
+            var pos = stringLength;
+            if (arguments.length > 1) {
+                var position = arguments[1];
+                if (position !== undefined) {
+                    // `ToInteger`
+                    pos = position ? Number(position) : 0;
+                    if (pos != pos) { // better `isNaN`
+                        pos = 0;
+                    }
+                }
+            }
+            var end = Math.min(Math.max(pos, 0), stringLength);
+            var start = end - searchLength;
+            if (start < 0) {
+                return false;
+            }
+            var index = -1;
+            while (++index < searchLength) {
+                if (string.charCodeAt(start + index) != searchString.charCodeAt(index)) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        if (defineProperty) {
+            defineProperty(String.prototype, 'endsWith', {
+                'value': endsWith,
+                'configurable': true,
+                'writable': true
+            });
+        } else {
+            String.prototype.endsWith = endsWith;
+        }
+    }());
+}
 
-/**
- * Create a SimpleGraph instance and draw an empty graph.
+/** 
+ * @class SimpleGraph 
  * @param {Object} [options] - Object literal of options (all optional).
  * @param {string} [options.container='body'] - The DOM element query/selector to the element to append the 
  *        graph to.
@@ -1217,7 +1200,7 @@ SimpleGraph.prototype.addPointsDataAsArray = function(name, data, size, y2Axis, 
         }
         var p = {
             series: name, 
-            x: parseFloat(data[i][0]),
+            x: data[i][0],
             y: parseFloat(data[i][1]), 
             y2: y2Axis ? true : false, 
             pointsize: size
@@ -2148,9 +2131,10 @@ SimpleGraph.prototype._getLineSegmentsFromFunction = function(lineFunction, reso
         };
     }
 
-    var lineSegments = [];
-    var segment = [];
-    var lastX = x = xRange[0];
+    var lineSegments = [], 
+        segment = [], 
+        lastX = xRange[0], 
+        x = xRange[0];
 
     while(true) {
         var markForBreak = false;
@@ -2629,10 +2613,4 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
     img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgHtml)));
 };
 
-
-// return object definition
-return SimpleGraph;
-
-
-// END IIFE Constructor
-});
+export default SimpleGraph;

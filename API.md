@@ -116,7 +116,7 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
 * `bgstyle` (*number*) Optional styles for the legend. These are SVG style attributes with the exception of support for padding.
 * `itemsPerColumn` (*object*) Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, all will be put in single column. Note that if the next column exceeds the right margin of the graph, placement errors will result.
 * `rowHeight` (*number*) The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.
-* `exclude` (*number*) The height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.
+* `exclude` (*string*|*string[]*) The types of shape data (i.e. 'points', 'lines', and/or 'areas') to ignore from the graph. Maybe be an array or values in single string separated by whitespace.
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
