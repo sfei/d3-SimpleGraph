@@ -8,12 +8,12 @@ export default function(SimpleGraph) {
         series = (series === null) ? "" : String(series);
         options = options || {};
         options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
-        options.y2Axis = !!options.y2Axis;
+        options.y2Axis = !!(options.y2Axis || options.y2);
         if(options.shape) this.setPointSeriesShape(series, options.shape);
 
         let p = {
             series: series, 
-            x: parseFloat(xValue), 
+            x: xValue, 
             y: parseFloat(yValue), 
             y2: options.y2Axis, 
             size: options.size, 
@@ -32,7 +32,7 @@ export default function(SimpleGraph) {
         this.ptSeriesShapes = this.ptSeriesShapes || {};
         options = options || {};
         options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
-        options.y2Axis = !!options.y2Axis;
+        options.y2Axis = !!(options.y2Axis || options.y2);
         options.additionalDataKeys = options.additionalDataKeys || null;
 
         // first we gotta comb through the data and organize it nicely
@@ -88,7 +88,7 @@ export default function(SimpleGraph) {
         series = (series === null) ? "" : String(series);
         options = options || {};
         options.size = !options.size || (typeof options.size !== "function" && options.size <= 0) ? options.size = 10 : options.size;
-        options.y2Axis = !!options.y2Axis;
+        options.y2Axis = !!(options.y2Axis || options.y2);
         options.showNulls = !!options.showNulls;
         if(options.shape) this.setPointSeriesShape(series, options.shape);
 

@@ -73,6 +73,9 @@ Due to nature of coordinates provided as primitive types, no data binding will o
     <tr>
       <td>options.y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
     </tr>
+    <tr>
+      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -122,6 +125,9 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
       <td>options.y2Axis</td><td>boolean</td><td>If true, points area assigned to y2 axis.</td>
     </tr>
     <tr>
+      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+    </tr>
+    <tr>
       <td>options.additionalDataKeys</td><td>string[]</td><td>Additional keys for data you want to store for each point.</td>
     </tr>
   </tbody>
@@ -129,7 +135,7 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-addpointsdataasarray" href="#a-">#</a> *SimpleGraph*.**addpointsdataasarray**(*series*, *data*[, *options*]]])
+<a name="a-addpointsdataasarray" href="#a-">#</a> *SimpleGraph*.**addPointsDataAsArray**(*series*, *data*[, *options*])
 
 Add multiple point data from an array of x,y coordinates. 
 
@@ -157,6 +163,9 @@ For each point, each x,y coordinate pair from the data array will be bound.
     </tr>
     <tr>
       <td>options.y2Axis</td><td>boolean</td><td>If true, points are assigned to y2 axis.</td>
+    </tr>
+    <tr>
+      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
     </tr>
   </tbody>
 </table>
@@ -229,6 +238,9 @@ Add line data as an array of coordinates.
     <tr>
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
+    <tr>
+      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -266,6 +278,9 @@ The function cannot be bound in anyway that syncs changes, as it is provided dir
     <tr>
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
+    <tr>
+      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+    </tr>
   </tbody>
 </table>
 
@@ -301,6 +316,9 @@ The coordinate array and optional styles will be bound.
     </tr>
     <tr>
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
+    </tr>
+    <tr>
+      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
     </tr>
   </tbody>
 </table>
@@ -341,6 +359,9 @@ The functions cannot be bound in anyway that syncs changes, as they are provided
     </tr>
     <tr>
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
+    </tr>
+    <tr>
+      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
     </tr>
   </tbody>
 </table>

@@ -6,7 +6,7 @@ export default function(SimpleGraph, d3) {
         var style = {};
         if(options.style) {
             for(let k in options.style) {
-                style[k] = options.style;
+                style[k] = options.style[k];
             }
         }
         this.areas = this.areas || [];
@@ -16,7 +16,7 @@ export default function(SimpleGraph, d3) {
             coords:      areaCoordinates, 
             resolution:  null, 
             xRange:      null, 
-            y2:          !!options.y2Axis, 
+            y2:          !!(options.y2Axis || options.y2), 
             style:       options.style || {}, 
             interpolate: options.interpolation || d3.curveLinear, 
             _bind:       {coords: areaCoordinates, style: style}
@@ -31,7 +31,7 @@ export default function(SimpleGraph, d3) {
         var style = {};
         if(options.style) {
             for(let k in options.style) {
-                style[k] = options.style;
+                style[k] = options.style[k];
             }
         }
         this.areas = this.areas || [];
@@ -40,7 +40,7 @@ export default function(SimpleGraph, d3) {
             functions:   [lineFunctionBottom, lineFunctionTop], 
             coords:      null, 
             xRange:      xRange ? [...xRange] : null, 
-            y2:          !!options.y2Axis, 
+            y2:          !!(options.y2Axis || options.y2), 
             style:       options.style || {}, 
             interpolate: options.interpolation || d3.curveLinear, 
             _bind:       {xRange: xRange, style: style}

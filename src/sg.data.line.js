@@ -11,7 +11,7 @@ export default function(SimpleGraph, d3) {
         var style = {};
         if(options.style) {
             for(let k in options.style) {
-                style[k] = options.style;
+                style[k] = options.style[k];
             }
         }
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
@@ -22,7 +22,7 @@ export default function(SimpleGraph, d3) {
             lineFunction: null, 
             coords:       coords.map(c => [...c]), 
             xRange:       null, 
-            y2:           !!options.y2Axis, 
+            y2:           !!(options.y2Axis || options.y2), 
             style:        style, 
             interpolate:  options.interpolation || d3.curveLinear, 
             _bind:        {coords: coords, style: style}
@@ -40,7 +40,7 @@ export default function(SimpleGraph, d3) {
         var style = options.style || {};
         if(options.style) {
             for(let k in options.style) {
-                style[k] = options.style;
+                style[k] = options.style[k];
             }
         }
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
@@ -52,7 +52,7 @@ export default function(SimpleGraph, d3) {
             lineFunction: lineFunction, 
             coords:       null, 
             xRange:       xRange ? [...xRange] : null, 
-            y2:           !!options.y2Axis, 
+            y2:           !!(options.y2Axis || options.y2), 
             style:        style, 
             interpolate:  options.interpolation || d3.curveLinear, 
             _bind:        {xRange: xRange, style: style}
@@ -69,7 +69,7 @@ export default function(SimpleGraph, d3) {
         var style = {};
         if(options.style) {
             for(let k in options.style) {
-                style[k] = options.style;
+                style[k] = options.style[k];
             }
         }
         if(!style['stroke-width'] || typeof style['stroke-width'] !== "number") {
