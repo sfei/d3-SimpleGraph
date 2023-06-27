@@ -63,7 +63,7 @@
       <span 
         class="btn" 
         helptitle="Adding Points Data"
-        helptext="We can add our array of objects (var `score` created in global scope for this page) and convert it to points data in our SimpleGraph instance. To do so, we need to specify which keys denote what.
+        helptext="We can add our array of objects (<code class='inline'>score</code> created in global scope for this page) and convert it to points data in our SimpleGraph instance. To do so, we need to specify which keys denote what.
           <br /><br />
           Points can also be added individually or as an array, but this method allows us to add multiple data series at once.
           <br /><br />
@@ -135,7 +135,7 @@ graph.drawLines();"
       <span 
         class="btn" 
         helptitle="Adding Lines as Functions"
-        helptext="Another way to add lines is supply a callback function such that function(x) = y, then let the graph object handle drawing it. Additionally, to smooth the line (otherwise the graph will just linearly connect x,y points from the function drawn at a certain interval), we will use a smoothing function via the interpolation option.
+        helptext="Another way to add lines is supply a callback function such that f(x)=y, then let the graph object handle drawing it. To smooth the line (otherwise the graph will just linearly connect x,y points from the function drawn at a certain interval), we will use a smoothing function via the interpolation parameter in the options.
           <br /><br />
           <span class='func'><b>addLineDataAsFunction</b>(<i>name</i>, <i>lineFunction</i>[, <i>xRange</i>[, <i>options</i>]])</span>
           <p class='param'>@param {string} name - Series name</p>

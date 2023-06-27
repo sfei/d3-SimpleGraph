@@ -128,7 +128,7 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
       <td>options.rowHeight</td><td>number</td><td>Optional height per row. Default of 24 is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</td>
     </tr>
     <tr>
-      <td>options.exclude</td><td>string[]</td><td>Can optionally name data series to exclude from adding to the legend. Provided as list or whitespace-separated string of data series names (though list is preferred as data series names may include spaces). Case sensitive and remove any matching data series by name from all types of data (points, lines, and areas).</td>
+      <td>options.exclude</td><td>string[]</td><td>Can optionally name data series to exclude from adding to the legend. Provided as list or whitespace-separated string of data series names (though list is preferred as data series names may include spaces). Case sensitive and remove any matching data series by name from all types of data (points, lines, and areas).<br /><br />Additionally, suffix a "::shape" to specify only for a specific shape. E.g. the value "scores::points" would exclude any dataseries named "scores" of points type, but not for lines or areas. A value of "::points" would exclude all points data.</td>
     </tr>
   </tbody>
 </table>

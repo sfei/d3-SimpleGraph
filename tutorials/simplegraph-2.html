@@ -27,15 +27,15 @@
         class="btn" 
         helptitle="Re-adding Points Data"
         helptext="Let's say we want to change our point dataset. One way to do so is by removing and re-adding the data. We can either remove datasets by series name, or just remove all datasets associated with points. Note that clearing won't erase the points visually drawn until a redraw is called. But before we do that, let's re-add the same points data we used previously, but add some additional optional parameters.
-          <br /><br />
-          First, we'll play with dynamic sizing. Parameters of a data series, when provided as functions, like this optional size function, are called within a <code class='inline'>this</code> context of the data as copied within the SimpleGraph instance (you could, though it is strongly discouraged, modify data this way. Additionally it is provided arguments of the same (for the first), and the bound data object (if available) from when the data was created. In this case, <code class='inline'>this.y</code> is the same value as <code class='inline'>d.y</code> or <code class='inline'>o.score</code>.
-          <br /><br />
-          Additionally, we're going to add an additional data keys to copy the wetland class information. This comes in handy when calling tooltips layer one.
-          <br /><br />
-          Note that after redrawing, options we set previously (like color and point shape) are still preserved, as they are mappings tied to the SimpleGraph instance, not associated with the dataset itself.
-          <br /><br />
-          <span class='func'><b>clearPointsData</b>([<i>series</i>])</span>
-          <p class='param'>@param {string} series - If provided, only removes data series matching this name.</p>"
+        <br /><br />
+        First, we'll play with dynamic sizing. Parameters of a data series, when provided as functions, like this optional size function, are called within the context (accessed via <code class='inline'>this</code>) of the data (as copied within the SimpleGraph instance). You could, though it is strongly discouraged, modify the data this way. Additionally, the function is provided arguments of the same context (as the first argument) and the bound data object (if available) from when the data was created. In this case, <code class='inline'>this.y</code> is the same value as <code class='inline'>d.y</code> or <code class='inline'>o.score</code>.
+        <br /><br />
+        Next, we're going to add an additional data key to copy over the wetland class information along with the copied name, age, and score for the series name and x/y data. This additional information will come in handy later for the tooltips.
+        <br /><br />
+        Note that after redrawing, options we set previously (like color and point shape) are still preserved, as they are mappings tied to the SimpleGraph instance, not associated with the dataset itself.
+        <br /><br />
+        <span class='func'><b>clearPointsData</b>([<i>series</i>])</span>
+        <p class='param'>@param {string} series - If provided, only removes data series matching this name.</p>"
         sampleCode="// remove all points data
 graph.clearPointsData();
 graph.addPointsData(scores, 'name', 'age', 'score', {
@@ -50,7 +50,7 @@ graph.drawPoints();"
       <span 
         class="btn" 
         helptitle="Connecting Points Data"
-        helptext="To connect points of the same data series by straight lines, simply call the function below. If there are 2 or more data points on the same x-value, the mean y-value is used. These lines are referred to as 'point-lines' to differentiate from lines derived from line data.
+        helptext="To connect points of the same data series by straight lines, simply call the function below. If there are two or more data points on the same x-value, the mean y-value is used. These lines are referred to as 'point-lines' to differentiate from lines derived from line data.
           <br /><br />
           <span class='func'><b>addLinesDataFromPoints</b>([<i>forSeries</i>[, <i>options</i>])</span>
           <p class='param'>@param {string|string[]|function} [forSeries] - To filter series on which to add connecting lines, either provide a series name, an array of series names, or a callback function which will be provided the name of the series to check. If null/undefined, draws point-lines for all point series.</p>
@@ -77,9 +77,9 @@ graph.drawPoints();"
       <span 
         class="btn" 
         helptitle="Adding a Grid and Legend"
-        helptext="To draw a legend, all you have to do is specify the position. The class with automatically create the legend for all datapoints. We will also include some additional styling parameters.
+        helptext="To draw a legend, all you have to do is specify the position. The class will automatically create the legend for all datapoints. We will also include some additional styling parameters.
           <br /><br />
-          Note that due to the order called, the grid would be drawn over the items in the chart. You can re-invoke drawLines() and drawPoints() to redraw the items over the grid, however the tooltip functionality will have to be reapplied, and they would also draw over the legend if they overlapped. In a similar vein, it may be pertinent to redraw the axes (drawAxes()) after adding the other elements. Potentially then, drawing the grid might want to be the first thing you draw before anything else.
+          Note that due to the order called, the grid would be drawn over the items in the chart. You can re-invoke <code class='inline'>drawLines()</code> and <code class='inline'>drawPoints()</code> to redraw the items over the grid, however the tooltip functionality will also have to be reapplied, and they would also draw over the legend if they overlapped. In a similar vein, it may be pertinent to redraw the axes (<code class='inline'>drawAxes()</code>) after adding the other elements. Potentially then, drawing the grid might want to be the first thing you draw before anything else.
           <br /><br />
           <span class='func'><b>drawGrid</b>([<i>style</i>])</span>
           <p class='param'>@param {Object} [style={opacity:0.4,stroke:'#555','stroke-width':0.3}]</p>
@@ -90,7 +90,8 @@ graph.drawPoints();"
           <p class='param'>@param {string} [options.anchor='left'] - Optional anchor for the coordinate x-position (left, middle, or right).</p>
           <p class='param'>@param {Object} [options.bgstyle] - Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</p>
           <p class='param'>@param {number} [options.itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, infinite (that is, all will be put in single column). Note that if the next column exceeds the right margin of the graph, placement errors will result.</p>
-          <p class='param'>@param {number} [options.rowHeight=24] - The height per row. Default is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</p>"
+          <p class='param'>@param {number} [options.rowHeight=24] - The height per row. Default is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</p>
+          <p class='param'>@param {string[]} [options.exclude] - Can optionally name data series to exclude from adding to the legend. Provided as list or whitespace-separated string of data series names (though list is preferred as data series names may include spaces). Case sensitive and remove any matching data series by name from all types of data (points, lines, and areas).</p>"
         sampleCode="graph.drawGrid();
 graph.drawLegend(
   [50,20],  // place legend near top-left of graph
@@ -160,7 +161,7 @@ graph.addTooltipToLines(
       <span 
         class="btn" 
         helptitle="Adding Tooltips to Lines (Coordinates-based)"
-        helptext="Now for our other line. As this was defined from coordinates as a fairly coarse resolution, we'll manually interpolate ourselves using the coordinate data (which we have defined as <code class='inline'>lineACoordinates</code>, but we can also pull from the supplied data)."
+        helptext="Now for our other line. As this was defined from coordinates at a fairly coarse resolution, we'll manually interpolate ourselves using the coordinate data (which we have defined as <code class='inline'>lineACoordinates</code>, but we can also pull from the supplied data)."
         sampleCode="// Since line A has no interpolation (linear), is only a few coordinates long,
 // and is sorted by x, we're just going to do it really simply for demonstration
 graph.addTooltipToLines(

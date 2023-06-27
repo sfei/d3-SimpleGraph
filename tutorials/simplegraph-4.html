@@ -24,8 +24,8 @@
       <span 
           class="btn" 
           helptitle="Add an Area"
-          helptext="Let's add an area to this graph, which we already covered, but with one added twist that will become important later. The functions will be stored in an object called `areaFunctions`, and instead of passing the functions themselves, we will again wrap the callbacks passed to our area creation function in yet another arrow function.<br /><br />
-            This means that at any point we can redefine the functions in `areaFunctions` and the references will also update in SimpleGraph.<br /><br />
+          helptext="Let's add an area to this graph, which we already covered, but with one added twist that will become important later. The functions will be stored in an object called <code class='inline'>areaFunctions</code>, and instead of passing the functions themselves, we will again wrap the callbacks passed to our area creation function in yet another arrow function.<br /><br />
+            This means that at any point we can redefine the functions in <code class='inline'>areaFunctions</code> and the references will also update in SimpleGraph.<br /><br />
             As a final step, we'll redraw the points and lines so they lay on top of the area."
           sampleCode="var areaFunctions = {
     upper: x => 25, 
@@ -51,7 +51,7 @@ graph.drawPoints();"
           helptitle="Updating Area Data"
           helptext="Using the extended series of callbacks before, one way we can update the area is simply to update the function being pointed at by the final variable reference.<br /><br />
           There is also another functional method to update data, which we can use to additionally update the style. <br /><br />
-          Note that no changes will be rendered until we redraw, which we could call with `graph.drawAreas()`. But we'll hold for now so that the last step can demonstrate transition animations via draw update functions.<br /><br />
+          Note that no changes will be rendered until we redraw, which we could call with <code class='inline'>graph.drawAreas()</code>. But we'll hold for now so that the last step can demonstrate transition animations via draw update functions.<br /><br />
           <span class='func'><b>updateAreaData</b>(series, index, update):</span>
           <p class='param'>@param {string} series - Series name.</p>
           <p class='param'>@param {number} index - Index of item in series. Can be negative. Can be negative to traverse the array in reverse. Or null/undefined to apply to all in the series.</p>
@@ -79,7 +79,7 @@ graph.updateAreaData(
       <span 
           class="btn" 
           helptitle="Updating Lines Data"
-          helptext="Lines created via coordinates are bound to the original coordinate array supplied to create them, such that when we call <code class='inline'>updateLinesData()</code>, any bound data is sync-ed up. However, since this is a line created from a function, we will update manually update the line function.<br /><br />
+          helptext="Lines created via coordinates are bound to the original coordinate array supplied to create them, such that when we call <code class='inline'>updateLinesData()</code>, any bound data is sync-ed up. However, since this is a line created from a function, we will manually update the line function.<br /><br />
           <span class='func'><b>updateLinesData</b>(series, index, update):</span>
           <p class='param'>@param {string} series - Series name.</p>
           <p class='param'>@param {number} index - Index of item in series. Can be negative to traverse the array in reverse. Or null/undefined to apply to all in the series.</p>

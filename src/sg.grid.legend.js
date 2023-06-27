@@ -55,8 +55,47 @@
             bgstyle = options.bgstyle || {}, 
             exclude = options.exclude || [];
 
+        // exclude formatting
         if(!exclude) { exclude = []; }
         if(typeof exclude === "string") { exclude = exclude.trim().split(/\s+/); }
+        let excludeObj = {
+            "all":    [], 
+            "points": [], 
+            "lines":  [], 
+            "areas":  []
+        };
+        exclude.forEach(seriesname => {
+            let excludeSub = excludeObj.all, 
+                nameparts = seriesname.split("::").map(s => s.trim());
+            if(nameparts.length > 1) {
+                switch(nameparts[1].toLowerCase()) {
+                    case "point":
+                    case "points":
+                        if(!nameparts[0]) excludeObj.points = true;
+                        excludeSub = excludeObj.points;
+                        break;
+                    case "line":
+                    case "lines":
+                        if(!nameparts[0]) excludeObj.lines = true;
+                        excludeSub = excludeObj.lines;
+                        break;
+                    case "area":
+                    case "areas":
+                        if(!nameparts[0]) excludeObj.areas = true;
+                        excludeSub = excludeObj.areas;
+                        break;
+                    default:
+                        return;
+                }
+            }
+            if(excludeSub === true) return;
+            excludeSub.push(nameparts[0]);
+        });
+        let checkExclude = (seriesname, seriesshape) => (
+            excludeObj[seriesshape] === true
+            || ~excludeObj[seriesshape].indexOf(seriesname)
+            || !excludeObj.all.indexOf(seriesname)
+        );
         
         // default styles for legend container (padding is set via explicit sides)
         if(bgstyle.padding) {
@@ -265,35 +304,35 @@
         }
         
         // start with areas data
-        if(this.areas && !~exclude.indexOf("areas")) {
+        if(this.areas && excludeObj.areas !== true) {
             let areaSeries = [];
             for(let i = 0; i < this.areas.length; i++) {
                 let name = this.areas[i].series;
-                if(!~areaSeries.indexOf(name)) {
+                if(!checkExclude(name, 'areas') && !~areaSeries.indexOf(name)) {
                     areaSeries.push(name);
-                    let color = this.getColorBySeriesName(this.areas[i].series);
+                    let color = this.getColorBySeriesName(name);
                     addAreaItem(this.areas[i], typeof color === "function" ? color(this.areas[i]) : color);
                 }
             }
         }
         // then lines
-        if(this.lines && !~exclude.indexOf("lines")) {
+        if(this.lines && excludeObj.lines !== true) {
             let lineSeries = [];
             for(let i = 0; i < this.lines.length; i++) {
                 let name = this.lines[i].series;
-                if(!~lineSeries.indexOf(name)) {
+                if(!checkExclude(name, 'lines') && !~lineSeries.indexOf(name)) {
                     lineSeries.push(name);
-                    let color = this.getColorBySeriesName(this.lines[i].series);
+                    let color = this.getColorBySeriesName(name);
                     addLineItem(this.lines[i], typeof color === "function" ? color(this.lines[i]) : color);
                 }
             }
         }
         // finally points
-        if(this.points && !~exclude.indexOf("points")) {
+        if(this.points && excludeObj.points !== true) {
             let pointSeries = [];
             for(let i = 0; i < this.points.length; i++) {
                 let name = this.points[i].series;
-                if(!~pointSeries.indexOf(name)) {
+                if(!checkExclude(name, 'points') && !~pointSeries.indexOf(name)) {
                     pointSeries.push(name);
                     // find connected point line series, if it exists
                     let drawPointLine = false;
@@ -306,7 +345,7 @@
                             }
                         }
                     }
-                    let color = this.getColorBySeriesName(this.points[i].series);
+                    let color = this.getColorBySeriesName(name);
                     color = typeof color === "function" ? color(this.points[i]) : color;
                     addPointItem(this.points[i], this.getPointSeriesShape(name), color, drawPointLine);
                 }

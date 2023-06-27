@@ -118,10 +118,13 @@ graph.addAreaBetweenTwoLines(
             <p class='param'>@param {number} [transition.duration] - Transition duration in milliseconds (defaults to 200).</p>
             <p class='param'>@param {number} [transition.ease] - Transition easing function (defaults to d3.easePolyOut).</p>"
           sampleCode="graph.drawAreas(
-    null,                                   // default resolution
+    null,                                   // use default resolution
     {duration: 1000, ease: d3.easePolyOut}  // transition fade in
 );
-graph.drawAxes();" 
+graph.drawAxes(
+    'inside x-outside center y-bottom y2-top', 
+    'top'
+);" 
           onclick="openHelp(this)">
         Transition Draw
       </span>
