@@ -1,328 +1,271 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>SimpleGraph Additional Functionality</title>
+    <title>SimpleGraph Tutorial 2</title>
     <meta charset="UTF-8">
-    <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script src="../d3.simplegraph.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
-    <style>
-      body {
-        font-family: Arial;
-        font-size: 14px;
-      }
-      .btn {
-        display: inline-block;
-        margin: 2px 4px;
-        background: #c5c7c9;
-        background-image: -webkit-linear-gradient(top, #c5c7c9, #8a8e91);
-        background-image: -moz-linear-gradient(top, #c5c7c9, #8a8e91);
-        background-image: -ms-linear-gradient(top, #c5c7c9, #8a8e91);
-        background-image: -o-linear-gradient(top, #c5c7c9, #8a8e91);
-        background-image: linear-gradient(to bottom, #c5c7c9, #8a8e91);
-        -webkit-border-radius: 4;
-        -moz-border-radius: 4;
-        border-radius: 4px;
-        color: #ffffff;
-        padding: 6px 10px;
-      }
-      .btn:hover {
-        background: #787b7d;
-        background-image: -webkit-linear-gradient(top, #787b7d, #3a3f42);
-        background-image: -moz-linear-gradient(top, #787b7d, #3a3f42);
-        background-image: -ms-linear-gradient(top, #787b7d, #3a3f42);
-        background-image: -o-linear-gradient(top, #787b7d, #3a3f42);
-        background-image: linear-gradient(to bottom, #787b7d, #3a3f42);
-        text-decoration: none;
-        cursor: pointer;
-      }
-      #help-dialog-container {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow-y: auto;
-        background-color: rgba(80, 80, 80, 0.4);
-      }
-      #help-dialog {
-        position: relative;
-        top: 20%;
-        margin: auto;
-        margin-bottom: 40px;
-        width: 600px;
-        min-height: 200px;
-        background: #77b8e0;
-        background-image: -webkit-linear-gradient(top, #77b8e0, #5083ba);
-        background-image: -moz-linear-gradient(top, #77b8e0, #5083ba);
-        background-image: -ms-linear-gradient(top, #77b8e0, #5083ba);
-        background-image: -o-linear-gradient(top, #77b8e0, #5083ba);
-        background-image: linear-gradient(to bottom, #77b8e0, #5083ba);
-        -webkit-border-radius: 8;
-        -moz-border-radius: 8;
-        border-radius: 8px;
-        -webkit-box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
-        -moz-box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
-        box-shadow: 1px 3px 4px 2px rgba(0,0,0,0.4);
-        padding: 10px;
-        color: #fff;
-        text-align: left;
-      }
-      #help-dialog-title {
-        width: 100%;
-        display: block;
-        margin: auto;
-        font-size: 26px;
-        font-weight: bolder;
-        text-align: center;
-        color: #fff;
-        text-shadow: -1px -1px 0px rgba(255,255,255,0.3), 1px 1px 0px rgba(0,0,0,0.8);
-      }
-      #help-dialog-content {
-        padding: 0 10px;
-      }
-      code {
-        display: block;
-        margin: auto;
-        background-clip: padding-box;
-        background-color: #f9f9f9;
-        -webkit-border-radius: 3px;
-        -moz-border-radius: 3px;
-        border-radius: 3px;
-        -moz-background-clip: padding;
-        -webkit-background-clip: padding-box;
-        border: 1px solid #ccc;
-        padding: 5px;
-        font: 12px "Courier New",monospace;
-        color: #52595d;
-        overflow-x: scroll;
-      }
-      pre { font-size: 12px; }
-      .param {
-        padding-left: 40px;
-        text-indent: -25px;
-        margin: 0;
-        font: 12px "Courier New",monospace;
-      }
-    </style>
+    <script src="tutorial-lib.js"></script>
+    <script src="../d3.simplegraph.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <link href="style.css" rel="stylesheet" />
   </head>
   <body>
-    <div id="simple-chart" style="width:100%;height:600px;text-align:center;vertical-align:center;border:1px solid black;overflow:hidden;">
-      <div style="position:absolute;top:15px;left:15px;color:rgba(0,0,0,0.2);font-weight:bold;font-size:20px;text-align:left;">
-        #simple-chart
-      </div>
+    <h1>Tutorial 2: Point-lines, Grids, Legends, and Tooltips</h1>
+    
+    <div id="simple-chart">
+      <div class="label">#simple-chart</div>
     </div>
+  
     <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
-      <p style="max-width:810px;margin:4px auto;">Click each button below for a tutorial on using this library. Follow along by copying and pasting the code snippits from each section into the developer tool console (usually opened up with F12). For best results you should go in the order shown.</p>
+    
+      <p style="max-width:810px;margin:8px auto;">The above graph has been recreated as the state it would be in after following the previous tutorial. If you want to learn how this was done, <a href="simplegraph-1.html">go back to the previous tutorial</a>, first.</p>
+    
+      <p style="max-width:810px;margin:4px auto;">Click each button below for a tutorial on using this library. Follow along by copying and pasting the code snippets from each section into the developer tool console (usually opened up with F12). For best results you should go in the order shown.</p>
+    
       <span 
-          class="btn" 
-          helptitle="Advanced Graph Options" 
-          helptext="Let's start by creating a graph, similar as before, but play with a few advanced options.<br /><br />
-            To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options except the label (the rest will revert to default), but specify a y2-axis.<br /><br />
-            After creating the graph object, let's first draw the grid before drawing anything on the graph."
-          sampleCode="var colors = d3.scaleOrdinal(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
-var graph = new SimpleGraph({
-    container: '#simple-chart',
-    width: 850,
-    height: 580,
-    // we'll want to expand our margins for playing with labels later
-    margins: { top: 50, left: 50, bottom: 50, right: 50 },
-    colorScale: colors, 
-    axis: {
-      x: {
-        label: 'x-value'
-      }, 
-      y: {
-        label: 'y-value'
-      }, 
-      y2: {
-        min: 0, 
-        max: 10,
-        label: 'y2-value'
-      }
-    }
+        class="btn" 
+        helptitle="Re-adding Points Data"
+        helptext="Let's say we want to change our point dataset. One way to do so is by removing and re-adding the data. We can either remove datasets by series name, or just remove all datasets associated with points. Note that clearing won't erase the points visually drawn until a redraw is called. But before we do that, let's re-add the same points data we used previously, but add some additional optional parameters.
+        <br /><br />
+        First, we'll play with dynamic sizing. Parameters of a data series, when provided as functions, like this optional size function, are called within the context (accessed via <code class='inline'>this</code>) of the data (as copied within the SimpleGraph instance). You could, though it is strongly discouraged, modify the data this way. Additionally, the function is provided arguments of the same context (as the first argument) and the bound data object (if available) from when the data was created. In this case, <code class='inline'>this.y</code> is the same value as <code class='inline'>d.y</code> or <code class='inline'>o.score</code>.
+        <br /><br />
+        Next, we're going to add an additional data key to copy over the wetland class information along with the copied name, age, and score for the series name and x/y data. This additional information will come in handy later for the tooltips.
+        <br /><br />
+        Note that after redrawing, options we set previously (like color and point shape) are still preserved, as they are mappings tied to the SimpleGraph instance, not associated with the dataset itself.
+        <br /><br />
+        <span class='func'><b>clearPointsData</b>([<i>series</i>])</span>
+        <p class='param'>@param {string} series - If provided, only removes data series matching this name.</p>"
+        sampleCode="// remove all points data
+graph.clearPointsData();
+graph.addPointsData(scores, 'name', 'age', 'score', {
+  // let's play with point size as dynamically scaled to y-value
+  size: function(d, o) { return 4 + 0.2*(this.y - 25); }, 
+  additionalDataKeys: ['wetlandclass']
 });
-graph.drawGrid();" 
-          onclick="openHelp(this)">
-        Advanced Graph Options
-      </span>
+graph.drawPoints();"
+        onclick="openHelp(this)"
+      >Re-adding Data</span>
+    
       <span 
-          class="btn" 
-          helptitle="Adding an Area"
-          helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
-            You'll notice that the area will overlap over the axes and one of the axes labels, so it's necessary to redraw the axis which we'll do in the next step.<br /><br />
-            <b>addAreaBetweenTwoLines(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</b>
-            <p class='param'>@param {string} name - Series name</p>
-            <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
-            <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
-            <p class='param'>@param {Object} [style] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
-            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
-            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
-            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
-            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
-          sampleCode="var bottomBoundary = function(x) {
-    return -0.01*x*x + 1.6*x;
-};
-var topBoundary = function(x) {
-    return -0.0003*Math.pow(x-40,2)+0.2*x+80;
-};
-graph.addAreaBetweenTwoLines(
-    'Area',
-    bottomBoundary, // callback line function for bottom boundary
-    topBoundary,    // callback line function for top boundary
-    {opacity: 0.6}  // let's make it transparent
-);
-graph.drawAreas();" 
-          onclick="openHelp(this)">
-        Adding an Area
-      </span>
-      <span 
-          class="btn" 
-          helptitle="Axis Label Placement" 
-          helptext="Let's play with a custom label placement. We'll move the x-axis to the top, have the x-axis label centered, but the y-axis labels up top.<br /><br />
-            <b>drawAxes(labelPosition):</b>
-            <p class='param'>@param {string} [labelPosition='outside center'] - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top.</p>
-            <p class='param'>@param {string} [xAxisPosition='bottom'] - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom.</p>
-            <p class='param'>@param {number} [axisLabelMargin=0] - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
-          sampleCode="graph.drawAxes(
-    'inside top center', // draw labels on inside, y-axis labels on top, and x-axis centered
-    'top'                // place x-axis on top of graph
-);" 
-          onclick="openHelp(this)">
-        Axis Label Placement
-      </span>
-      <span 
-          class="btn" 
-          helptitle="Adding a Range Limited Line"
-          helptext="Let's add a line, as a function, same as previously, but using the new y2-axis we've created. Additionally, we'll limit it's range via an x-range parameter.<br /><br />
-            Note two things in the result, one is that the line starts at 10 and ends at 90 (as specified), but also that when the line dips outside of the graph domain (where y values are below zero), it is not drawn. This can be called with the SimpleGraph.allowDrawBeyondGraph option, if desired.<br /><br />
-            <b>addLineDataAsFunction(name, lineFunction, resolution, style, interpolation, xRange):</b>
-            <p class='param'>@param {string} name - Series name</p>
-            <p class='param'>@callback lineFunction(x) - Callback function such that function(x) returns y.</p>
-            <p class='param'>@param {Object} [style]{'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
-            <p class='param'>@param {number} [resolution] - How many coordinates to calculate when drawing the line (defaults to every 20 pixels of width if not provided and if provided enforces minimum of 2).</p>
-            <p class='param'>@param {string} [interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
-            <p class='param'>@param {number[]} [xRange] - The x-range of the line. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
-            <p class='param'>@param {boolean} [y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
-          sampleCode="var limitedLineFunction = function(x) {
-    return (2.5*Math.sin(0.2*x) + 2);
-};
-graph.addLineDataAsFunction(
-    'Limited Line',
-    limitedLineFunction,
-    {'stroke-width':3.0},
-    50,                   // compute line at 50 intervals
-    d3.curveStepBefore,   // stepped drawing, just to demonstrate another type of interpolation
-    [10, 90],             // draw line only between 10 < x < 90
-    true                  // flags it for the y2-axis
-);
-graph.drawLines();" 
-          onclick="openHelp(this)">
-        Limiting Line Range
-      </span>
-      <span 
-          class="btn" 
-          helptitle="Customizing Tooltips"
-          helptext="Now let's add tooltips to both our lines and areas. As well, let's add some custom styling to the tooltip.
-            <br /><br />
-            The call to add tooltips to areas looks identical to the function used for points and lines, but instead of calling from our globals, we will use two methods to retrieve the series data from within the graph object (using both is redudant but for demonstration). Also note that the y-values need no special handling for either y-axis, however to know which of these axes the value is placed on calls the boolean y2 parameter.<br /><br />
-            <b>LineData:</b>
-            <p class='param'>@property {string} series - The series name this line belongs to.</p>
-            <p class='param'>@property {callback} lineFunction - The line function defining this line (or null if the line was provided as a series of coordinates.</p>
-            <p class='param'>@property {number[][]} coords - The line as a series of coordinates (or null if the line was provided as a function.</p>
-            <p class='param'>@property {number} resolution - If the line was defined by a function, the resolution to draw the line, i.e. the number of points to draw then interpolate a line through, or null if using default settings.</p>
-            <p class='param'>@property {number[]} xRange - The minimum and maximum x-values the drawn line may not exceed, or null if  there are no limits.</p>
-            <p class='param'>@property {boolean} y2 - If true, the y-values of the line correlates to the y2 axis.</p>
-            <p class='param'>@property {Object} style - A dictionary of styles to apply to the line. Even if no style was provided with  the data, a default 'stroke' style value provided.</p>
-            <p class='param'>@property {string} interpolate - The interpolation type.when drawing the line.</p>
-            <br />
-            <b>getLinesDataBySeries(seriesName):</b>
-            <p class='param'>@param {string} seriesName - Name of the series for which you want to grab data.</p>
-            <p class='param'>@returns {LineData[]} Array of line data.</p>"
-          sampleCode="var tooltipOptions = {
+        class="btn" 
+        helptitle="Connecting Points Data"
+        helptext="To connect points of the same data series by straight lines, simply call the function below. If there are two or more data points on the same x-value, the mean y-value is used. These lines are referred to as 'point-lines' to differentiate from lines derived from line data.
+          <br /><br />
+          <span class='func'><b>addLinesDataFromPoints</b>([<i>forSeries</i>[, <i>options</i>])</span>
+          <p class='param'>@param {string|string[]|function} [forSeries] - To filter series on which to add connecting lines, either provide a series name, an array of series names, or a callback function which will be provided the name of the series to check. If null/undefined, draws point-lines for all point series.</p>
+          <p class='param'>@param {Object} [options] - Additional options defining the line data.</p>
+          <p class='param'>@param {Object} [options.style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+          <p class='param'>@param {d3.curve} [options.interpolation=d3.curveLinear] - Type of interpolation to draw line with.</p>
+          <p class='param'>@param {string} [options.handleOverlaps='average'] - If there are 2 or more points overlapped for a given x-value, how to handle the y-value for the line. Options are 'average', 'mean', 'median', 'highest', 'max', 'lowest', and 'min'. Defaults to average/mean.</p>"
+        sampleCode="graph.addLinesDataFromPoints(
+  null,  // draw for all data series
+  {
     style: {
-        border: '1px solid #02D', 
-        'background-color': '#333', 
-        color: '#fff'
+      'stroke-width': 2.0,       // bit thicker line
+      'stroke-dasharray': '4, 4' // dashed line, for fun
+    }, 
+    handleOverlaps: 'mean'
+  }
+);
+graph.drawPointLines();
+// let's also redraw points to ensure they stay on top of lines
+graph.drawPoints();"
+          onclick="openHelp(this)"
+      >Connecting Points</span>
+      
+      <span 
+        class="btn" 
+        helptitle="Adding a Grid and Legend"
+        helptext="To draw a legend, all you have to do is specify the position. The class will automatically create the legend for all datapoints. We will also include some additional styling parameters.
+          <br /><br />
+          Note that due to the order called, the grid would be drawn over the items in the chart. You can re-invoke <code class='inline'>drawLines()</code> and <code class='inline'>drawPoints()</code> to redraw the items over the grid, however the tooltip functionality will also have to be reapplied, and they would also draw over the legend if they overlapped. In a similar vein, it may be pertinent to redraw the axes (<code class='inline'>drawAxes()</code>) after adding the other elements. Potentially then, drawing the grid might want to be the first thing you draw before anything else.
+          <br /><br />
+          <span class='func'><b>drawGrid</b>([<i>style</i>])</span>
+          <p class='param'>@param {Object} [style={opacity:0.4,stroke:'#555','stroke-width':0.3}]</p>
+          <br />
+          <span class='func'><b>drawLegend</b>(<i>position</i>, <i>bgstyle</i>)</span>
+          <p class='param'>@param {number[]} position - x,y coordinate position from top-left corner of SVG.</p>
+          <p class='param'>@param {Object} options -Additional options for the legend.</p>
+          <p class='param'>@param {string} [options.anchor='left'] - Optional anchor for the coordinate x-position (left, middle, or right).</p>
+          <p class='param'>@param {Object} [options.bgstyle] - Optional styles for the legend. These are SVG style attributes with the exception of support for padding.</p>
+          <p class='param'>@param {number} [options.itemsPerColumn=0] - Optional limit on items per column. On reaching this number, a new column will be started to the right. If set to 0 or less, infinite (that is, all will be put in single column). Note that if the next column exceeds the right margin of the graph, placement errors will result.</p>
+          <p class='param'>@param {number} [options.rowHeight=24] - The height per row. Default is set to best fit size of text and icons in legend (the second which is currently uncustomizable) so use care if decreasing row height.</p>
+          <p class='param'>@param {string[]} [options.exclude] - Can optionally name data series to exclude from adding to the legend. Provided as list or whitespace-separated string of data series names (though list is preferred as data series names may include spaces). Case sensitive and remove any matching data series by name from all types of data (points, lines, and areas).</p>"
+        sampleCode="graph.drawGrid();
+graph.drawLegend(
+  [50,20],  // place legend near top-left of graph
+  {
+    anchor: 'left', 
+    bgstyle: {
+      fill:'#fff',  // fill in legend
+      padding:10,   // add padding for legend items
+      stroke:'#000' // add border to legend
     }
-};
-var lineTooltipFunction = function(d, p, s, i) {
-    var seriesName = s[i].getAttribute('series');
-    var linesData = graph.getLinesDataBySeries(seriesName)[0];
-    if(linesData.lineFunction) {
-        var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
-        var y = linesData.lineFunction(x).toFixed(1);
-        // while we know it's always from the y2 axis as we have only one line, we'll dynamically check
-        return 'x: ' + x + ',&amp;lt;br /&amp;gt;' + (linesData.y2 ? 'y2' : 'y') + ': ' + y;
+  }
+);"
+        onclick="openHelp(this)"
+      >Grid/Legend</span>
+    
+      <span 
+        class="btn" 
+        helptitle="Adding Tooltips to Points"
+        helptext="To add a tooltip, simply supply a callback function. In this example we simply use the data of the selected element provided to the function. Note that the <code class='inline'>wetlandclass</code> key had to be added separately when re-adding the point data, but now is directly callable.
+          <br /><br />
+          <span class='func'><b>addTooltipToPoints</b>(<i>textFunction</i>[, <i>options</i>])</span>
+          <p class='param'>@callback textFunction(d,n,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
+          <p class='param' style='padding-left:50px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+          <p class='param' style='padding-left:50px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
+          <p class='param' style='padding-left:50px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
+          <p class='param'>@param {string|string[]} [forSeries] - If provided, only applies tooltips to series matching this name (or within list of names, if array).</p>
+          <p class='param'>@param {Object} [options] - Optional parameters.</p>
+          <p class='param'>@param {number[]} [options.offset=[15,15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
+          <p class='param'>@param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's CSS style (optional).</p>"
+        sampleCode="graph.addTooltipToPoints(function(d) {
+  return (
+    '&amp;lt;b&amp;gt;' + d.series + ': ' + d.y + '&amp;lt;/b&amp;gt;&amp;lt;br /&amp;gt;' +
+    d.wetlandclass + '&amp;lt;br /&amp;gt;' +
+    'Est. Wetland Age: ' + d.x.toFixed(1) + ' yrs'
+  );
+});"
+        onclick="openHelp(this)"
+      >Point Tooltips</span>
+    
+      <span 
+        class="btn" 
+        helptitle="Adding Tooltips to Lines (Function-based)"
+        helptext="Now we're going to add tooltips to our line added as a function. For the line defined by a function, we can use the original function (<code class='inline'>lineBFunction</code>) we defined globally earlier.
+          <br /><br />
+          <span class='func'><b>addTooltipToLines</b>(<i>textFunction</i>[, <i>options</i>])</span>
+          <p class='param'>@callback textFunction(d,m,s,i) - Callback function that handles the dynamic text appearing in the tooltip.</p>
+          <p class='param' style='padding-left:50px;'>@param {Object} d - The data object bound to the hovered SVG element. For points, keys included are 'series', 'x', 'y', and any additional data keys specified.</p>
+          <p class='param' style='padding-left:50px;'>@param {number[]} m - The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</p>
+          <p class='param' style='padding-left:50px;'>@param {Object[]} s - Array of the SVG elements in the layer selected(or null).</p>
+          <p class='param'>@param {string|string[]} [forSeries] - If provided, only applies tooltips to series matching this name (or within list of names, if array).</p>
+          <p class='param'>@param {Object} [options] - Optional parameters.</p>
+          <p class='param'>@param {number[]} [options.offset=[15,15]] - The x,y offset of the tooltip from the cursor (default places the tooltip to the bottom right of the cursor).</p>
+          <p class='param'>@param {Object} [options.style] - Object literal of key-value pairs that will be applied as the tooltip div's CSS style (optional).</p>"
+        sampleCode="// adding for a function is easy as we can reference original function
+graph.addTooltipToLines(
+  function(d, m, s) {
+    // convert to x-position of mouse to x-value on graph
+    var x = graph.xScale.invert(m[0]), 
+        y = lineBFunction(x);
+    return 'Score of ' + y.toFixed(1) + ' at ' + x.toFixed(1) + ' years.';
+  }, 
+  'Line B', 
+);"
+      onclick="openHelp(this)"
+      >Line Tooltips 1</span>
+      
+      <span 
+        class="btn" 
+        helptitle="Adding Tooltips to Lines (Coordinates-based)"
+        helptext="Now for our other line. As this was defined from coordinates at a fairly coarse resolution, we'll manually interpolate ourselves using the coordinate data (which we have defined as <code class='inline'>lineACoordinates</code>, but we can also pull from the supplied data)."
+        sampleCode="// Since line A has no interpolation (linear), is only a few coordinates long,
+// and is sorted by x, we're just going to do it really simply for demonstration
+graph.addTooltipToLines(
+  function(d, m, s) {
+    var lineCoords = d.coords, 
+        nCoords = lineCoords.length, 
+        x = graph.xScale.invert(m[0]), 
+        y;
+    if(x <= lineCoords[0][0]) {
+      y = lineCoords[0][1];
+    } else if(x >= lineCoords[nCoords-1][0]) {
+      y = lineCoords[nCoords-1][1];
+    } else {
+      var pts;
+      lineCoords.find(function(c, i) {
+        if(i && lineCoords[i][0] > x) return (pts = [lineCoords[i-1], c]);
+      });
+      var slope = (pts[1][1] - pts[0][1]) / (pts[1][0] - pts[0][0]);
+      y = pts[0][1] + slope*(x - pts[0][0]);
     }
-};
-var areaTooltipFunction = function(d, p, s, i) {
-    var seriesName = s[i].getAttribute('series');
-    var areasData = graph.getAreasDataBySeries(seriesName)[0];
-    if(areasData.areaFunctions) {
-        var x = graph.xScale.invert(p[0]-graph.margins.left).toFixed(1);
-        var y0 = areasData.areaFunctions[0](x).toFixed(1);
-        var y1 = areasData.areaFunctions[1](x).toFixed(1);
-        return 'At ' + x + ':&amp;lt;br /&amp;gt;min = ' + y0 + '&amp;lt;br /&amp;gt;max = ' + y1;
-    }
-};
-graph.addTooltipToLines(lineTooltipFunction, tooltipOptions);
-graph.addTooltipToAreas(areaTooltipFunction, tooltipOptions);"
-          onclick="openHelp(this)">
-        Custom Tooltips
-      </span>
-    </div>
-    <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
-        <p>
-          &gt; <a href="simplegraph-1.html">For the previous tutorial with a run down of the major functionalities, click here.</a>
+    return 'Score of ' + y.toFixed(1) + ' at ' + x.toFixed(1) + ' years.';
+  }, 
+  'Line A', 
+);"
+      onclick="openHelp(this)"
+      >Line Tooltips 2</span>
+    
+      <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
+        <p style="font-weight:bold;margin-bottom:4px;">
+          Data used for points are as follows:
+        </p>
+        <pre><code id='show-data'></code></pre>
+        <p style="margin-top:20px;">
+          &gt; <a href="simplegraph-3.html">Go to the next tutorial</a>, which covers more axis options, adding areas, colors, and transitions.
+        </p>
+        <p style="margin-top:0px;">
+          &gt; <a href="simplegraph-1.html">Go back to the previous tutorial</a>.
         <p>
       </div>
+    </div>
+  
     <div id="help-dialog-container">
-        <div id="help-dialog">
-          <span id="help-dialog-title"></span>
-          <p id="help-dialog-content"></p>
-          <pre><code style="width:95%;"></code></pre>
-      <div style="height:20px;margin:12px 5px;text-align:right;">
-        <span class="btn" onclick="copyToClipboard();">Copy Code Snippet to Clipboard</span>
-      </div>
+      <div id="help-dialog">
+        <span id="help-dialog-title"></span>
+        <p id="help-dialog-content"></p>
+        <pre><code class="block" style="width:95%;"></code></pre>
+        <div style="height:20px;margin:12px 5px;text-align:right;">
+          <span class="btn" onclick="copyToClipboard();">Copy Code Snippet to Clipboard</span>
         </div>
+      </div>
     </div>
+  
+  
     <script>
-    // hide dialog
-    $("#help-dialog-container").hide();
-    // dialog click to close
-    $("#help-dialog-container").click(function(evt) {
-        if(evt.target !== this) { return; }
-        $("#help-dialog-container").hide();
-    });
-    // dialog functionality
-    function openHelp(elem) {
-        $("#help-dialog-title").html(elem.getAttribute("helptitle"));
-        $("#help-dialog-content").html(elem.getAttribute("helptext"));
-        $("#help-dialog code").html(elem.getAttribute("sampleCode"));
-        $("#help-dialog-container").show();
-        var hdElem = $("#help-dialog");
-        var hdOffset = hdElem.css("top", (0.5*($(window).height() - $("#help-dialog").height()) - 20)).offset();
-        if(hdOffset.top < 40) {
-          hdElem.css("top", 40)
+      var scores = [
+        { name: "Made-Up River", wetlandclass: "riverine", age: 10, score: 63 },
+        { name: "Made-Up River", wetlandclass: "riverine", age: 20, score: 72 },
+        { name: "Fake Lagoon", wetlandclass: "estuarine", age: 2, score: 45 },
+        { name: "Fake Lagoon", wetlandclass: "estuarine", age: 14, score: 62 },
+        { name: "Fake Lagoon", wetlandclass: "estuarine", age: 28, score: 60 },
+        { name: "Mirage", wetlandclass: "illusionary", age: 35, score: 79 },
+        { name: "YMCA", wetlandclass: "public pool", age: 26, score: 28 }
+      ];
+      displayScores(scores);
+      
+      var graph = new SimpleGraph({
+        container: '#simple-chart',
+        width: 700,
+        height: 500,
+        axis: {
+          style: {'stroke-width': 1.0},
+          x: {
+            min: 0,
+            max: 40,
+            label: 'Site Age'
+          },
+          y: {
+            min: 25,
+            max: 100,
+            label: 'Score',
+            tickValues: [25, 50, 75, 100]
+          }
         }
-    }
-    // copy code snippet to clipboard functionality
-    function copyToClipboard() {
-      var copyDiv = $("#help-dialog code");
-      if(document.body.createTextRange) {
-        var range = document.body.createTextRange();
-        range.moveToElementText(copyDiv[0]);
-        range.select();
-      } else if(window.getSelection) {
-        var selection = window.getSelection();        
-        var range = document.createRange();
-        range.selectNodeContents(copyDiv[0]);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      }
-      try { document.execCommand('copy'); } catch(e) { }
-    }
+      });
+      
+      graph.addPointsData(scores, 'name', 'age', 'score');
+      var lineACoordinates = [[5,20],[15,30],[25,50],[35,55],[50,65]];
+      graph.addLineDataAsCoordinates('Line A', lineACoordinates);
+      var lineBFunction = function(x) {
+        return (15*Math.sin(0.2*x) + 0.02*x*x + 40);
+      };
+      graph.addLineDataAsFunction('Line B', lineBFunction, [5,40], {
+          interpolation: d3.curveBasis, 
+          style: {'stroke-width':3.0} 
+        }
+      );
+      
+      graph.setPointSeriesShape('Made-Up River', 'circle');
+      graph.setPointSeriesShape('Fake Lagoon', 'triangle');
+      graph.setPointSeriesShape('Mirage', 'diamond');
+      graph.setPointSeriesShape('YMCA', 'triangle-down');
+      
+      graph.drawPoints();
+      graph.drawLines();
     </script>
   </body>
 </html>

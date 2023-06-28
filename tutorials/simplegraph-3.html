@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SimpleGraph Tutorial 3</title>
+    <meta charset="UTF-8">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="tutorial-lib.js"></script>
+    <script src="../d3.simplegraph.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+    <link href="style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <h1>Tutorial 3: Y2 Axis, Areas, Colors, and Transitions</h1>
+    
+    <div id="simple-chart">
+      <div class="label">#simple-chart</div>
+    </div>
+  
+    <div style="width:100%;margin-top:10px;text-align:center;margin-bottom:40px;">
+    
+      <p style="max-width:810px;margin:4px auto;">Click each button below for a tutorial on using this library. Follow along by copying and pasting the code snippets from each section into the developer tool console (usually opened up with F12). For best results you should go in the order shown.</p>
+    
+      <span 
+        class="btn" 
+        helptitle="Creating a Graph with Y2 Axis and Custom Color Scale"
+        helptext="Let's start by creating a graph, similar as before, but play with a few advanced options.
+          <br /><br />
+          To start, let's create a custom color scale, and also prep our graph to have multiple y-axes. We'll not specify x or y-axis options except the label (the rest will revert to default), but specify a y2-axis.
+          <br /><br />
+          After creating the graph object, let's first draw the grid before drawing anything on the graph."
+        sampleCode="var colors = d3.scaleOrdinal(['#9edae5', '#393b79', '#bd9e39', '#d6616b']);
+var graph = new SimpleGraph({
+    container: '#simple-chart',
+    width: 700,
+    height: 500,
+    // we'll want to expand our margins for playing with labels later
+    margins: { top: 50, left: 50, bottom: 50, right: 50 },
+    colorScale: colors, 
+    axis: {
+      x: {
+        label: 'x-value'
+      }, 
+      y: {
+        label: 'y-value'
+      }, 
+      y2: {
+        min: 0, 
+        max: 1000,
+        label: 'y2-value'
+      }
+    }
+});
+graph.drawGrid();"
+        onclick="openHelp(this)"
+      >Create Y2 Graph</span>
+    
+      <span 
+        class="btn" 
+        helptitle="Axis Labels"
+        helptext="Let's play with a custom label placement. Note that axis placement keywords are sent as a single string (separated by spaces). They are processed in the order they are received (overwriting the previous directive if that is the sequence read), and can be prefixed by the axis name (e.g. 'x', 'y', 'y2') to add specificity. By playing with these keywords, we can place any combination of possible label positions.
+          <br /><br />
+          <span class='func'><b>drawAxes</b>([<i>labelPosition</i>[, <i>xAxisPosition</i>[, <i>axisLabelMargin</i>]]])</span>
+          <p class='param'>@param {string} labelPosition - Keywords for the label positions on each axis. Keywords include 'inside' or 'outside' for the position of both axis labels either inside or outside of the axis lines; 'center' to center both axis labels along parallel of respective axis; 'left' or 'right' to determine placement of x-axis label along axis parallel; 'top' or 'bottom' to determine placement of y-axis label along axis parallel. Keywords are assigned in the order they are read. Thus a call of 'center top' would first center both labels, then move the y-axis label to the top. Defaults to 'outside center'.</p>
+          <p class='param'>@param {string} xAxisPosition - Placement option of the x-axis, allowing you to draw the x-axis line and labels on top or bottom. Defaults to 'bottom'.</p>
+          <p class='param'>@param {number} axisLabelMargin - Labels are automatically placed at a margin determined not to overlap with the tick marks. However you may specify and additional margin here.</p>"
+        sampleCode="graph.drawAxes(
+  // draw labels on inside, then x label outside, center all labels, then y and y2 axes on bottom and top
+  'inside x-outside center y-bottom y2-top', 
+  // place x-axis on top of graph
+  'top'
+);"
+        onclick="openHelp(this)"
+      >Axis Labels</span>
+
+      <span 
+          class="btn" 
+          helptitle="Adding an Area"
+          helptext="To add an area to a graph, we supply two functions for the top and bottom boundaries of the area. Note we will also use the default resolution of every 20 pixels of width and a linear interpolation.<br /><br />
+            We won't draw the area yet, because in the next step we'll overview how to animate a fade-in transition.<br /><br />
+            <span class='func'><b>addAreaBetweenTwoLines</b>(name, lineFunctionBottom, lineFunctionTop, resolution, style, interpolation, xRange):</span>
+            <p class='param'>@param {string} name - Series name</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for bottom border of area such that function(x) returns y0.</p>
+            <p class='param'>@callback lineFunctionBottom - callback function for top border of area such that function(x) returns y1.</p>
+            <p class='param'>@param {number[]} [xRange] - The x-range of the area. Defaults to the min-max of the graph. If supplied will still be truncated to the min-max of the graph if it extends past.</p>
+            <p class='param'>@param {Object} [options] - Additional options defining the area data.</p>
+            <p class='param'>@param {Object} [options.style={'stroke-width':1.5}] - Object literal of key-value pairs that will be applied as the resulting SVG element's CSS style.</p>
+            <p class='param'>@param {d3.interpolation} [options.interpolation=d3.curveLinear] - Type of interpolation (now curve factory) to draw line with.</p>
+            <p class='param'>@param {boolean} [options.y2Axis=false] - Whether coordinates are for 2nd y-axis.</p>"
+          sampleCode="var bottomBoundary = function(x) {
+    return -0.1*x*x + 16*x;
+};
+var topBoundary = function(x) {
+    return -0.003*Math.pow(x-40,2)+2.0*x+800;
+};
+graph.addAreaBetweenTwoLines(
+    'Area',
+    bottomBoundary,          // callback line function for bottom boundary
+    topBoundary,             // callback line function for top boundary
+    null,                    // won't constrain x-range of area
+    {
+      y2Axis: true,          // put in on 2nd y-axis
+      style: {opacity: 0.6}  // let's make it transparent
+    }
+);" 
+          onclick="openHelp(this)">
+        Adding an Area
+      </span>
+
+      <span 
+          class="btn" 
+          helptitle="Transition Draw"
+          helptext="Additionally, we'll add a transition to fade in our area upon drawing. Previously we'd call the draw functions without specifying arguments but some can be provided. For lines and areas, the first argument is the resolution to draw lines and areas defined by functions. (For points, the first argument is a boolean whether to show points with NaN y-values with y=0.) The second argument is transition parameters.<br /><br />
+            You'll notice that the area will overlap over the axes and one of the axes labels, so it may be helpful to redraw the axis.<br /><br />
+            <span class='func'><b>drawAreas</b>(resolution, transition):</span>
+            <p class='param'>@param {number} [resolution] - The resolution on which to draw an area defined via functions. That is, in how many evenly-spaced locations to split the horizontal span and calculate points from which to interpolate the lines. Defaults to 20.</p>
+            <p class='param'>@param {Object} [transition] - Transition parameters.</p>
+            <p class='param'>@param {number} [transition.duration] - Transition duration in milliseconds (defaults to 200).</p>
+            <p class='param'>@param {number} [transition.ease] - Transition easing function (defaults to d3.easePolyOut).</p>"
+          sampleCode="graph.drawAreas(
+    null,                                   // use default resolution
+    {duration: 1000, ease: d3.easePolyOut}  // transition fade in
+);
+graph.drawAxes(
+    'inside x-outside center y-bottom y2-top', 
+    'top'
+);" 
+          onclick="openHelp(this)">
+        Transition Draw
+      </span>
+
+      <span 
+          class="btn" 
+          helptitle="Series Colors"
+          helptext="We can manually set the series colors as well with a few simple functions.<br /><br />
+            <span class='func'><b>setSeriesColor</b>(series, color):</span>
+            <p class='param'>@param {string} series - Series name.</p>
+            <p class='param'>@param {string} color - The color to assign to the series.</p>
+            <br /><br />
+            <span class='func'><b>resetColorScale</b>(colorScale):</span>
+            <p class='param'>@param [colorScale] - If supplied, the d3 color scale to use. Otherwise simply resets the domain of the existing color scale.</p>"
+          sampleCode="// while not necessary in this case, will free current color used by area
+graph.resetColorScale();
+// set area to an orange/umber
+graph.setSeriesColor('Area', 'rgb(235,170,55)');
+// redraw
+graph.drawAreas();" 
+          onclick="openHelp(this)">
+        Series Colors
+      </span>
+    
+      <div style="max-width:610px;margin:0 auto;margin-top:40px;text-align:left;">
+        <p style="margin-top:0px;">
+        <p style="margin-top:20px;">
+          &gt; <a href="simplegraph-4.html">Go to the next tutorial</a>, which covers data updates and draw updates with transitions.
+        </p>
+          &gt; <a href="simplegraph-2.html">Go back to the previous tutorial</a>.
+        <p>
+      </div>
+    </div>
+  
+    <div id="help-dialog-container">
+      <div id="help-dialog">
+        <span id="help-dialog-title"></span>
+        <p id="help-dialog-content"></p>
+        <pre><code class="block" style="width:95%;"></code></pre>
+        <div style="height:20px;margin:12px 5px;text-align:right;">
+          <span class="btn" onclick="copyToClipboard();">Copy Code Snippet to Clipboard</span>
+        </div>
+      </div>
+    </div>
+  
+  
+    <script>
+      // pass
+    </script>
+  </body>
+</html>
