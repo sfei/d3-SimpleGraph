@@ -23,19 +23,17 @@
 
 ## Data in SimpleGraph ##
 
-SimpleGraph stores data in a few simplified data models that contain both coordinate information and some metadata about the data series and parameters on drawing them. Data is split into categories of points, lines, areas, and pointlines (lines constructed as connections between a point data series), each of which are handled separately. For more information on how these data are detailed, see definitions of [pointData](./defs.md#defs-point-data), [lineData](./defs.md#defs-line-data), and [areaData](./defs.md#defs-area-data).
+SimpleGraph stores data in a few simplified data models that contain both coordinate information and some metadata about the data series and parameters on drawing them. Data is split into categories of points, lines, areas, and pointlines (lines constructed as connections between a point data series), each of which are handled separately. For more information on how these data are detailed, see definitions of [pointData](./defs.md#point-data), [lineData](./defs.md#line-data), and [areaData](./defs.md#area-data).
 
 #### Data series ####
 
 Data are referenced by series names. Multiple sets of data associated with the same series name are allowed. That is, adding another dataset with the same series name simply stacks them instead of replacing the original, and the same data series name may also appear as points, lines, and/or areas. 
 
-Data are then referenced by series, which means that modifying or removing data can get tricky if you only want to affect a singular datum within the data series. 
-
-E.g., you may add several lines of the same data series, and if added separately, you may specify a different interpolation type for each. However, to update the interpolation type, one either has to update the interpolation for the entire data series in bulk or update a specific index corresponding to the addition order of the data series. For more on this, see ["Removing and updating data"](./mod-data.md).
+Data are then referenced by series, which means that modifying or removing data can get tricky if you only want to affect a singular datum within the data series. E.g., you may add several lines of the same data series, and if added separately, you may specify a different interpolation type for each. However, to update the interpolation type, one either has to update the interpolation for the entire data series in bulk or update a specific index corresponding to the addition order of the data series. For more on this, see [Removing and updating data](./mod-data.md).
 
 ## Adding data ##
 
-Note that bindings of input data to data model in SimpleGraph, and from there to D3 objects, depend on the method the data was added. This becomes important when updating data via syncing is desired (a prerequisite to animated transitions). For more on this, see [Removing and updating data](./mod-data.md#syncing-data).
+Note that bindings of input data to data model in SimpleGraph and from there to D3 objects, depend on the method the data was added. This becomes important when updating data via syncing is desired (a prerequisite to animated transitions). For more on this, see [Removing and updating data](./mod-data.md#syncing-data).
 
 Note that changes to the data will not be reflected until the data is [re]drawn. For more, see [Drawing data onto the graph](./draw.md).
 
@@ -65,7 +63,7 @@ Due to nature of coordinates provided as primitive types, no data binding will o
       <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
     </tr>
     <tr>
-      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">`setPointSeriesShape()`</a>.</td>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">setPointSeriesShape()</a>.</td>
     </tr>
     <tr>
       <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
@@ -74,7 +72,7 @@ Due to nature of coordinates provided as primitive types, no data binding will o
       <td>options.y2Axis</td><td>boolean</td><td>If true, point is assigned to y2 axis.</td>
     </tr>
     <tr>
-      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+      <td>options.y2</td><td>boolean</td><td>Alias for options.y2Axis.</td>
     </tr>
   </tbody>
 </table>
@@ -85,9 +83,9 @@ Due to nature of coordinates provided as primitive types, no data binding will o
 
 Add multiple point data from an array of object literals. 
 
-All data possible will be bound, which include the coordinates, the data series name (if `seriesName` is a key in the data), and any additional parameters bound via `additionalDataKeys`.
+The `seriesName` parameter is first used as the key for each object in the provided data, in order to retrieve the value as the data series name. As a fallback if they key does not exist, the provided value is used as-is for the data series name. This may be undesirable behavior, especially if some datasets contain this key and some do not. To force the `seriesName` parameter to be used as-is, one can set `options.forceSeriesName` as true. If `seriesName` is null or undefined, the index of the item in the data array is used.
 
-Note that the `seriesName` parameter first checks if this is a valid key for each object in the provided data. As a fallback it uses the provided value as-is. This may in some cases be undesirable behavior, especially if some datasets contain this key and some do not. To force the `seriesName` parameter to be used as-is, one can set `options.forceSeriesName` as true. If `seriesName` is null or undefined, the index of the item in the data array is used.
+All data possible will be bound, which include the coordinates and the data series name (if `seriesName` is a key in the data) and any additional parameters bound via `additionalDataKeys`.
 
 <table style="font-size:0.9em;">
   </tbody>
@@ -110,13 +108,13 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
       <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
     </tr>
     <tr>
-      <td>options.forceSeriesName</td><td>boolean</td><td>If set and true, this forces the provided `seriesName` parameter to be used as the series name value for all added data.</td>
+      <td>options.forceSeriesName</td><td>boolean</td><td>If set and true, this forces the provided seriesName parameter to be used as the series name value for all added data.</td>
     </tr>
     <tr>
       <td>options.forceSeries</td><td>boolean</td><td>Alias for the above.</td>
     </tr>
     <tr>
-      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">`setPointSeriesShape()`</a>.</td>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">setPointSeriesShape()</a>.</td>
     </tr>
     <tr>
       <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, y, and additional data keys, if supplied). Defaults to 10.</td>
@@ -125,7 +123,7 @@ Note that the `seriesName` parameter first checks if this is a valid key for eac
       <td>options.y2Axis</td><td>boolean</td><td>If true, points area assigned to y2 axis.</td>
     </tr>
     <tr>
-      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+      <td>options.y2</td><td>boolean</td><td>Alias for options.y2Axis.</td>
     </tr>
     <tr>
       <td>options.additionalDataKeys</td><td>string[]</td><td>Additional keys for data you want to store for each point.</td>
@@ -156,7 +154,7 @@ For each point, each x,y coordinate pair from the data array will be bound.
       <td>options</td><td>object</td><td>Additional options to set for the added data.</td>
     </tr>
     <tr>
-      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">`setPointSeriesShape()`</a>).</td>
+      <td>options.shape</td><td>string</td><td>The shape to assign to the series. As multiple data series may be provided by this function, any series found in the provided data will be assigned to this shape (overwriting previous shape, if set to that series name). For currently accepted shapes, see <a href="./color.md#a-setpointseriesshape">setPointSeriesShape()</a>).</td>
     </tr>
     <tr>
       <td>options.size</td><td>number|callback</td><td>The size of the points when drawn. May also be a callback function where the 'this' scope would be the data point object (with keys series, x, and y). Defaults to 10.</td>
@@ -165,7 +163,7 @@ For each point, each x,y coordinate pair from the data array will be bound.
       <td>options.y2Axis</td><td>boolean</td><td>If true, points are assigned to y2 axis.</td>
     </tr>
     <tr>
-      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+      <td>options.y2</td><td>boolean</td><td>Alias for options.y2Axis.</td>
     </tr>
   </tbody>
 </table>
@@ -176,7 +174,7 @@ For each point, each x,y coordinate pair from the data array will be bound.
 
 A special type of dataset, lines created as the connections between points of the same data series, may be created as well.
 
-<a name="a-addlinesdatafrompoints" href="#a-addlinesdatafrompoints">#</a> *SimpleGraph*.**addLinesDataFromPoints**([*forSeries**[, *options*]])
+<a name="a-addlinesdatafrompoints" href="#a-addlinesdatafrompoints">#</a> *SimpleGraph*.**addLinesDataFromPoints**([*forSeries*[, *options*]])
 
 Add line data from existing point data series as lines connecting points in the same series.
 
@@ -239,7 +237,7 @@ Add line data as an array of coordinates.
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
     <tr>
-      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+      <td>options.y2</td><td>boolean</td><td>Alias for options.y2Axis.</td>
     </tr>
   </tbody>
 </table>
@@ -279,7 +277,7 @@ The function cannot be bound in anyway that syncs changes, as it is provided dir
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
     <tr>
-      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+      <td>options.y2</td><td>boolean</td><td>Alias for options.y2Axis.</td>
     </tr>
   </tbody>
 </table>
@@ -318,7 +316,7 @@ The coordinate array and optional styles will be bound.
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
     <tr>
-      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+      <td>options.y2</td><td>boolean</td><td>Alias for options.y2Axis.</td>
     </tr>
   </tbody>
 </table>
@@ -361,7 +359,7 @@ The functions cannot be bound in anyway that syncs changes, as they are provided
       <td>options.y2Axis</td><td>boolean</td><td>Whether coordinates are for 2nd y-axis.</td>
     </tr>
     <tr>
-      <td>options.y2</td><td>boolean</td><td>Alias for `options.y2Axis`.</td>
+      <td>options.y2</td><td>boolean</td><td>Alias for options.y2Axis.</td>
     </tr>
   </tbody>
 </table>
@@ -389,7 +387,7 @@ Note point data returns a shallow copy of the underlying data object. As such, a
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](./defs.md#defs-point-data).
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `pointData[]` - Array of [pointData](./defs.md#point-data).
 
 <a name="a-getpointcoordinatesbyseries" href="#a-getpointcoordinatesbyseries">#</a> *SimpleGraph*.**getPointCoordinatesBySeries**(*series*)
 
@@ -427,7 +425,7 @@ Note line data returns a copy of the underlying data object (including shallow c
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](./defs.md#defs-line-data).
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `lineData[]` - Array of [lineData](./defs.md#line-data).
 
 
 <a name="a-getareasdatabyseries" href="#a-getareasdatabyseries">#</a> *SimpleGraph*.**getAreasDataBySeries**(*series*) 
@@ -447,4 +445,4 @@ Note point data returns a shallow copy of the underlying data object. As such, a
   </tbody>
 </table>
 
-&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](./defs.md#defs-area-data).
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `areaData[]` - Array of [areaData](./defs.md#area-data).

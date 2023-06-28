@@ -119,10 +119,10 @@ graph.syncPointsData();"
           helptext="Simply calling the draw functions would remove and redraw the SVGs as data dictates. At most, we could add a fade in transition, but it would not appear seamless. By instead using a draw-update command, we can animate changes to the datasets which are already drawn. The draw-update draws new data (with fade-in transition) if it exists, but retains renders of data already drawn and modifies them as necessary."
           sampleCode="// set area color to change
 graph.setSeriesColor('Area', '#ff00c4');
-// draw updates with transition
-graph.drawUpdateAreas(null, {duration: 1000});
-graph.drawUpdateLines(null, {duration: 1000});
-graph.drawUpdatePoints(false, {duration: 1000});" 
+// draw updates with animated, one-second transition
+graph.drawUpdateAreas(null, {duration: 1000});    // null for default resolution
+graph.drawUpdateLines(null, {duration: 1000});    // null for default resolution
+graph.drawUpdatePoints(false, {duration: 1000});  // false to not show nulls" 
           onclick="openHelp(this)">
         Transition Update
       </span>

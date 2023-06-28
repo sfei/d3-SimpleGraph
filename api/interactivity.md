@@ -142,7 +142,7 @@ The original SVG element tied to the highlighted data is given the class `sg-hig
 
 <a name="a-highlightpoints" href="a-highlightpoints">#</a> *SimpleGraph*.**highlightPoints**(*options*)
 
-Highlights points by drawing a new SVG over highlighted points. By default, the highlight style enlarges the points, but this can be overwritten via the options.
+Highlights points by drawing a new SVG over highlighted points. By default, the effect is simply to add a black stroke to the point.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -156,7 +156,10 @@ Highlights points by drawing a new SVG over highlighted points. By default, the 
       <td>filter</td><td>function</td><td>The callback function to validate whether to highlight given point. Passed argument of <a href="./defs.md#defs-pointdata">point data</a> for given point and the SVG element. Return true to include the point for highlighting. If callback is undefined or null, assumes all points to be included.</td>
     </tr>
     <tr>
-      <td>size</td><td>number|function</td><td>Point size or callback function to determine point size. Called in scope such that `this` will refer to the <a href="./defs.md#defs-pointdata">point data</a>. If null, uses assigned `pointsize` for point data.</td>
+      <td>size</td><td>number|function</td><td>Point size or callback function to determine point size. Called in scope such that `this` will refer to the <a href="./defs.md#defs-pointdata">point data</a>. If null or undefined, uses assigned `pointsize` for point data (resulting in no change).</td>
+    </tr>
+    <tr>
+      <td>nooutline</td><td>boolean</td><td>If true, does not add the outline.</td>
     </tr>
     <tr>
       <td>style</td><td>object</td><td>Optional key-value dictionary of styles to apply to SVG.</td>

@@ -5,7 +5,7 @@
 * [Adding and getting data](./add-data.md)
 * [Removing and updating data](./mod-data.md)
 * [Drawing data onto the graph](./draw.md)
-* **Color category functions**
+* **Color and point shape**
   * [getColorBySeriesName](#a-getcolorseriesbyname)
   * [resetColorScale](#a-resetcolorscale)
   * [setSeriesColor](#a-setseriescolor)

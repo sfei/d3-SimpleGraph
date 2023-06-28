@@ -15,9 +15,15 @@ This project is licensed under the GNU Lesser General Public License. See [LICEN
 
 ## Usage ##
 
-Library is dependent on D3. Tested on D3 v7.8.2. [https://d3js.org](https://d3js.org)
+Library is dependent on [D3](https://d3js.org). Tested on v7.
 
-Simply import `d3.simplegraph.min.js` to your application. Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or simply regular instantiation. 
+Simply import `d3.simplegraph.min.js` to your application. Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or a regular script import. 
+
+As a regular script import, it is assumed that the global var `d3` has been set. This can be locally or through a CDN before loading the d3-SimpleGraph library. E.g.:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+```
 
 If used within a webpack build, you may need to provide the 'd3' object as a global shim. E.g.:
 
@@ -27,17 +33,14 @@ plugins: [
 ]
 ```
 
-Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or simply regular instantiation.
-
 ## API & Guide ##
 
-* [Intro, Constructor, Properties, and Misc. Functions](api/README.md)
-* [Axis, Grid, and Legend Functions](api/axis-grid-legend.md)
-* [Color and Category Functions](api/color.md)
-* [Add Data Functions](api/add-data.md)
-* [Getting data](api/get-data2.md)
+* [Constructor, properties, and misc. functions](api/README.md)
+* [Axis, grid, and legend](api/axis-grid-legend.md)
+* [Adding and getting data](api/add-data.md)
 * [Removing and updating data](api/mod-data.md)
 * [Drawing data onto the graph](api/draw.md)
+* [Color and point shape](api/color.md)
 * [Adding interactive features](api/interactivity.md)
 * [Definitions](api/defs.md)
 
@@ -69,6 +72,7 @@ Interactive tutorials are provided as HTML pages where one can following along b
   * **Breaking changes**
     * Constructor simplified to single `options` parameter.
     * Drawing legend, several parameters moved to `options` object to simplify.
+    * Drawing legend, `exclude` parameter behavior has changed.
     * Adding data, several parameters moved to `options` object to simplify.
     * Adding points, `showNulls` parameter moved to be specified on drawing.
     * Adding areas and lines, `resolution` parameter moved to be specified on drawing.

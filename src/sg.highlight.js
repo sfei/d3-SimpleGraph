@@ -90,6 +90,10 @@ export default function(SimpleGraph, d3) {
                     highlight.attr("r", size);
                     break;
             }
+            if(!options.nooutline) {
+                highlight.style('stroke', '#000');
+                highlight.style('stroke-width', '1');
+            }
             if(options.style) {
                 for(let sk in options.style) {
                     highlight.style(sk, options.style[sk]);
@@ -121,7 +125,7 @@ export default function(SimpleGraph, d3) {
                     .style("fill", 'none')
                     .style("filter", 'brightness(135%)')
                     .style("opacity", "0.7");
-                if(options.noblur && options.blurstyle) {
+                if(options.blurstyle) {
                     for(let sk in options.blurstyle) {
                         behind.style(sk, options.blurstyle[sk]);
                     }

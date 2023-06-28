@@ -36,9 +36,6 @@ Remove points data.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
@@ -54,9 +51,6 @@ Remove lines data.
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
     </tr>
     <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
@@ -76,9 +70,6 @@ Remove lines data.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
       <td>series</td><td>string|string[]</td><td>If provided, only removes data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
@@ -96,9 +87,6 @@ Remove all areas data.
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
-    </tr>
-    <tr>
       <td>series</td><td>string</td><td>If provided, only removes data series matching this name. If null or undefined, removes all data. May also be an array to remove multiple data series at once.</td>
     </tr>
   </tbody>
@@ -114,9 +102,6 @@ Remove all data.
   </tbody>
     <tr>
       <th>Name</th><th>Type</th><th>Description</th>
-    </tr>
-    <tr>
-      <td>name</td><td>string</td><td>The name of the data series.</td>
     </tr>
     <tr>
       <td>series</td><td>string</td><td>If provided, only removes data series matching this name. If null or undefined, removes all data. May also be an array to remove multiple data series at once.</td>
@@ -139,9 +124,9 @@ Binding of data is only done in a few basic ways, which are not always consisten
 * Singular points added from [`addPointData()`](#a-addpointdata) have no data-binding, as they are provided values as primitive types in the arguments.
 * Points added from a list of data objects via [`addPointsData()`](#a-addpointsdata) bind all the points to each respective object by the keys provided in that function as called when the point was originally added. Additional data may also be bound with the option `additionalDataKeys`.
 * Points added from an array via [`addPointsDataAsArray()`](#a-addpointsdataasarray) bind each points coordinates to the nested array of point coordinates.
-* Point lines (added via ['addLinesDataFromPoints()'](#a-addlinedatafrompoints)) are handled internally, as these are derived from points data series. As such, data bindings to the original point data is implicit with any update/sync of the points data.
-* Lines defined by coordinates, added via ['addLineDataAsCoordinates()'](#a-addlinedataascoordinates), bind the line coordinates to the coordinate array provided as well as any styles with the style object if provided in the options.
-* Lines defined by a function, added via ['addLineDataAsFunction()'](#a-addlinedataasfunction), bind the `xRange` parameter and the optional styles, if provided. The function itself cannot be bound.
+* Point lines (added via [`addLinesDataFromPoints()`](#a-addlinedatafrompoints)) are handled internally, as these are derived from points data series. As such, data bindings to the original point data is implicit with any update/sync of the points data.
+* Lines defined by coordinates, added via [`addLineDataAsCoordinates()`](#a-addlinedataascoordinates), bind the line coordinates to the coordinate array provided as well as any styles with the style object if provided in the options.
+* Lines defined by a function, added via [`addLineDataAsFunction()`](#a-addlinedataasfunction), bind the `xRange` parameter and the optional styles, if provided. The function itself cannot be bound.
 * Areas defined by coordinates, added via [`addAreaAsCoordinates()`](#a-addareaascoordinates), bind the area coordinates to the coordinate array provided as well as any styles with the style object if provided in the options.
 * Areas defined by functions, added via [`addAreaBetweenTwoLines()`](#a-addareabetweentwolines()), only bind the `xRange` and the optional styles, if provided. The functions themselves cannot be bound.
 
@@ -151,7 +136,7 @@ Bindings are not automatically checked or updated. Synchronization must be manua
 
 Updating data manually is somewhat tricky if there are multiple datasets attached to a data series. The data can be updated for all datasets of the same type of data series name, or the update can be specified by a specific index. 
 
-However, figuring out what index this is may be tricky. While lines and areas are added one at a time, the function `addPointsData()` and `addPointsDataAsArray()` may be adding multiple points, with the former even potentially adding multiple points to different data series. In such a case, it may be helpful to [get the data series](./add-data.md#get-data-functions) and determine the specific index of the datum from the returned dataset.
+However, figuring out what index this is may not be intuitive. While lines and areas are added one at a time, the function `addPointsData()` and `addPointsDataAsArray()` may be adding multiple points, with the former even potentially adding multiple points to different data series. In such a case, it may be helpful to [get the data series](./add-data.md#get-data-functions) and determine the specific index of the datum from the returned dataset.
 
 Any updated values will change or break the corresponding data bindings.
 
