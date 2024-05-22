@@ -251,12 +251,12 @@ export default function(SimpleGraph) {
                 x: 0.5*this.width,
                 y: (xAxisPosition === "top") ? -(tickMargin.x + axisLabelMargin) : (tickMargin.x + 10 + axisLabelMargin)
             }, 
-                yLabelPos = {
+            yLabelPos = {
                 a: 'middle', 
                 x: -0.5*this.height,
                 y: -(tickMargin.y + 10 + axisLabelMargin)
             }, 
-                y2LabelPos = {
+            y2LabelPos = {
                 a: 'middle', 
                 x: 0.5*this.height,
                 y: -(tickMargin.y2 + 10 + axisLabelMargin)
