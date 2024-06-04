@@ -1,4 +1,4 @@
-export default function(SimpleGraph) {
+export default function(SimpleGraph, d3) {
 
     SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
         if(!axisOptions)        { axisOptions = {}; }

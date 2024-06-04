@@ -1,8 +1,8 @@
 /*************************************************************************************************************
  * D3-Simple-Graph
- * @version v3.0.0
+ * @version v3.1.0
  * @author Lawrence Sim
- * @copyright 2022 - San Francisco Estuary Institute
+ * @copyright 2024 - San Francisco Estuary Institute
  * @license This project is licensed under the GNU Lesser General Public License.
  ************************************************************************************************************/
 import * as d3 from 'd3';
@@ -105,33 +105,33 @@ SimpleGraph.prototype.destroy = function() {
 // Add modules
 //************************************************************************************************************
 // Axis functions
-import sgAxis from "./sg.axis";
+import sgAxis from "./sg.axis.js";
 sgAxis(SimpleGraph, d3);
 // Color/category functions
-import sgColor from "./sg.color";
+import sgColor from "./sg.color.js";
 sgColor(SimpleGraph, d3);
 // Grid and legend
-import sgGridLegend from "./sg.grid.legend";
+import sgGridLegend from "./sg.grid.legend.js";
 sgGridLegend(SimpleGraph, d3);
 // Data functions
-import sgDataPoint from "./sg.data.point";
-import sgDataArea from "./sg.data.area";
-import sgDataLine from "./sg.data.line";
+import sgDataPoint from "./sg.data.point.js";
+import sgDataArea from "./sg.data.area.js";
+import sgDataLine from "./sg.data.line.js";
 sgDataPoint(SimpleGraph, d3);
 sgDataArea(SimpleGraph, d3);
 sgDataLine(SimpleGraph, d3);
 // Draw functions
-import sgDrawLib from "./sg.draw.lib";
-import sgDrawPoints from "./sg.draw.points";
-import sgDrawLines from "./sg.draw.lines";
-import sgDrawAreas from "./sg.draw.areas";
+import sgDrawLib from "./sg.draw.lib.js";
+import sgDrawPoints from "./sg.draw.points.js";
+import sgDrawLines from "./sg.draw.lines.js";
+import sgDrawAreas from "./sg.draw.areas.js";
 sgDrawLib(SimpleGraph, d3);
 sgDrawPoints(SimpleGraph, d3);
 sgDrawLines(SimpleGraph, d3);
 sgDrawAreas(SimpleGraph, d3);
 // Interactivity functions
-import sgTooltip from "./sg.tooltip";
-import sgHighlight from "./sg.highlight";
+import sgTooltip from "./sg.tooltip.js";
+import sgHighlight from "./sg.highlight.js";
 sgTooltip(SimpleGraph, d3);
 sgHighlight(SimpleGraph, d3);
 
@@ -168,17 +168,17 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
     
     // because internet explorer, this is only way around the security error (requires canvg library which is 
     // not explicitly required, assumed loaded somewhere on the page globally)
-    if(navigator.msSaveBlob && canvg) {
-        // have to manually replace the width/height in cases of bottom-buffer IE hack for resizable graphs
-        svgHtml = svgHtml.replace("style=\"width: 100%; height: 1px;", "style=\"width:" + this.containerWidth + "px; height:" + this.containerHeight + "px;");
-        // draw via canvg, which is totally redudant if not for the fact this is only way to bypass security error
-        canvg(canvas, svgHtml);
-        navigator.msSaveBlob(
-            new Blob([canvas.msToBlob()], {type:"image/png"}), 
-            pngName
-        );
-        return this;
-    }
+    // if(navigator.msSaveBlob && canvg) {
+    //     // have to manually replace the width/height in cases of bottom-buffer IE hack for resizable graphs
+    //     svgHtml = svgHtml.replace("style=\"width: 100%; height: 1px;", "style=\"width:" + this.containerWidth + "px; height:" + this.containerHeight + "px;");
+    //     // draw via canvg, which is totally redudant if not for the fact this is only way to bypass security error
+    //     canvg(canvas, svgHtml);
+    //     navigator.msSaveBlob(
+    //         new Blob([canvas.msToBlob()], {type:"image/png"}), 
+    //         pngName
+    //     );
+    //     return this;
+    // }
     
     let a = document.createElement("a");
     a.style.display = "none";
@@ -189,20 +189,18 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
     img.onload = function() {
         canvas.getContext("2d").drawImage(img, 0, 0);
         // freaking internet explorer..
-        if(navigator.msSaveBlob) {
-            try {
-                navigator.msSaveBlob(
-                    new Blob([canvas.msToBlob()], {type:"image/png"}), 
-                    pngName
-                );
-            } catch(e) {
-                // still doesn't work because of overly strict security restrictions in IE
-                alert("Sorry, SVG to PNG downloads are restricted in Internet Explorer, please try with another browser.");
-            }
-        } else {
-            a.href = canvas.toDataURL("image/png");
-            a.click();
-        }
+        // if(navigator.msSaveBlob) {
+        //     try {
+        //         navigator.msSaveBlob(
+        //             new Blob([canvas.msToBlob()], {type:"image/png"}), 
+        //             pngName
+        //         );
+        //     } catch(e) {
+        //         // still doesn't work because of overly strict security restrictions in IE
+        //         alert("Sorry, SVG to PNG downloads are restricted in Internet Explorer, please try with another browser.");
+        //     }1
+        a.href = canvas.toDataURL("image/png");
+        a.click();
         a.parentElement.removeChild(a);
         canvas.remove();
     };

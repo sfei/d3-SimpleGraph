@@ -7,7 +7,7 @@
 D3-SimpleGraph is an abstraction of the D3 library for quickly creating and adding functionality of basic, 2-dimensional plots.
 
 **Lawrence Sim** -- lawrences@sfei.org<br />
-**San Francisco Estuary Institute** -- 2023
+**San Francisco Estuary Institute** -- 2024
 
 ## License ##
 
@@ -17,21 +17,9 @@ This project is licensed under the GNU Lesser General Public License. See [LICEN
 
 Library is dependent on [D3](https://d3js.org). Tested on v7.
 
-Simply import `d3.simplegraph.min.js` to your application. Library is configured for import via CommonJS based API (e.g. NodeJS), AMD-based API (e.g. RequireJS), or a regular script import. 
+Distributables are provided as ES6, CommonJS, and UMD (which can be imported in AMD, CommonJS, and global/vanilla environments) under the folder `dist\` in both minified and un-minified formats. These distributables are babel transpiled for backwards compatibility and are not bundled with `d3`. The `d3` library must be resolvable in your project's node modules, provided in the global/scoped namespace, and/or shimmed into the build process as necessary depending on how SimpleGraph is imported into your project.
 
-As a regular script import, it is assumed that the global var `d3` has been set. This can be locally or through a CDN before loading the d3-SimpleGraph library. E.g.:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-```
-
-If used within a webpack build, you may need to provide the 'd3' object as a global shim. E.g.:
-
-```javascript
-plugins: [
-  new webpack.ProvidePlugin({d3: 'd3'})
-]
-```
+The source may also be imported (ES6 module definition only) from `src\simple-graph.js`.
 
 ## API & Guide ##
 
@@ -57,6 +45,11 @@ Interactive tutorials are provided as HTML pages where one can following along b
 2. [Data Updates and Draw Updates with Transitions](tutorials/simplegraph-4.html). [tutorials/simplegraph-4.html]
 
 ## Change Log ##
+
+#### v3.1.0 ####
+  * Updated build libraries.
+  * Fix import issue in `sg.axis` module instantiation.
+  * Updated exports/distributables for various import methods.
 
 #### v3.0.0 ####
   * Modularized packages.

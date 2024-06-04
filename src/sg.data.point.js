@@ -1,4 +1,4 @@
-import shapes from "./sg.point.shapes";
+import shapes from "./sg.point.shapes.js";
 
 export default function(SimpleGraph) {
 
