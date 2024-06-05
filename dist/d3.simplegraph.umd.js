@@ -117,22 +117,84 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: external {"amd":"d3","root":"d3","commonjs":"d3","commonjs2":"d3"}
 var external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_ = __webpack_require__(712);
 var external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_namespaceObject = /*#__PURE__*/__webpack_require__.t(external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_, 2);
+;// CONCATENATED MODULE: ./src/checkscale.js
+var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
+  TEST_DOMAIN_TIME_0 = TEST_DOMAIN[0].getTime();
+/* harmony default export */ function checkscale(scale) {
+  var checkScale = scale(TEST_DOMAIN),
+    checkDomain = checkScale.domain(),
+    isSequential = !!checkScale.interpolator; // various version can be sequential
+  // scaleOrdinal and odd-balls
+  if (!checkDomain.length) {
+    if (checkScale.quantiles) return {
+      isQuantile: true,
+      isSequential: isSequential
+    };
+    if (checkScale.step) {
+      return {
+        isBand: true,
+        isPoint: !checkScale.paddingInner
+      };
+    }
+    return {
+      isOrdinal: true
+    };
+  }
+  if (checkDomain.length === 1) return {
+    isThreshold: true
+  };
+  // time scales
+  if (checkDomain[0] instanceof Date) {
+    return {
+      isTime: true,
+      isUtc: checkDomain[0].getTime() === TEST_DOMAIN_TIME_0
+    };
+  }
+  var isDiverging = checkDomain.length === 3; // various version can be diverging
+  // log and pow scales
+  if (checkScale.base) {
+    return {
+      isPow: true,
+      isSequential: isSequential,
+      isDiverging: isDiverging
+    };
+  }
+  if (checkScale.exponent) {
+    return {
+      isPow: true,
+      isSqrt: checkScale.exponent() == 0.5,
+      isSequential: isSequential,
+      isDiverging: isDiverging
+    };
+  }
+  if (checkScale.constant) {
+    return {
+      isSymlog: true,
+      isSequential: isSequential,
+      isDiverging: isDiverging
+    };
+  }
+  // scaleQuantize
+  if (checkScale.thresholds) return {
+    isQuantize: true
+  };
+  // scaleLinear
+  return {
+    isLinear: true,
+    isSequential: isSequential,
+    isDiverging: isDiverging
+  };
+}
+;
 ;// CONCATENATED MODULE: ./src/sg.axis.js
+
 /* harmony default export */ function sg_axis(SimpleGraph, d3) {
   SimpleGraph.prototype.resetAxisOptions = function (axisOptions) {
     var _this = this;
-    if (!axisOptions) {
-      axisOptions = {};
-    }
-    if (!axisOptions.x) {
-      axisOptions.x = {};
-    }
-    if (!axisOptions.y) {
-      axisOptions.y = {};
-    }
-    if (!axisOptions.styles) {
-      axisOptions.styles = {};
-    }
+    axisOptions = axisOptions || {};
+    axisOptions.x = axisOptions.x || {};
+    axisOptions.y = axisOptions.y || {};
+    axisOptions.style = axisOptions.styles || {};
 
     // default axis styles
     this.axisStyles = axisOptions.style;
@@ -142,39 +204,30 @@ var external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_namespaceObject = /*#__PURE
     this.axisStyles.stroke = this.axisStyles.stroke || "black";
 
     // loop per axis to remove redundancies
-    var axes = ["x", "y", "y2"];
-    axes.forEach(function (a) {
+    ["x", "y", "y2"].forEach(function (a) {
       // specific axis options
       if (!axisOptions[a]) {
         // if no second y-axis, just skip
         if (a === "y2") return;
         axisOptions[a] = {};
       }
-      if (!axisOptions[a].scale) {
-        axisOptions[a].scale = d3.scaleLinear;
+      axisOptions[a].scale = axisOptions[a].scale || d3.scaleLinear;
+      var theScale = checkscale(axisOptions[a].scale);
+      if (!theScale.isTime && !theScale.isLog && !theScale.isLinear) {
+        // possibly unsupported scales? TODO: handle
       }
-      var scaleIsTime = axisOptions[a].scale === d3.scaleTime || axisOptions[a].scale === d3.scaleUtc,
-        scaleIsLog = !scaleIsTime && axisOptions[a].scale === d3.scaleLog;
       if (!axisOptions[a].format) {
-        if (scaleIsTime) {
-          axisOptions[a].format = "%Y-%m-%d";
-        } else {
-          axisOptions[a].format = ".0f";
-        }
+        axisOptions[a].format = theScale.isTime ? "%Y-%m-%d" : ".0f";
       }
-      if (!axisOptions[a].grid) {
-        axisOptions[a].grid = {};
-      }
-      if (scaleIsLog && !axisOptions[a].logBase) {
-        axisOptions[a].logBase = 10;
-      }
+      axisOptions[a].grid = axisOptions[a].grid || {};
+      if (theScale.isLog) axisOptions[a].logBase = axisOptions[a].logBase || 10;
       _this[a] = {
         label: axisOptions[a].label === null ? a === "x" ? "x-value" : "y-value" : axisOptions[a].label,
-        isDate: scaleIsTime,
-        isLog: scaleIsLog
+        isDate: theScale.isTime,
+        isLog: theScale.isLog
       };
-      if (scaleIsTime) {
-        if (axisOptions[a].scale === d3.scaleUtc) {
+      if (theScale.isTime) {
+        if (theScale.isUTC) {
           _this[a].format = d3.utcFormat(axisOptions[a].format);
         } else {
           _this[a].format = d3.timeFormat(axisOptions[a].format);
@@ -187,14 +240,12 @@ var external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_namespaceObject = /*#__PURE
 
       // create scale
       _this[a].scale = axisOptions[a].scale();
-      if (scaleIsLog) {
-        _this[a].scale.base(axisOptions[a].logBase);
-      }
+      theScale.isLog && _this[a].scale.base(axisOptions[a].logBase);
       var domain, range;
       if (axisOptions[a]["break"]) {
         _this[a]["break"] = axisOptions[a]["break"];
         domain = [_this[a].min, _this[a]["break"].domain[0], _this[a]["break"].domain[1], _this[a].max];
-        var domain2 = !scaleIsTime ? domain : domain.map(function (x) {
+        var domain2 = !theScale.isTime ? domain : domain.map(function (x) {
             return x.getTime();
           }),
           span = a === "x" ? _this.width : _this.height;
@@ -226,7 +277,7 @@ var external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_namespaceObject = /*#__PURE
       }
 
       // log scale handles ticks differently
-      if (scaleIsLog) {
+      if (theScale.isLog) {
         _this[a].axis.tickFormat(_this[a].format);
         if (axisOptions[a].ticks) {
           _this[a].axis.ticks(axisOptions[a].ticks, _this[a].format);

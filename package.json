@@ -1,6 +1,6 @@
 {
   "name": "@sfei/d3-simplegraph",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "author": "Lawrence Sim",
   "license": "LGPL-3.0",
   "type": "module",
@@ -8,8 +8,8 @@
   "module": "dist/d3.simplegraph.mjs",
   "exports": {
     ".": {
-      "require": "dist/d3.simplegraph.cjs",
-      "import": "dist/d3.simplegraph.mjs"
+      "require": "./dist/d3.simplegraph.cjs",
+      "import": "./dist/d3.simplegraph.mjs"
     }
   },
   "repository": {

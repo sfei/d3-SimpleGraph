@@ -1,10 +1,13 @@
+import checkScale from "./checkscale.js";
+
+
 export default function(SimpleGraph, d3) {
 
     SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
-        if(!axisOptions)        { axisOptions = {}; }
-        if(!axisOptions.x)      { axisOptions.x = {}; }
-        if(!axisOptions.y)      { axisOptions.y = {}; }
-        if(!axisOptions.styles) { axisOptions.styles = {}; }
+        axisOptions       = axisOptions || {};
+        axisOptions.x     = axisOptions.x || {};
+        axisOptions.y     = axisOptions.y || {};
+        axisOptions.style = axisOptions.styles || {};
         
         // default axis styles
         this.axisStyles                 = axisOptions.style;
@@ -14,36 +17,31 @@ export default function(SimpleGraph, d3) {
         this.axisStyles.stroke          = this.axisStyles.stroke || "black";
         
         // loop per axis to remove redundancies
-        var axes = ["x", "y", "y2"];
-        axes.forEach(a => {
+        ["x", "y", "y2"].forEach(a => {
             // specific axis options
             if(!axisOptions[a]) {
                 // if no second y-axis, just skip
                 if(a === "y2") return;
                 axisOptions[a] = {};
             }
-            if(!axisOptions[a].scale) {
-                axisOptions[a].scale = d3.scaleLinear;
+            axisOptions[a].scale = axisOptions[a].scale || d3.scaleLinear;
+            let theScale = checkScale(axisOptions[a].scale);
+            if(!theScale.isTime && !theScale.isLog && !theScale.isLinear) {
+                // possibly unsupported scales? TODO: handle
             }
-            let scaleIsTime = axisOptions[a].scale === d3.scaleTime || axisOptions[a].scale === d3.scaleUtc, 
-                scaleIsLog = !scaleIsTime && axisOptions[a].scale === d3.scaleLog;
             if(!axisOptions[a].format) {
-                if(scaleIsTime) {
-                    axisOptions[a].format = "%Y-%m-%d";
-                } else {
-                    axisOptions[a].format = ".0f";
-                }
+                axisOptions[a].format = theScale.isTime ? "%Y-%m-%d" : ".0f";
             }
-            if(!axisOptions[a].grid) { axisOptions[a].grid = {}; }
-            if(scaleIsLog && !axisOptions[a].logBase) { axisOptions[a].logBase = 10; }
+            axisOptions[a].grid = axisOptions[a].grid || {};
+            if(theScale.isLog) axisOptions[a].logBase = axisOptions[a].logBase || 10;
             
             this[a] = {
-                label: (axisOptions[a].label === null) ? (a === "x" ? "x-value" : "y-value") : axisOptions[a].label, 
-                isDate: scaleIsTime, 
-                isLog: scaleIsLog
+                label:  (axisOptions[a].label === null) ? (a === "x" ? "x-value" : "y-value") : axisOptions[a].label, 
+                isDate: theScale.isTime, 
+                isLog:  theScale.isLog
             };
-            if(scaleIsTime) {
-                if(axisOptions[a].scale === d3.scaleUtc) {
+            if(theScale.isTime) {
+                if(theScale.isUTC) {
                     this[a].format = d3.utcFormat(axisOptions[a].format);
                 } else {
                     this[a].format = d3.timeFormat(axisOptions[a].format);
@@ -57,9 +55,7 @@ export default function(SimpleGraph, d3) {
             
             // create scale
             this[a].scale = axisOptions[a].scale();
-            if(scaleIsLog) {
-                this[a].scale.base(axisOptions[a].logBase);
-            }
+            theScale.isLog && this[a].scale.base(axisOptions[a].logBase);
             let domain, range;
             if(axisOptions[a].break) {
                 this[a].break = axisOptions[a].break;
@@ -69,7 +65,7 @@ export default function(SimpleGraph, d3) {
                     this[a].break.domain[1], 
                     this[a].max
                 ];
-                let domain2 = !scaleIsTime ? domain : domain.map(x => x.getTime()), 
+                let domain2 = !theScale.isTime ? domain : domain.map(x => x.getTime()), 
                     span = a === "x" ? this.width : this.height;
                 range = a === "x" ? [0, 0, 0, span] : [span, 0, 0, 0];
                 let validspan = span - this[a].break.rangegap, 
@@ -99,7 +95,7 @@ export default function(SimpleGraph, d3) {
             }
             
             // log scale handles ticks differently
-            if(scaleIsLog) {
+            if(theScale.isLog) {
                 this[a].axis.tickFormat(this[a].format);
                 if(axisOptions[a].ticks) {
                     this[a].axis.ticks(axisOptions[a].ticks, this[a].format);

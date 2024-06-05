@@ -46,6 +46,9 @@ Interactive tutorials are provided as HTML pages where one can following along b
 
 ## Change Log ##
 
+#### v3.1.1 ####
+  * More robust scale comparisons via in `sg.axis` via functional detections.
+
 #### v3.1.0 ####
   * Updated build libraries.
   * Fix import issue in `sg.axis` module instantiation.

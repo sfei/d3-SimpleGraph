@@ -34,14 +34,77 @@ var x = (y) => {
 } 
 var y = (x) => (() => (x))
 const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
+;// CONCATENATED MODULE: ./src/checkscale.js
+const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")], 
+      TEST_DOMAIN_TIME_0 = TEST_DOMAIN[0].getTime();
+
+/* harmony default export */ function checkscale(scale) {
+    let checkScale   = scale(TEST_DOMAIN), 
+        checkDomain  = checkScale.domain(), 
+        isSequential = !!checkScale.interpolator;  // various version can be sequential
+    // scaleOrdinal and odd-balls
+    if(!checkDomain.length) {
+        if(checkScale.quantiles) return {isQuantile: true, isSequential: isSequential};
+        if(checkScale.step) {
+            return {
+                isBand: true, 
+                isPoint: !checkScale.paddingInner
+            };
+        }
+        return {isOrdinal: true};
+    }
+    if(checkDomain.length === 1) return {isThreshold: true};
+    // time scales
+    if(checkDomain[0] instanceof Date) {
+        return {
+            isTime: true, 
+            isUtc: checkDomain[0].getTime() === TEST_DOMAIN_TIME_0
+        };
+    }
+    let isDiverging  = checkDomain.length === 3;  // various version can be diverging
+    // log and pow scales
+    if(checkScale.base) {
+        return {
+            isPow: true, 
+            isSequential: isSequential, 
+            isDiverging: isDiverging
+        };
+    }
+    if(checkScale.exponent) {
+        return {
+            isPow: true,
+            isSqrt: checkScale.exponent() == 0.5, 
+            isSequential: isSequential, 
+            isDiverging: isDiverging
+        };
+    }
+    if(checkScale.constant) {
+        return {
+            isSymlog: true, 
+            isSequential: isSequential, 
+            isDiverging: isDiverging
+        };
+    }
+    // scaleQuantize
+    if(checkScale.thresholds) return {isQuantize: true};
+    // scaleLinear
+    return {
+        isLinear: true, 
+        isSequential: isSequential, 
+        isDiverging: isDiverging
+    };
+};
 ;// CONCATENATED MODULE: ./src/sg.axis.js
+
+
+
 /* harmony default export */ function sg_axis(SimpleGraph, d3) {
 
     SimpleGraph.prototype.resetAxisOptions = function(axisOptions) {
-        if(!axisOptions)        { axisOptions = {}; }
-        if(!axisOptions.x)      { axisOptions.x = {}; }
-        if(!axisOptions.y)      { axisOptions.y = {}; }
-        if(!axisOptions.styles) { axisOptions.styles = {}; }
+        axisOptions       = axisOptions || {};
+        axisOptions.x     = axisOptions.x || {};
+        axisOptions.y     = axisOptions.y || {};
+        axisOptions.style = axisOptions.styles || {};
         
         // default axis styles
         this.axisStyles                 = axisOptions.style;
@@ -51,36 +114,31 @@ const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
         this.axisStyles.stroke          = this.axisStyles.stroke || "black";
         
         // loop per axis to remove redundancies
-        var axes = ["x", "y", "y2"];
-        axes.forEach(a => {
+        ["x", "y", "y2"].forEach(a => {
             // specific axis options
             if(!axisOptions[a]) {
                 // if no second y-axis, just skip
                 if(a === "y2") return;
                 axisOptions[a] = {};
             }
-            if(!axisOptions[a].scale) {
-                axisOptions[a].scale = d3.scaleLinear;
+            axisOptions[a].scale = axisOptions[a].scale || d3.scaleLinear;
+            let theScale = checkscale(axisOptions[a].scale);
+            if(!theScale.isTime && !theScale.isLog && !theScale.isLinear) {
+                // possibly unsupported scales? TODO: handle
             }
-            let scaleIsTime = axisOptions[a].scale === d3.scaleTime || axisOptions[a].scale === d3.scaleUtc, 
-                scaleIsLog = !scaleIsTime && axisOptions[a].scale === d3.scaleLog;
             if(!axisOptions[a].format) {
-                if(scaleIsTime) {
-                    axisOptions[a].format = "%Y-%m-%d";
-                } else {
-                    axisOptions[a].format = ".0f";
-                }
+                axisOptions[a].format = theScale.isTime ? "%Y-%m-%d" : ".0f";
             }
-            if(!axisOptions[a].grid) { axisOptions[a].grid = {}; }
-            if(scaleIsLog && !axisOptions[a].logBase) { axisOptions[a].logBase = 10; }
+            axisOptions[a].grid = axisOptions[a].grid || {};
+            if(theScale.isLog) axisOptions[a].logBase = axisOptions[a].logBase || 10;
             
             this[a] = {
-                label: (axisOptions[a].label === null) ? (a === "x" ? "x-value" : "y-value") : axisOptions[a].label, 
-                isDate: scaleIsTime, 
-                isLog: scaleIsLog
+                label:  (axisOptions[a].label === null) ? (a === "x" ? "x-value" : "y-value") : axisOptions[a].label, 
+                isDate: theScale.isTime, 
+                isLog:  theScale.isLog
             };
-            if(scaleIsTime) {
-                if(axisOptions[a].scale === d3.scaleUtc) {
+            if(theScale.isTime) {
+                if(theScale.isUTC) {
                     this[a].format = d3.utcFormat(axisOptions[a].format);
                 } else {
                     this[a].format = d3.timeFormat(axisOptions[a].format);
@@ -94,9 +152,7 @@ const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
             
             // create scale
             this[a].scale = axisOptions[a].scale();
-            if(scaleIsLog) {
-                this[a].scale.base(axisOptions[a].logBase);
-            }
+            theScale.isLog && this[a].scale.base(axisOptions[a].logBase);
             let domain, range;
             if(axisOptions[a].break) {
                 this[a].break = axisOptions[a].break;
@@ -106,7 +162,7 @@ const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
                     this[a].break.domain[1], 
                     this[a].max
                 ];
-                let domain2 = !scaleIsTime ? domain : domain.map(x => x.getTime()), 
+                let domain2 = !theScale.isTime ? domain : domain.map(x => x.getTime()), 
                     span = a === "x" ? this.width : this.height;
                 range = a === "x" ? [0, 0, 0, span] : [span, 0, 0, 0];
                 let validspan = span - this[a].break.rangegap, 
@@ -136,7 +192,7 @@ const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
             }
             
             // log scale handles ticks differently
-            if(scaleIsLog) {
+            if(theScale.isLog) {
                 this[a].axis.tickFormat(this[a].format);
                 if(axisOptions[a].ticks) {
                     this[a].axis.ticks(axisOptions[a].ticks, this[a].format);
