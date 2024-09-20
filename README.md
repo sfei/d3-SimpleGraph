@@ -6,7 +6,7 @@
 
 D3-SimpleGraph is an abstraction of the D3 library for quickly creating and adding functionality of basic, 2-dimensional plots.
 
-**Lawrence Sim** -- lawrences@sfei.org<br />
+**Lindsey Sim** -- lindseys@sfei.org<br />
 **San Francisco Estuary Institute** -- 2024
 
 ## License ##
@@ -45,6 +45,9 @@ Interactive tutorials are provided as HTML pages where one can following along b
 2. [Data Updates and Draw Updates with Transitions](tutorials/simplegraph-4.html). [tutorials/simplegraph-4.html]
 
 ## Change Log ##
+
+#### v3.1.2 ####
+  * UTC format fix for axis ticks.
 
 #### v3.1.1 ####
   * More robust scale comparisons via in `sg.axis` via functional detections.

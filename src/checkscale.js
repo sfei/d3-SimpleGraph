@@ -21,7 +21,7 @@ export default function(scale) {
     if(checkDomain[0] instanceof Date) {
         return {
             isTime: true, 
-            isUtc: checkDomain[0].getTime() === TEST_DOMAIN_TIME_0
+            isUTC: checkDomain[0].getTime() === TEST_DOMAIN_TIME_0
         };
     }
     let isDiverging  = checkDomain.length === 3;  // various version can be diverging
