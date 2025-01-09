@@ -46,6 +46,9 @@ Interactive tutorials are provided as HTML pages where one can following along b
 
 ## Change Log ##
 
+#### v3.1.3 ####
+  * Fix interpolation error for line coordinates beyond x-max.
+
 #### v3.1.2 ####
   * UTC format fix for axis ticks.
 

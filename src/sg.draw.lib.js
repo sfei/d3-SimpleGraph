@@ -87,7 +87,7 @@ export default function(SimpleGraph) {
                         // get y-intercept on x-domain-min, add if within range
                         var intercept = [
                             this.x.min, 
-                            lastCoords[0] + slope*(coords[1] - lastCoords[1])
+                            lastCoords[1] + slope*(coords[1] - lastCoords[1])
                         ];
                         if(intercept[1] >= yAxis.min && intercept[1] <= yAxis.max) {
                             segment.push(intercept);
@@ -110,7 +110,7 @@ export default function(SimpleGraph) {
                     // interpolate back to x-max
                     coords = [
                         this.x.max, 
-                        lastCoords[0] + slope*(coords[1] - lastCoords[1])
+                        lastCoords[1] + slope*(coords[1] - lastCoords[1])
                     ];
                 }
             }

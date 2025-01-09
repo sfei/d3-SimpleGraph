@@ -1757,7 +1757,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
           crossedXMin = true;
           if (coords[0] > this.x.min && lastCoords) {
             // get y-intercept on x-domain-min, add if within range
-            var intercept = [this.x.min, lastCoords[0] + slope * (coords[1] - lastCoords[1])];
+            var intercept = [this.x.min, lastCoords[1] + slope * (coords[1] - lastCoords[1])];
             if (intercept[1] >= yAxis.min && intercept[1] <= yAxis.max) {
               segment.push(intercept);
             }
@@ -1777,7 +1777,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
           // if no last coords, this is just a point outside
           if (!lastCoords) break;
           // interpolate back to x-max
-          coords = [this.x.max, lastCoords[0] + slope * (coords[1] - lastCoords[1])];
+          coords = [this.x.max, lastCoords[1] + slope * (coords[1] - lastCoords[1])];
         }
       }
 
