@@ -1,7 +1,7 @@
 {
   "name": "@sfei/d3-simplegraph",
-  "version": "3.1.2",
-  "author": "Lawrence Sim",
+  "version": "3.1.3",
+  "author": "Lindsey Sim",
   "license": "LGPL-3.0",
   "type": "module",
   "main": "dist/d3.simplegraph.cjs",

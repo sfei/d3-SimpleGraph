@@ -3047,9 +3047,9 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
 ;// CONCATENATED MODULE: ./src/simple-graph.js
 /*************************************************************************************************************
  * D3-Simple-Graph
- * @version v3.1.0
- * @author Lawrence Sim
- * @copyright 2024 - San Francisco Estuary Institute
+ * @version v3.1.3
+ * @author Lindsey Sim
+ * @copyright 2025 - San Francisco Estuary Institute
  * @license This project is licensed under the GNU Lesser General Public License.
  ************************************************************************************************************/
 
