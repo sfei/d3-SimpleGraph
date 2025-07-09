@@ -1,6 +1,6 @@
 /*************************************************************************************************************
  * D3-Simple-Graph
- * @version v3.1.3
+ * @version v3.1.4
  * @author Lindsey Sim
  * @copyright 2025 - San Francisco Estuary Institute
  * @license This project is licensed under the GNU Lesser General Public License.

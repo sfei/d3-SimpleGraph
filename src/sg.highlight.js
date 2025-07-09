@@ -58,7 +58,6 @@ export default function(SimpleGraph, d3) {
             switch(this.ptSeriesShapes[d.series]) {
                 case "triangle":
                 case "triangle-up":
-                    size *= 2.0;
                     highlight.attr("points", d => {
                         let length = size*1.519676,   // side length of equilateral trangle of same area of square
                             height = length*0.86602,  // ratio of equilateral triangle
@@ -68,7 +67,6 @@ export default function(SimpleGraph, d3) {
                     });
                     break;
                 case "triangle-down":
-                    size *= 2.0;
                     highlight.attr("points", d => {
                         let length = size*1.519676,   // side length of equilateral trangle of same area of square
                             height = length*0.86602,  // ratio of equilateral triangle
@@ -116,7 +114,7 @@ export default function(SimpleGraph, d3) {
         this.svgGraph.selectAll(".sg-line").each((d, i, s) => {
             if(options.series && !~options.series.indexOf(d.series)) return;
             if(options.filter && !options.filter(this._cloneLineData(d), s[i])) return;
-            let front = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight"), 
+            let front = d3.select(s[i].cloneNode(true)).attr("class", "sg-line-highlight"), 
                 behind = null;
             if(!options.noblur) {
                 behind = d3.select(s[i].cloneNode(true))
@@ -155,7 +153,7 @@ export default function(SimpleGraph, d3) {
             if(options.series && !~options.series.indexOf(d.series)) return;
             if(options.filter && !options.filter(this._cloneAreaData(d), s[i])) return;
             let highlight = d3.select(s[i].cloneNode(true))
-                .attr("class", "sg-point-highlight")
+                .attr("class", "sg-area-highlight")
                 .style("opacity", "1");
             if(!options.nooutline) {
                 highlight.style("stroke", "#000");

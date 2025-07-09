@@ -117,6 +117,8 @@ A few (but not comprehensive) list of the important variables in an initialized 
 * `max` - The axis max value
 * `scale` - The D3 scale object for this axis
 
+&nbsp;
+
 ## Misc. functions ##
 
 #### Getting elements ####
@@ -127,11 +129,15 @@ Returns D3 wrapper for SVG node.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `sg.svg`
 
+&nbsp;
+
 <a name="a-getsvggraphic" href="#a-getsvggraphic">#</a> *SimpleGraph*.**getSvgGraphic**()
 
 Returns D3 wrapper for graphic node in SVG node.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** `sg.svgGraph`
+
+&nbsp;
 
 #### Remove and destroy ####
 
@@ -141,15 +147,19 @@ Removes SVG node from container.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
-<a name="a-destory" href="#a-destory">#</a> **sg.destroy()**
+&nbsp;
+
+<a name="a-destory" href="#a-destory">#</a> *SimpleGraph*.**destroy()**
 
 Removes and destroys SVG and this object. Irreversible.
+
+&nbsp;
 
 #### Saving the graph ####
 
 <a name="a-saveaspng" href="#a-saveaspng">#</a> *SimpleGraph*.**saveAsPng**(*pngName*)
 
-Save graph as a PNG. Note, in non-Edge Internet Explorer, the [canvg library](https://github.com/canvg/canvg) is required due to security error. This library is not  packaged with SimpleGraph and simply assumed loaded into global space. If canvg object is not found, function will simply error on IE.
+Save graph as a PNG. Will automatically pop-up the save dialog.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -163,3 +173,5 @@ Save graph as a PNG. Note, in non-Edge Internet Explorer, the [canvg library](ht
 </table>
 
 &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;

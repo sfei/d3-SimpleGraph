@@ -48,7 +48,7 @@
 /******/ 			__webpack_require__.r(ns);
 /******/ 			var def = {};
 /******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
-/******/ 			for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
 /******/ 				Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
 /******/ 			}
 /******/ 			def['default'] = () => (value);
@@ -93,10 +93,10 @@ __webpack_require__.d(__webpack_exports__, {
   "default": () => (/* binding */ simple_graph)
 });
 
-;// CONCATENATED MODULE: external "d3"
+;// external "d3"
 const external_d3_namespaceObject = require("d3");
 var external_d3_namespaceObject_0 = /*#__PURE__*/__webpack_require__.t(external_d3_namespaceObject, 2);
-;// CONCATENATED MODULE: ./src/checkscale.js
+;// ./src/checkscale.js
 var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
   TEST_DOMAIN_TIME_0 = TEST_DOMAIN[0].getTime();
 /* harmony default export */ function checkscale(scale) {
@@ -165,7 +165,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
   };
 }
 ;
-;// CONCATENATED MODULE: ./src/sg.axis.js
+;// ./src/sg.axis.js
 
 /* harmony default export */ function sg_axis(SimpleGraph, d3) {
   SimpleGraph.prototype.resetAxisOptions = function (axisOptions) {
@@ -553,7 +553,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     return this;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.color.js
+;// ./src/sg.color.js
 /* harmony default export */ function sg_color(SimpleGraph) {
   SimpleGraph.prototype.getColorBySeriesName = function (name, create) {
     if (!name) return null;
@@ -629,7 +629,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     return this;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.grid.legend.js
+;// ./src/sg.grid.legend.js
 
 /* harmony default export */ function sg_grid_legend(SimpleGraph) {
   SimpleGraph.prototype.drawGrid = function (style) {
@@ -939,9 +939,9 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     return this;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.point.shapes.js
+;// ./src/sg.point.shapes.js
 /* harmony default export */ const sg_point_shapes = (["diamond", "circle", "square", "triangle", "triangle-up", "triangle-down"]);
-;// CONCATENATED MODULE: ./src/sg.data.point.js
+;// ./src/sg.data.point.js
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 
 /* harmony default export */ function sg_data_point(SimpleGraph) {
@@ -1149,7 +1149,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     return this;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.data.area.js
+;// ./src/sg.data.area.js
 function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -1317,7 +1317,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     return this;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.data.line.js
+;// ./src/sg.data.line.js
 function sg_data_line_toConsumableArray(r) { return sg_data_line_arrayWithoutHoles(r) || sg_data_line_iterableToArray(r) || sg_data_line_unsupportedIterableToArray(r) || sg_data_line_nonIterableSpread(); }
 function sg_data_line_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function sg_data_line_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return sg_data_line_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? sg_data_line_arrayLikeToArray(r, a) : void 0; } }
@@ -1664,7 +1664,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     });
   };
 }
-;// CONCATENATED MODULE: ./src/sg.draw.lib.js
+;// ./src/sg.draw.lib.js
 /* harmony default export */ function sg_draw_lib(SimpleGraph) {
   /*
    * Find x-intercept (on either y-axis min or max).using simple binary search
@@ -2008,7 +2008,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     return areas;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.draw.points.js
+;// ./src/sg.draw.points.js
 function sg_draw_points_toConsumableArray(r) { return sg_draw_points_arrayWithoutHoles(r) || sg_draw_points_iterableToArray(r) || sg_draw_points_unsupportedIterableToArray(r) || sg_draw_points_nonIterableSpread(); }
 function sg_draw_points_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function sg_draw_points_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return sg_draw_points_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? sg_draw_points_arrayLikeToArray(r, a) : void 0; } }
@@ -2252,7 +2252,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     return selc;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.draw.lines.js
+;// ./src/sg.draw.lines.js
 
 /* harmony default export */ function sg_draw_lines(SimpleGraph, d3) {
   SimpleGraph.prototype.removeAllLines = function (series) {
@@ -2523,7 +2523,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     }
   };
 }
-;// CONCATENATED MODULE: ./src/sg.draw.areas.js
+;// ./src/sg.draw.areas.js
 
 /* harmony default export */ function sg_draw_areas(SimpleGraph, d3) {
   SimpleGraph.prototype.removeAreas = function (series) {
@@ -2730,7 +2730,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     }
   };
 }
-;// CONCATENATED MODULE: ./src/sg.tooltip.js
+;// ./src/sg.tooltip.js
 /* harmony default export */ function sg_tooltip(SimpleGraph, d3) {
   SimpleGraph.prototype.addTooltipToPoints = function (textFunction, forSeries, options) {
     forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
@@ -2874,7 +2874,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     return this;
   };
 }
-;// CONCATENATED MODULE: ./src/sg.highlight.js
+;// ./src/sg.highlight.js
 /* harmony default export */ function sg_highlight(SimpleGraph, d3) {
   SimpleGraph.prototype.removeHighlights = function () {
     return this.removeHighlightPoints().removeHighlightLines().removeHighlightAreas();
@@ -2917,7 +2917,6 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       switch (_this.ptSeriesShapes[d.series]) {
         case "triangle":
         case "triangle-up":
-          size *= 2.0;
           highlight.attr("points", function (d) {
             var length = size * 1.519676,
               // side length of equilateral trangle of same area of square
@@ -2929,7 +2928,6 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
           });
           break;
         case "triangle-down":
-          size *= 2.0;
           highlight.attr("points", function (d) {
             var length = size * 1.519676,
               // side length of equilateral trangle of same area of square
@@ -2974,7 +2972,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     this.svgGraph.selectAll(".sg-line").each(function (d, i, s) {
       if (options.series && !~options.series.indexOf(d.series)) return;
       if (options.filter && !options.filter(_this2._cloneLineData(d), s[i])) return;
-      var front = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight"),
+      var front = d3.select(s[i].cloneNode(true)).attr("class", "sg-line-highlight"),
         behind = null;
       if (!options.noblur) {
         behind = d3.select(s[i].cloneNode(true)).attr("class", "sg-line-highlight").attr("filter", "url('#sg-effect-blur')").style("fill", 'none').style("filter", 'brightness(135%)').style("opacity", "0.7");
@@ -3006,7 +3004,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     this.svgGraph.selectAll(".sg-area").each(function (d, i, s) {
       if (options.series && !~options.series.indexOf(d.series)) return;
       if (options.filter && !options.filter(_this3._cloneAreaData(d), s[i])) return;
-      var highlight = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight").style("opacity", "1");
+      var highlight = d3.select(s[i].cloneNode(true)).attr("class", "sg-area-highlight").style("opacity", "1");
       if (!options.nooutline) {
         highlight.style("stroke", "#000");
         highlight.style("stroke-width", "1.5");
@@ -3023,10 +3021,10 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     return this;
   };
 }
-;// CONCATENATED MODULE: ./src/simple-graph.js
+;// ./src/simple-graph.js
 /*************************************************************************************************************
  * D3-Simple-Graph
- * @version v3.1.3
+ * @version v3.1.4
  * @author Lindsey Sim
  * @copyright 2025 - San Francisco Estuary Institute
  * @license This project is licensed under the GNU Lesser General Public License.

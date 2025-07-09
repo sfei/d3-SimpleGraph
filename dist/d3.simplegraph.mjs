@@ -1,40 +1,8 @@
 import * as __WEBPACK_EXTERNAL_MODULE_d3__ from "d3";
-/******/ // The require scope
-/******/ var __webpack_require__ = {};
-/******/ 
-/************************************************************************/
-/******/ /* webpack/runtime/define property getters */
-/******/ (() => {
-/******/ 	// define getter functions for harmony exports
-/******/ 	__webpack_require__.d = (exports, definition) => {
-/******/ 		for(var key in definition) {
-/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 			}
-/******/ 		}
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/hasOwnProperty shorthand */
-/******/ (() => {
-/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ })();
-/******/ 
-/************************************************************************/
-var __webpack_exports__ = {};
 
-// EXPORTS
-__webpack_require__.d(__webpack_exports__, {
-  A: () => (/* binding */ simple_graph)
-});
-
-;// CONCATENATED MODULE: external "d3"
-var x = (y) => {
-	var x = {}; __webpack_require__.d(x, y); return x
-} 
-var y = (x) => (() => (x))
+;// external "d3"
 const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
-;// CONCATENATED MODULE: ./src/checkscale.js
+;// ./src/checkscale.js
 const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")], 
       TEST_DOMAIN_TIME_0 = TEST_DOMAIN[0].getTime();
 
@@ -94,7 +62,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
         isDiverging: isDiverging
     };
 };
-;// CONCATENATED MODULE: ./src/sg.axis.js
+;// ./src/sg.axis.js
 
 
 
@@ -521,7 +489,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
         return this;
     };
 }
-;// CONCATENATED MODULE: ./src/sg.color.js
+;// ./src/sg.color.js
 /* harmony default export */ function sg_color(SimpleGraph) {
 
     SimpleGraph.prototype.getColorBySeriesName = function(name, create) {
@@ -594,7 +562,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
         return this;
     };
 }
-;// CONCATENATED MODULE: ./src/sg.grid.legend.js
+;// ./src/sg.grid.legend.js
  
 
  /* harmony default export */ function sg_grid_legend(SimpleGraph) {
@@ -967,9 +935,9 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
         return this;
     };
 }
-;// CONCATENATED MODULE: ./src/sg.point.shapes.js
+;// ./src/sg.point.shapes.js
 /* harmony default export */ const sg_point_shapes = (["diamond", "circle", "square", "triangle", "triangle-up", "triangle-down"]);
-;// CONCATENATED MODULE: ./src/sg.data.point.js
+;// ./src/sg.data.point.js
 
 
 /* harmony default export */ function sg_data_point(SimpleGraph) {
@@ -1177,7 +1145,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
     };
 
 }
-;// CONCATENATED MODULE: ./src/sg.data.area.js
+;// ./src/sg.data.area.js
 /* harmony default export */ function sg_data_area(SimpleGraph, d3) {
 
     SimpleGraph.prototype.addAreaAsCoordinates = function(series, areaCoordinates, options) {
@@ -1326,7 +1294,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
     };
     
 }
-;// CONCATENATED MODULE: ./src/sg.data.line.js
+;// ./src/sg.data.line.js
 /* harmony default export */ function sg_data_line(SimpleGraph, d3) {
 
     SimpleGraph.prototype.addLineDataAsCoordinates = function(series, coords, options) {
@@ -1641,7 +1609,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
     };
 
 }
-;// CONCATENATED MODULE: ./src/sg.draw.lib.js
+;// ./src/sg.draw.lib.js
 /* harmony default export */ function sg_draw_lib(SimpleGraph) {
     
     /*
@@ -2006,7 +1974,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
         return areas;
     };
 }
-;// CONCATENATED MODULE: ./src/sg.draw.points.js
+;// ./src/sg.draw.points.js
 
 
 /* harmony default export */ function sg_draw_points(SimpleGraph, d3) {
@@ -2261,7 +2229,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
     };
 
 }
-;// CONCATENATED MODULE: ./src/sg.draw.lines.js
+;// ./src/sg.draw.lines.js
 
 
 /* harmony default export */ function sg_draw_lines(SimpleGraph, d3) {
@@ -2568,7 +2536,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
     };
 
 }
-;// CONCATENATED MODULE: ./src/sg.draw.areas.js
+;// ./src/sg.draw.areas.js
 
 
 /* harmony default export */ function sg_draw_areas(SimpleGraph, d3) {
@@ -2801,7 +2769,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
     };
 
 }
-;// CONCATENATED MODULE: ./src/sg.tooltip.js
+;// ./src/sg.tooltip.js
 /* harmony default export */ function sg_tooltip(SimpleGraph, d3) {
 
     SimpleGraph.prototype.addTooltipToPoints = function(textFunction, forSeries, options) {
@@ -2966,7 +2934,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
 
     
 }
-;// CONCATENATED MODULE: ./src/sg.highlight.js
+;// ./src/sg.highlight.js
 /* harmony default export */ function sg_highlight(SimpleGraph, d3) {
 
     SimpleGraph.prototype.removeHighlights = function() {
@@ -3027,7 +2995,6 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
             switch(this.ptSeriesShapes[d.series]) {
                 case "triangle":
                 case "triangle-up":
-                    size *= 2.0;
                     highlight.attr("points", d => {
                         let length = size*1.519676,   // side length of equilateral trangle of same area of square
                             height = length*0.86602,  // ratio of equilateral triangle
@@ -3037,7 +3004,6 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                     });
                     break;
                 case "triangle-down":
-                    size *= 2.0;
                     highlight.attr("points", d => {
                         let length = size*1.519676,   // side length of equilateral trangle of same area of square
                             height = length*0.86602,  // ratio of equilateral triangle
@@ -3085,7 +3051,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
         this.svgGraph.selectAll(".sg-line").each((d, i, s) => {
             if(options.series && !~options.series.indexOf(d.series)) return;
             if(options.filter && !options.filter(this._cloneLineData(d), s[i])) return;
-            let front = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight"), 
+            let front = d3.select(s[i].cloneNode(true)).attr("class", "sg-line-highlight"), 
                 behind = null;
             if(!options.noblur) {
                 behind = d3.select(s[i].cloneNode(true))
@@ -3124,7 +3090,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
             if(options.series && !~options.series.indexOf(d.series)) return;
             if(options.filter && !options.filter(this._cloneAreaData(d), s[i])) return;
             let highlight = d3.select(s[i].cloneNode(true))
-                .attr("class", "sg-point-highlight")
+                .attr("class", "sg-area-highlight")
                 .style("opacity", "1");
             if(!options.nooutline) {
                 highlight.style("stroke", "#000");
@@ -3144,10 +3110,10 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
     };
 
 }
-;// CONCATENATED MODULE: ./src/simple-graph.js
+;// ./src/simple-graph.js
 /*************************************************************************************************************
  * D3-Simple-Graph
- * @version v3.1.3
+ * @version v3.1.4
  * @author Lindsey Sim
  * @copyright 2025 - San Francisco Estuary Institute
  * @license This project is licensed under the GNU Lesser General Public License.
@@ -3355,5 +3321,4 @@ SimpleGraph.prototype.saveAsPng = function(pngName) {
 };
 
 /* harmony default export */ const simple_graph = (SimpleGraph);
-var __webpack_exports__default = __webpack_exports__.A;
-export { __webpack_exports__default as default };
+export { simple_graph as default };

@@ -21,6 +21,8 @@ Color handling is handled at two levels. At the bottom (the default) is the a [D
 
 Colors are based on series names, which must be provided with all data added to the SimpleGraph instance (see [adding and manipulating data](./add-data.md)).
 
+&nbsp;
+
 <a name="a-getcolorbyseriesname" href="#a-getcolorbyseriesname">#</a> *SimpleGraph*.**getColorBySeriesName**(*name*, *create*)
 
 Get the color or style related to a data series. Attempts to return the style first, but failing that will return the color string. Note that colors will not be assigned to a data series until drawn, thus data series that do exist but haven't been drawn yet may not return a color.
@@ -41,6 +43,8 @@ Get the color or style related to a data series. Attempts to return the style fi
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Color value, or null.
 
+&nbsp;
+
 <a name="a-resetcolorscale" href="#a-resetcolorscale">#</a> *SimpleGraph*.**resetColorScale**(*colorScale*)
 
 Reset domain on color scale, or replace with provided.
@@ -57,6 +61,8 @@ Reset domain on color scale, or replace with provided.
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-setseriescolor" href="#a-setseriescolor">#</a> *SimpleGraph*.**setSeriesColor**(*series*, *color*)
 
@@ -78,6 +84,8 @@ Sets a custom color (overriding the color scale) for a given series name.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-removeseriescolor" href="#a-removeseriescolor">#</a> *SimpleGraph*.**removeSeriesColor**(*series*)
 
 Remove custom color for series name.
@@ -95,9 +103,13 @@ Remove custom color for series name.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 ## Point shapes ##
 
 By default, points will be drawn as circles, but other shapes may be provided. As the legend needs to be consistent by data series, shapes must be set for the entire data series. Setting a shape in the options when adding point data (using any of the functions from the previous subsection), will override any existing shape specified for the entire data series.
+
+&nbsp;
 
 <a name="a-setpointseriesshape" href="#a-setpointseriesshape">#</a> *SimpleGraph*.**setPointSeriesShape**(*series*, *shape*)
 
@@ -128,6 +140,10 @@ Point shape changes may not work well with draw-updates. It is recommended to ch
   </tbody>
 </table>
 
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
+
 <a name="a-getpointseriesshape" href="#a-getpointseriesshape">#</a> *SimpleGraph*.**getPointSeriesShape**(*series*)
 
 Get the shape assigned to a data series.
@@ -142,3 +158,7 @@ Get the shape assigned to a data series.
     </tr>
   </tbody>
 </table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Name of shape (or null if not defined).
+
+&nbsp;
