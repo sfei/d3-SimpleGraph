@@ -25,9 +25,11 @@
 
 To visualize changes after adding or updating data, draw functions must be called explicitly. Draws must be called for each type of data separately (points, lines, areas, and point-lines). As such, the call-order will determine which type of data is drawn over the other.
 
-There are two methods of drawing. The simple draw functions will erase and redraw all elements on the graph. A simple fade-in transition can be applied. Update draws (next section), will keep existing elements on the graph, instead animating their changes to align with the state of the data.
+There are two methods of drawing. The simple draw functions will erase and redraw all elements on the graph. A simple fade-in transition can be applied. Update draws (see [Updating drawn data](#updating-drawn-data)), will keep existing elements on the graph, instead animating their changes to align with the state of the data.
 
 All data SVG nodes will be given the attribute `series` with the data series name, which may be helpful in selecting or parsing the elements manually.
+
+&nbsp;
 
 <a name="a-drawpoints" href="#a-drawpoints">#</a> *SimpleGraph*.**drawPoints**([*showNull*[, *transition*]])
 
@@ -55,6 +57,8 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-drawlines" href="#a-">#</a> *SimpleGraph*.**drawLines**([*resolution*[, *transition*]])
 
 (Re)draw lines data on graph (excluding point-lines). Lines will have class `.sg-line`.
@@ -81,6 +85,8 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-drawpointlines" href="#a-">#</a> *SimpleGraph*.**drawPointLines**([*transition*])
 
 (Re)draw all point-lines data on graph. Lines will have class `.sg-point-line`.
@@ -103,6 +109,8 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-drawalllines" href="#a-">#</a> *SimpleGraph*.**drawAllLines**([*resolution*[, *transition*]])
 
@@ -130,6 +138,8 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-drawareas" href="#a-drawareas">#</a> *SimpleGraph*.**drawAreas**([*resolution*[, *transition*]])
 
 (Re)draw all area data on graph. Areas will have class `.sg-areas`.
@@ -156,6 +166,8 @@ All data SVG nodes will be given the attribute `series` with the data series nam
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 ## Updating drawn data ##
 
 Update draws can be called in tandem with transitions to animate changes to the graph. New data will be faded in and existing data that was updated (for updating data, see [Removing and updating data](./mod-data.md)) will be animated to change to the new position and styles.
@@ -163,6 +175,8 @@ Update draws can be called in tandem with transitions to animate changes to the 
 As existing data is kept and transitioned while new data is drawn on top, this may have odd effects on the resulting layer order if mixed.
 
 At current, data that no longer exists is simply removed without a transition.
+
+&nbsp;
 
 <a name="a-drawupdatepoints" href="#a-drawupdatepoints">#</a> *SimpleGraph*.**drawUpdatePoints**([*showNull*[, *transition*]])
 
@@ -190,6 +204,8 @@ Draw-update points on the graph (which will also draw-update any existing point 
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-drawupdatelines" href="#a-drawupdatelines">#</a> *SimpleGraph*.**drawUpdateLines**([*resolution*[, *transition*]])
 
 Draw-update lines on the graph.
@@ -212,6 +228,8 @@ Draw-update lines on the graph.
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-drawupdateareas" href="#adrawupdateareas-">#</a> *SimpleGraph*.**drawUpdateAreas**([*resolution*[, *transition*]])
 
@@ -239,11 +257,15 @@ Draw-update areas on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 ## Removing drawn data ##
 
 The remove functions remove the drawn elements on the graph (using class selections). 
 
 The remove functions do not remove the underlying data. For actually removing the data itself, see the clear data functions in [Removing and updating data](./mod-data.md).
+
+&nbsp;
 
 <a name="a-removepoints" href="#a-removepoints">#</a> *SimpleGraph*.**removePoints**([*series*])
 
@@ -262,6 +284,8 @@ Remove drawn points on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-removelines" href="#a-removelines">#</a> *SimpleGraph*.**removeLines**([*series*])
 
 Remove drawn lines (excluding point-lines) on graph.
@@ -278,6 +302,8 @@ Remove drawn lines (excluding point-lines) on graph.
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-removepointlines" href="#a-removepointlines">#</a> *SimpleGraph*.**removePointsLines**([*series*])
 
@@ -296,6 +322,8 @@ Remove drawn point-lines on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-removealllines" href="#a-removealllines">#</a> *SimpleGraph*.**removeAllLines**([*series*])
 
 Remove drawn lines (including point-lines) on graph.
@@ -312,6 +340,8 @@ Remove drawn lines (including point-lines) on graph.
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-removeareas" href="#a-removeareas">#</a> *SimpleGraph*.**removeAreas**([*series*])
 
@@ -330,6 +360,8 @@ Remove drawn areas on graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-removeall" href="#a-removeall">#</a> *SimpleGraph*.**removeAll**([*series*])
 
 Remove drawn data series on graph.
@@ -346,3 +378,5 @@ Remove drawn data series on graph.
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;

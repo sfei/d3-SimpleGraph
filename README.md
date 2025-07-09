@@ -6,8 +6,8 @@
 
 D3-SimpleGraph is an abstraction of the D3 library for quickly creating and adding functionality of basic, 2-dimensional plots.
 
-**Lindsey Sim** -- lindseys@sfei.org<br />
-**San Francisco Estuary Institute** -- 2024
+**Lindsey Sim** -- lindseys@sfei.org  
+**San Francisco Estuary Institute** -- 2025
 
 ## License ##
 
@@ -15,7 +15,7 @@ This project is licensed under the GNU Lesser General Public License. See [LICEN
 
 ## Usage ##
 
-Library is dependent on [D3](https://d3js.org). Tested on v7.
+Library is dependent on [D3](https://d3js.org). Tested on D3 v7.9.0.
 
 Distributables are provided as ES6, CommonJS, and UMD (which can be imported in AMD, CommonJS, and global/vanilla environments) under the folder `dist\` in both minified and un-minified formats. These distributables are babel transpiled for backwards compatibility and are not bundled with `d3`. The `d3` library must be resolvable in your project's node modules, provided in the global/scoped namespace, and/or shimmed into the build process as necessary depending on how SimpleGraph is imported into your project.
 
@@ -45,6 +45,10 @@ Interactive tutorials are provided as HTML pages where one can following along b
 2. [Data Updates and Draw Updates with Transitions](tutorials/simplegraph-4.html). [tutorials/simplegraph-4.html]
 
 ## Change Log ##
+
+#### v3.1.4 ####
+  * Minor fix to highlight function class names.
+  * Updated build libraries.
 
 #### v3.1.3 ####
   * Fix interpolation error for line coordinates beyond x-max.

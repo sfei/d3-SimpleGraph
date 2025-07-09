@@ -21,9 +21,11 @@
 
 There are three fixed axes available: the mandatory x and y axes, and an optional y2 axis. Axes are handled as a dictionary of [axis options](./defs.md#axis-options), to be enacted once drawing the axis. You may also potentially manually access the axis objects within the SimpleGraph instance's [axis properties](./README.md#axis).
 
+&nbsp;
+
 <a name="a-resetaxisoptions" href="#a-resetaxisoptions">#</a> *SimpleGraph*.**resetAxisOptions**(*axisOptions*)
 
-Redefine axis options. As calling this will invalidate anything drawn on the graph, all data is cleared from the graph on calling this.
+Redefine axis options. As calling this will invalidate anything drawn on the graph, all drawn data is cleared from the graph on calling this.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -43,12 +45,14 @@ Redefine axis options. As calling this will invalidate anything drawn on the gra
       <td>axisOptions.y2</td><td><a href="./defs.md#axis-options">Axis Options</a></td><td>Object literal of y2-Axis options.</td>
     </tr>
     <tr>
-      <td>axisOptions.styles</td><td>object</td><td>Optional key-value object of shared axis styles. Defaults to `fill="none"`, `stroke="black"`, and `'stroke-width'=0.5`.</td>
+      <td>axisOptions.styles</td><td>object</td><td>Optional key-value object of shared axis styles. Defaults to <code>fill="none"</code>, <code>stroke="black"</code>, and <code>'stroke-width'=0.5</code>.</td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-drawaxes" href="a-drawaxes">#</a> *SimpleGraph*.**drawAxes**([*labelPosition*[, *xAxisPosition*[, *axisLabelMargin*]]])
 
@@ -73,6 +77,8 @@ Redraws the axes on the graph. Often useful for redrawing the axes on top of any
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-drawgrid" href="a-drawgrid">#</a> *SimpleGraph*.**drawGrid**([*style*])
 
 Draws a grid. If grid already exists, redraws it. Grid spacing is determined by axis ticks.
@@ -83,12 +89,14 @@ Draws a grid. If grid already exists, redraws it. Grid spacing is determined by 
       <th>Name</th><th>Type</th><th>Description</th>
     </tr>
     <tr>
-      <td>style</td><td>object</td><td>Optional key-value object of grid styles. Defaults to opacity=0.4, stroke="#555", and stroke-width=0.3.</td>
+      <td>style</td><td>object</td><td>Optional key-value object of grid styles. Defaults to <code>opacity=0.4</code>, <code>stroke="#555"</code>, and <code>stroke-width=0.3</code>.</td>
     </tr>
   </tbody>
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-removegrid" href="a-removegrid">#</a> *SimpleGraph*.**removeGrid**()
 
@@ -96,9 +104,13 @@ Removes the grid.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 #### Legend ####
 
 Legends are handled fairly automatically, with all data series present (even if not yet drawn on the graph) automatically added to the legend. Simply define where to place it along with some optional formatting parameters.
+
+&nbsp;
 
 <a name="a-drawlegend" href="a-drawlegend">#</a> *SimpleGraph*.**drawLegend**(*position*[, *options*])
 
@@ -135,8 +147,12 @@ Draw the legend onto the graph. If legend already exists, will redraw it.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="a-removelegend" href="a-removelegend">#</a> *SimpleGraph*.**removeLegend**()
 
 Removes the legend.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;

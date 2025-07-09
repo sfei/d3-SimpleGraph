@@ -27,11 +27,13 @@ To create the tooltip itself, a div is created and appended to the document body
 
 Most of the tooltip functionality is handled via the supplied [tooltipTextFunction](./defs.md#tooltip-text-function) callback, which is passed the data, mouse position, and svg elements, and is expected to return the HTML filling the tooltip itself. The callback is called for every mousemove event over elements of the data type.
 
-To remove tooltip functionality, simply redraw the elements on the graph. As the event listeners are attached to the SVG elements
+To remove tooltip functionality, simply redraw the elements on the graph. As the event listeners are attached to the SVG elements, this will create new SVG elements without the tooltip event listeners attached until explicitly readding tooltips.
+
+&nbsp;
 
 <a name="a-addtooltiptopoints" href="a-">#</a> *SimpleGraph*.**addTooltipToPoints**(*tooltipFunction*[, *options*])
 
-Add tooltip function to points on the graph. Does not add tooltips to the point-lines. (For point-lines, use [`addTooltipToLines()`](#a-addtooltipstolines).)
+Add tooltip function to points on the graph. Does not add tooltips to the point-lines. For point-lines, use [`addTooltipToLines()`](#a-addtooltipstolines).
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -63,6 +65,8 @@ Add tooltip function to points on the graph. Does not add tooltips to the point-
 </table>
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="addTooltipToLines" href="a-">#</a> *SimpleGraph*.**addTooltipToLines**(*textFunction*[, *options*])
 
@@ -99,6 +103,8 @@ Add tooltip function to lines (including point-lines) on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="addTooltipToAreas" href="a-">#</a> *SimpleGraph*.**addTooltipToAreas**(*textFunction*[, *options*])
 
 Add tooltip function to areas on the graph.
@@ -134,15 +140,21 @@ Add tooltip function to areas on the graph.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 ## Highlighting ##
 
-Highlight functionality is still somewhat rough. It does not, on it's own, add any event listeners or direct interactions with user events. Instead, event handlers defined outside should call these functions dynamically to highlight/unhighlight elements as needed.
+Highlight functionality is still somewhat rough. It does not, on its own, add any event listeners or direct interactions with user/mouse events. Event handlers defined outside SimpleGraph should call these functions dynamically to highlight/unhighlight elements as needed (or they could be attached to tooltips as additional mouseover/mouseout callbacks).
+
+When called, the highlight functions clone an SVG element over the selection to be highlighted with some highlighting style as appropriate. These elements are given the class `sg-point-hightlight`, `sg-line-hightlight`, or `sg-area-highlight` as appropriate. 
 
 The original SVG element tied to the highlighted data is given the class `sg-highlight-hide`, which hides the SVG by setting the element's inline style to `opacity:0` (thus still preserving mouse events). The highlight itself is a clone of that SVG (or two) with the highlight effects applied.
 
+&nbsp;
+
 <a name="a-highlightpoints" href="a-highlightpoints">#</a> *SimpleGraph*.**highlightPoints**(*options*)
 
-Highlights points by drawing a new SVG over highlighted points. By default, the effect is simply to add a black stroke to the point.
+Highlights points by drawing a new SVG over highlighted points. By default, the highlight effect is to add a black stroke.
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -167,9 +179,13 @@ Highlights points by drawing a new SVG over highlighted points. By default, the 
   </tbody>
 </table>
 
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
+
 <a name="a-highlightlines" href="a-highlightlines">#</a> *SimpleGraph*.**highlightLines**(*options*)
 
-Highlights lines by drawing new SVGs over highlighted lines. By default, the highlight is to add a brightened and blurred background to the line (with a new copy of the line drawn over to have the effect of the blur behind).
+Highlights lines by drawing new SVGs over highlighted lines. By default, the highlight is to add a brightened and blurred background to the line with a new copy of the line drawn over to have the effect of the blur being behind (the original line is hidden).
 
 <table style="font-size:0.9em;">
   <tbody>
@@ -193,6 +209,10 @@ Highlights lines by drawing new SVGs over highlighted lines. By default, the hig
     </tr>
   </tbody>
 </table>
+
+&nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="a-highlightareas" href="a-highlightareas">#</a> *SimpleGraph*.**highlightAreas**(*options*)
 
@@ -220,11 +240,15 @@ Highlights areas by drawing new SVGs over highlighted areas. By default, the hig
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="removehighlightpoints" href="a-removehighlightpoints">#</a> *SimpleGraph*.**removeHighlightPoints**()
 
 Remove any highlights on points.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
 
 <a name="removehighlightlines" href="a-removehighlightlines">#</a> *SimpleGraph*.**removeHighlightLines**()
 
@@ -232,14 +256,20 @@ Remove any highlights on points.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="removehighlightareas" href="a-removehighlightareas">#</a> *SimpleGraph*.**removeHighlightAreas**()
 
 Remove any highlights on points.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
 
+&nbsp;
+
 <a name="removehighlights" href="a-">#</a> *SimpleGraph*.**removeHighlights**()
 
 Remove all highlight effects.
 
 &nbsp; &nbsp; &nbsp; &nbsp;**Returns:** Self, for chaining functions.
+
+&nbsp;
