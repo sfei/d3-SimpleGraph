@@ -61,13 +61,13 @@ new **SimpleGraph**(*options*)
       <td>params.axis</td><td>object</td><td>Axis properties.</td>
     </tr>
     <tr>
-      <td>params.axis.x</td><a href="./defs.md#axis-params">Axis Options</a></td><td>Object literal of x-Axis params.</td>
+      <td>params.axis.x</td><td><a href="./defs.md#axis-params">Axis Options</a></td><td>Object literal of x-Axis params.</td>
     </tr>
     <tr>
-      <td>params.axis.y</td><a href="./defs.md#axis-params">Axis Options</a></td><td>Object literal of x-Axis params.</td>
+      <td>params.axis.y</td><td><a href="./defs.md#axis-params">Axis Options</a></td><td>Object literal of x-Axis params.</td>
     </tr>
     <tr>
-      <td>params.axis.y2</td><a href="./defs.md#axis-params">Axis Options</a></td><td>Object literal of x-Axis params.</td>
+      <td>params.axis.y2</td><td><a href="./defs.md#axis-params">Axis Options</a></td><td>Object literal of x-Axis params.</td>
     </tr>
     <tr>
       <td>params.axis.styles</td>

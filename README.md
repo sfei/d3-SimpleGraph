@@ -46,6 +46,9 @@ Interactive tutorials are provided as HTML pages where one can following along b
 
 ## Change Log ##
 
+#### v3.2.0 ####
+  * Allow functions passed to axis format option.
+
 #### v3.1.4 ####
   * Minor fix to highlight function class names.
   * Updated build libraries.

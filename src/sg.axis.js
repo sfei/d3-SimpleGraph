@@ -40,7 +40,9 @@ export default function(SimpleGraph, d3) {
                 isDate: theScale.isTime, 
                 isLog:  theScale.isLog
             };
-            if(theScale.isTime) {
+            if(typeof axisOptions[a].format === "function") {
+                this[a].format = axisOptions[a].format;
+            } else if(theScale.isTime) {
                 if(theScale.isUTC) {
                     this[a].format = d3.utcFormat(axisOptions[a].format);
                 } else {

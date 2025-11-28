@@ -148,6 +148,6 @@ export default function(env) {
         //     }
         // };
     } else {
-        console.log("Environment/exposure type not specified or unrecognized (es6|cjs|umd|min)");
+        console.log("Environment/exposure type not specified or unrecognized (es6|cjs|umd)");
     }
 };
