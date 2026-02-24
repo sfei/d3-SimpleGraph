@@ -96,7 +96,7 @@ export default function(SimpleGraph) {
         data.forEach(datum => {
             var p = {
                 series: series, 
-                x: parseFloat(datum[0]),
+                x: datum[0],
                 y: parseFloat(datum[1]), 
                 y2: options.y2Axis, 
                 size: options.size, 
