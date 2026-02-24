@@ -1050,7 +1050,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         }
       };
       if (isNaN(p.y) || !p.y && p.y !== 0) {
-        if (!showNulls) return;
+        if (!options.showNulls) return;
         p.y = 0;
         p.wasNull = true;
       }

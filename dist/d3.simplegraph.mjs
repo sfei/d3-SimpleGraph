@@ -1073,7 +1073,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                 }
             };
             if(isNaN(p.y) || (!p.y && p.y !== 0)) {
-                if(!showNulls) return;
+                if(!options.showNulls) return;
                 p.y = 0;
                 p.wasNull = true;
             }

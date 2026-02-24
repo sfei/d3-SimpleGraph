@@ -108,7 +108,7 @@ export default function(SimpleGraph) {
                 }
             };
             if(isNaN(p.y) || (!p.y && p.y !== 0)) {
-                if(!showNulls) return;
+                if(!options.showNulls) return;
                 p.y = 0;
                 p.wasNull = true;
             }
