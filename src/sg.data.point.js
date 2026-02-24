@@ -96,7 +96,7 @@ export default function(SimpleGraph) {
         data.forEach(datum => {
             var p = {
                 series: series, 
-                x: parseFloat(datum[0]),
+                x: datum[0],
                 y: parseFloat(datum[1]), 
                 y2: options.y2Axis, 
                 size: options.size, 
@@ -108,7 +108,7 @@ export default function(SimpleGraph) {
                 }
             };
             if(isNaN(p.y) || (!p.y && p.y !== 0)) {
-                if(!showNulls) return;
+                if(!options.showNulls) return;
                 p.y = 0;
                 p.wasNull = true;
             }

@@ -46,6 +46,9 @@ Interactive tutorials are provided as HTML pages where one can following along b
 
 ## Change Log ##
 
+#### v3.2.1 ####
+  * Minor fix to parsing points data as array.
+
 #### v3.2.0 ####
   * Allow functions passed to axis format option.
 

@@ -1,6 +1,6 @@
 {
   "name": "@sfei/d3-simplegraph",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "author": "Lindsey Sim",
   "license": "LGPL-3.0",
   "type": "module",
@@ -21,11 +21,11 @@
     "build": "webpack --config webpack.config.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
     "babel-loader": "^10.0.0",
     "d3": "^7.9.0",
-    "webpack": "^5.100.0",
+    "webpack": "^5.105.2",
     "webpack-cli": "^6.0.1"
   }
 }

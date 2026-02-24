@@ -12,12 +12,12 @@ return /******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 712:
-/***/ ((module) => {
+/***/ 712
+(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__712__;
 
-/***/ })
+/***/ }
 
 /******/ 	});
 /************************************************************************/
@@ -1057,7 +1057,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     data.forEach(function (datum) {
       var p = {
         series: series,
-        x: parseFloat(datum[0]),
+        x: datum[0],
         y: parseFloat(datum[1]),
         y2: options.y2Axis,
         size: options.size,
@@ -1069,7 +1069,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         }
       };
       if (isNaN(p.y) || !p.y && p.y !== 0) {
-        if (!showNulls) return;
+        if (!options.showNulls) return;
         p.y = 0;
         p.wasNull = true;
       }

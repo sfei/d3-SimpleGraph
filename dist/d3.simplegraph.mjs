@@ -1,4 +1,27 @@
 import * as __WEBPACK_EXTERNAL_MODULE_d3__ from "d3";
+/******/ // The require scope
+/******/ var __webpack_require__ = {};
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__webpack_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/************************************************************************/
+var __webpack_exports__ = {};
 
 ;// external "d3"
 const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
@@ -1038,7 +1061,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
         data.forEach(datum => {
             var p = {
                 series: series, 
-                x: parseFloat(datum[0]),
+                x: datum[0],
                 y: parseFloat(datum[1]), 
                 y2: options.y2Axis, 
                 size: options.size, 
@@ -1050,7 +1073,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                 }
             };
             if(isNaN(p.y) || (!p.y && p.y !== 0)) {
-                if(!showNulls) return;
+                if(!options.showNulls) return;
                 p.y = 0;
                 p.wasNull = true;
             }
