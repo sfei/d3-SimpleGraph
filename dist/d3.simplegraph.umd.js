@@ -22,17 +22,17 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__712__;
 /******/ 	});
 /************************************************************************/
 /******/ 	// The module cache
-/******/ 	var __webpack_module_cache__ = {};
+/******/ 	const __webpack_module_cache__ = {};
 /******/ 	
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
-/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		const cachedModule = __webpack_module_cache__[moduleId];
 /******/ 		if (cachedModule !== undefined) {
 /******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 		const module = __webpack_module_cache__[moduleId] = {
 /******/ 			// no module.id needed
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
@@ -48,8 +48,8 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__712__;
 /************************************************************************/
 /******/ 	/* webpack/runtime/create fake namespace object */
 /******/ 	(() => {
-/******/ 		var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
-/******/ 		var leafPrototypes;
+/******/ 		const getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 		let leafPrototypes;
 /******/ 		// create a fake namespace object
 /******/ 		// mode & 1: value is a module id, require it
 /******/ 		// mode & 2: merge all properties of value into the ns
@@ -63,9 +63,9 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__712__;
 /******/ 				if((mode & 4) && value.__esModule) return value;
 /******/ 				if((mode & 16) && typeof value.then === 'function') return value;
 /******/ 			}
-/******/ 			var ns = Object.create(null);
+/******/ 			const ns = Object.create(null);
 /******/ 			__webpack_require__.r(ns);
-/******/ 			var def = {};
+/******/ 			const def = {};
 /******/ 			leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
 /******/ 			for(var current = mode & 2 && value; (typeof current == 'object' || typeof current == 'function') && !~leafPrototypes.indexOf(current); current = getProto(current)) {
 /******/ 				Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
@@ -78,11 +78,26 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__712__;
 /******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
-/******/ 		// define getter functions for harmony exports
+/******/ 		// define getter/value functions for harmony exports
 /******/ 		__webpack_require__.d = (exports, definition) => {
-/******/ 			for(var key in definition) {
-/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			if(Array.isArray(definition)) {
+/******/ 				var i = 0;
+/******/ 				while(i < definition.length) {
+/******/ 					var key = definition[i++];
+/******/ 					var binding = definition[i++];
+/******/ 					if(!__webpack_require__.o(exports, key)) {
+/******/ 						if(binding === 0) {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, value: definition[i++] });
+/******/ 						} else {
+/******/ 							Object.defineProperty(exports, key, { enumerable: true, get: binding });
+/******/ 						}
+/******/ 					} else if(binding === 0) { i++; }
+/******/ 				}
+/******/ 			} else {
+/******/ 				for(var key in definition) {
+/******/ 					if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 						Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 					}
 /******/ 				}
 /******/ 			}
 /******/ 		};
@@ -97,7 +112,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__712__;
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
 /******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			if(Symbol.toStringTag) {
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
@@ -105,7 +120,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__712__;
 /******/ 	})();
 /******/ 	
 /************************************************************************/
-var __webpack_exports__ = {};
+let __webpack_exports__ = {};
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
@@ -116,10 +131,10 @@ __webpack_require__.d(__webpack_exports__, {
 var external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_ = __webpack_require__(712);
 var external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_namespaceObject = /*#__PURE__*/__webpack_require__.t(external_amd_d3_root_d3_commonjs_d3_commonjs2_d3_, 2);
 ;// ./src/checkscale.js
-var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
+const TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
   TEST_DOMAIN_TIME_0 = TEST_DOMAIN[0].getTime();
 /* harmony default export */ function checkscale(scale) {
-  var checkScale = scale(TEST_DOMAIN),
+  let checkScale = scale(TEST_DOMAIN),
     checkDomain = checkScale.domain(),
     isSequential = !!checkScale.interpolator; // various version can be sequential
   // scaleOrdinal and odd-balls
@@ -148,7 +163,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       isUTC: checkDomain[0].getTime() === TEST_DOMAIN_TIME_0
     };
   }
-  var isDiverging = checkDomain.length === 3; // various version can be diverging
+  let isDiverging = checkDomain.length === 3; // various version can be diverging
   // log and pow scales
   if (checkScale.base) {
     return {
@@ -188,7 +203,6 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
 
 /* harmony default export */ function sg_axis(SimpleGraph, d3) {
   SimpleGraph.prototype.resetAxisOptions = function (axisOptions) {
-    var _this = this;
     axisOptions = axisOptions || {};
     axisOptions.x = axisOptions.x || {};
     axisOptions.y = axisOptions.y || {};
@@ -202,7 +216,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     this.axisStyles.stroke = this.axisStyles.stroke || "black";
 
     // loop per axis to remove redundancies
-    ["x", "y", "y2"].forEach(function (a) {
+    ["x", "y", "y2"].forEach(a => {
       // specific axis options
       if (!axisOptions[a]) {
         // if no second y-axis, just skip
@@ -210,7 +224,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
         axisOptions[a] = {};
       }
       axisOptions[a].scale = axisOptions[a].scale || d3.scaleLinear;
-      var theScale = checkscale(axisOptions[a].scale);
+      let theScale = checkscale(axisOptions[a].scale);
       if (!theScale.isTime && !theScale.isLog && !theScale.isLinear) {
         // possibly unsupported scales? TODO: handle
       }
@@ -219,122 +233,120 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       }
       axisOptions[a].grid = axisOptions[a].grid || {};
       if (theScale.isLog) axisOptions[a].logBase = axisOptions[a].logBase || 10;
-      _this[a] = {
+      this[a] = {
         label: axisOptions[a].label === null ? a === "x" ? "x-value" : "y-value" : axisOptions[a].label,
         isDate: theScale.isTime,
         isLog: theScale.isLog
       };
       if (typeof axisOptions[a].format === "function") {
-        _this[a].format = axisOptions[a].format;
+        this[a].format = axisOptions[a].format;
       } else if (theScale.isTime) {
         if (theScale.isUTC) {
-          _this[a].format = d3.utcFormat(axisOptions[a].format);
+          this[a].format = d3.utcFormat(axisOptions[a].format);
         } else {
-          _this[a].format = d3.timeFormat(axisOptions[a].format);
+          this[a].format = d3.timeFormat(axisOptions[a].format);
         }
       } else {
-        _this[a].format = d3.format(axisOptions[a].format);
+        this[a].format = d3.format(axisOptions[a].format);
       }
-      _this[a].min = axisOptions[a].min ? axisOptions[a].min : 0;
-      _this[a].max = axisOptions[a].max ? axisOptions[a].max : 100;
+      this[a].min = axisOptions[a].min ? axisOptions[a].min : 0;
+      this[a].max = axisOptions[a].max ? axisOptions[a].max : 100;
 
       // create scale
-      _this[a].scale = axisOptions[a].scale();
-      theScale.isLog && _this[a].scale.base(axisOptions[a].logBase);
-      var domain, range;
-      if (axisOptions[a]["break"]) {
-        _this[a]["break"] = axisOptions[a]["break"];
-        domain = [_this[a].min, _this[a]["break"].domain[0], _this[a]["break"].domain[1], _this[a].max];
-        var domain2 = !theScale.isTime ? domain : domain.map(function (x) {
-            return x.getTime();
-          }),
-          span = a === "x" ? _this.width : _this.height;
+      this[a].scale = axisOptions[a].scale();
+      theScale.isLog && this[a].scale.base(axisOptions[a].logBase);
+      let domain, range;
+      if (axisOptions[a].break) {
+        this[a].break = axisOptions[a].break;
+        domain = [this[a].min, this[a].break.domain[0], this[a].break.domain[1], this[a].max];
+        let domain2 = !theScale.isTime ? domain : domain.map(x => x.getTime()),
+          span = a === "x" ? this.width : this.height;
         range = a === "x" ? [0, 0, 0, span] : [span, 0, 0, 0];
-        var validspan = span - _this[a]["break"].rangegap,
+        let validspan = span - this[a].break.rangegap,
           rangePerDomain = validspan / (domain2[1] - domain2[0] + domain2[3] - domain2[2]);
         range[1] = rangePerDomain * (domain2[1] - domain2[0]);
-        range[2] = range[1] + _this[a]["break"].rangegap;
+        range[2] = range[1] + this[a].break.rangegap;
       } else {
-        domain = [_this[a].min, _this[a].max];
-        range = a === "x" ? [0, _this.width] : [_this.height, 0];
+        domain = [this[a].min, this[a].max];
+        range = a === "x" ? [0, this.width] : [this.height, 0];
       }
-      _this[a].scale.domain(domain).range(range);
+      this[a].scale.domain(domain).range(range);
 
       // create axes
-      var applySecondAxes = false;
+      let applySecondAxes = false;
       if (a === "x") {
         // create both versions of the axes as we need to apply tick formatting to both here
         applySecondAxes = true;
-        _this[a].axis = d3.axisBottom(_this[a].scale);
-        _this[a].axisTwo = d3.axisTop(_this[a].scale);
-        _this[a].gridAxis = d3.axisBottom(_this[a].scale);
+        this[a].axis = d3.axisBottom(this[a].scale);
+        this[a].axisTwo = d3.axisTop(this[a].scale);
+        this[a].gridAxis = d3.axisBottom(this[a].scale);
       } else if (a === "y2") {
-        _this[a].axis = d3.axisRight(_this[a].scale);
-        _this[a].gridAxis = d3.axisRight(_this[a].scale);
+        this[a].axis = d3.axisRight(this[a].scale);
+        this[a].gridAxis = d3.axisRight(this[a].scale);
       } else {
-        _this[a].axis = d3.axisLeft(_this[a].scale);
-        _this[a].gridAxis = d3.axisLeft(_this[a].scale);
+        this[a].axis = d3.axisLeft(this[a].scale);
+        this[a].gridAxis = d3.axisLeft(this[a].scale);
       }
 
       // log scale handles ticks differently
       if (theScale.isLog) {
-        _this[a].axis.tickFormat(_this[a].format);
+        this[a].axis.tickFormat(this[a].format);
         if (axisOptions[a].ticks) {
-          _this[a].axis.ticks(axisOptions[a].ticks, _this[a].format);
+          this[a].axis.ticks(axisOptions[a].ticks, this[a].format);
         } else {
-          _this[a].axis.ticks(_this[a].format);
+          this[a].axis.ticks(this[a].format);
           if (axisOptions[a].tickValues) {
-            _this[a].axis.tickValues(axisOptions[a].tickValues);
+            this[a].axis.tickValues(axisOptions[a].tickValues);
           }
         }
         // repeat on second axis if needed
         if (applySecondAxes) {
-          _this[a].axisTwo.tickFormat(_this[a].format);
+          this[a].axisTwo.tickFormat(this[a].format);
           if (axisOptions[a].ticks) {
-            _this[a].axisTwo.ticks(axisOptions[a].ticks, _this[a].format);
+            this[a].axisTwo.ticks(axisOptions[a].ticks, this[a].format);
           } else {
-            _this[a].axisTwo.ticks(_this[a].format);
+            this[a].axisTwo.ticks(this[a].format);
             if (axisOptions[a].tickValues) {
-              _this[a].axisTwo.tickValues(axisOptions[a].tickValues);
+              this[a].axisTwo.tickValues(axisOptions[a].tickValues);
             }
           }
         }
       } else {
         // add ticks
-        _this[a].axis.tickFormat(_this[a].format);
+        this[a].axis.tickFormat(this[a].format);
         if (axisOptions[a].tickValues) {
-          _this[a].axis.tickValues(axisOptions[a].tickValues);
-          _this[a].gridAxis.tickValues(axisOptions[a].tickValues);
+          this[a].axis.tickValues(axisOptions[a].tickValues);
+          this[a].gridAxis.tickValues(axisOptions[a].tickValues);
         } else if (axisOptions[a].ticks || axisOptions[a].ticks === 0) {
           if (Array.isArray(axisOptions[a].ticks)) {
-            _this[a].axis.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
-            _this[a].gridAxis.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
+            this[a].axis.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
+            this[a].gridAxis.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
           } else {
-            _this[a].axis.ticks(axisOptions[a].ticks);
-            _this[a].gridAxis.ticks(axisOptions[a].ticks);
+            this[a].axis.ticks(axisOptions[a].ticks);
+            this[a].gridAxis.ticks(axisOptions[a].ticks);
           }
         }
         // add sub-grid-ticks
-        _this[a].gridAxis.tickFormat(_this[a].format);
+        this[a].gridAxis.tickFormat(this[a].format);
         if (axisOptions[a].grid.tickValues) {
-          _this[a].gridAxis.tickValues(axisOptions[a].grid.tickValues);
+          this[a].gridAxis.tickValues(axisOptions[a].grid.tickValues);
         } else if (axisOptions[a].grid.ticks || axisOptions[a].grid.ticks === 0) {
           if (Array.isArray(axisOptions[a].grid.ticks)) {
-            _this[a].gridAxis.ticks(axisOptions[a].grid.ticks[0], axisOptions[a].grid.ticks[1]);
+            this[a].gridAxis.ticks(axisOptions[a].grid.ticks[0], axisOptions[a].grid.ticks[1]);
           } else {
-            _this[a].gridAxis.ticks(axisOptions[a].grid.ticks);
+            this[a].gridAxis.ticks(axisOptions[a].grid.ticks);
           }
         }
         // repeat on second axis if needed
         if (applySecondAxes) {
-          _this[a].axisTwo.tickFormat(_this[a].format);
+          this[a].axisTwo.tickFormat(this[a].format);
           if (axisOptions[a].tickValues) {
-            _this[a].axisTwo.tickValues(axisOptions[a].tickValues);
+            this[a].axisTwo.tickValues(axisOptions[a].tickValues);
           } else if (axisOptions[a].ticks || axisOptions[a].ticks === 0) {
             if (Array.isArray(axisOptions[a].ticks)) {
-              _this[a].axisTwo.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
+              this[a].axisTwo.ticks(axisOptions[a].ticks[0], axisOptions[a].ticks[1]);
             } else {
-              _this[a].axisTwo.ticks(axisOptions[a].ticks);
+              this[a].axisTwo.ticks(axisOptions[a].ticks);
             }
           }
         }
@@ -359,7 +371,6 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     return this;
   };
   SimpleGraph.prototype.drawAxes = function (labelPosition, xAxisPosition, axisLabelMargin) {
-    var _this2 = this;
     if (!xAxisPosition) {
       xAxisPosition = "bottom";
     } else {
@@ -368,7 +379,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
         xAxisPosition = "bottom";
       }
     }
-    var xAxis,
+    let xAxis,
       xAxisPosY = 0;
     if (xAxisPosition !== "top") {
       xAxis = this.x.axis;
@@ -382,7 +393,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
 
     // draw axes first without labels
     this.svg.selectAll(".sg-xaxis, .sg-yaxis, .sg-y2axis, .sg-axis-label").remove();
-    var xAxisG = this.svgGraph.append("g").attr("class", "sg-xaxis").attr("transform", "translate(0," + xAxisPosY + ")").call(xAxis)
+    let xAxisG = this.svgGraph.append("g").attr("class", "sg-xaxis").attr("transform", "translate(0," + xAxisPosY + ")").call(xAxis)
       // annoyingly d3 adds these after axis call so remove so they don't override svg style
       .attr("font-size", null).attr("font-family", null),
       yAxisG = this.svgGraph.append("g").attr("class", "sg-yaxis").call(this.y.axis).attr("font-size", null).attr("font-family", null),
@@ -390,13 +401,13 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     // for some reason ticks are by default invisible
     this.svgGraph.selectAll(".tick line").style("stroke", "#000");
     // add styles
-    var axes = this.svgGraph.selectAll(".sg-xaxis .domain, .sg-yaxis .domain, .sg-y2axis .domain");
-    for (var style in this.axisStyles) {
+    let axes = this.svgGraph.selectAll(".sg-xaxis .domain, .sg-yaxis .domain, .sg-y2axis .domain");
+    for (let style in this.axisStyles) {
       axes.style(style, this.axisStyles[style]);
     }
 
     // get size of ticks to know margin to place labels away if outside
-    var tickMargin = {
+    let tickMargin = {
       x: 0,
       y: 0,
       y2: 0
@@ -418,7 +429,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     });
 
     // default position on center-outside
-    var xLabelPos = {
+    let xLabelPos = {
         a: 'middle',
         x: 0.5 * this.width,
         y: xAxisPosition === "top" ? -(tickMargin.x + axisLabelMargin) : tickMargin.x + 10 + axisLabelMargin
@@ -435,16 +446,16 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       };
     // determine label position
     // split by keys
-    var xparallel = "center",
+    let xparallel = "center",
       yparallel = "center",
       y2parallel = "center",
       xperpendicular = "outside",
       yperpendicular = "outside",
       y2perpendicular = "outside";
     if (labelPosition) {
-      var lpKeys = (labelPosition || "").toLowerCase().split(/[ ,]+/);
-      lpKeys.forEach(function (directive) {
-        var parts = directive.trim().split("-"),
+      let lpKeys = (labelPosition || "").toLowerCase().split(/[ ,]+/);
+      lpKeys.forEach(directive => {
+        let parts = directive.trim().split("-"),
           axis = parts.length > 1 ? parts[0] : false;
         directive = parts.length > 1 ? parts[parts.length - 1] : parts[0];
         switch (directive) {
@@ -478,17 +489,17 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
           case "center":
             if (!axis || axis === "x") {
               xLabelPos.a = 'middle';
-              xLabelPos.x = 0.5 * _this2.width;
+              xLabelPos.x = 0.5 * this.width;
               xparallel = "center";
             }
             if (!axis || axis === "y") {
               yLabelPos.a = 'middle';
-              yLabelPos.x = -0.5 * _this2.height;
+              yLabelPos.x = -0.5 * this.height;
               yparallel = "center";
             }
             if (!axis || axis === "y2") {
               y2LabelPos.a = 'middle';
-              y2LabelPos.x = 0.5 * _this2.height;
+              y2LabelPos.x = 0.5 * this.height;
               y2parallel = "center";
             }
             break;
@@ -499,7 +510,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
             break;
           case "right":
             xLabelPos.a = 'end';
-            xLabelPos.x = _this2.width;
+            xLabelPos.x = this.width;
             xparallel = "right";
             break;
           case "top":
@@ -517,12 +528,12 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
           case "bottom":
             if (!axis || axis === "y") {
               yLabelPos.a = 'start';
-              yLabelPos.x = -_this2.height;
+              yLabelPos.x = -this.height;
               yparallel = "bottom";
             }
             if (!axis || axis === "y2") {
               y2LabelPos.a = 'end';
-              y2LabelPos.x = _this2.height;
+              y2LabelPos.x = this.height;
               y2parallel = "bottom";
             }
             break;
@@ -580,8 +591,8 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     if (!name) return null;
     if (name in this.customColors) return this.customColors[name];
     if (this.points) {
-      var point;
-      for (var p in this.points) {
+      let point;
+      for (let p in this.points) {
         point = this.points[p];
         if (name === point.series) {
           // TODO, no style options yet available for points data
@@ -597,8 +608,8 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       }
     }
     if (this.lines) {
-      var line;
-      for (var l in this.lines) {
+      let line;
+      for (let l in this.lines) {
         line = this.lines[l];
         if (name === line.series) {
           if (line.style && line.style.stroke) {
@@ -613,8 +624,8 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       }
     }
     if (this.areas) {
-      var area;
-      for (var a in this.areas) {
+      let area;
+      for (let a in this.areas) {
         area = this.areas[a];
         if (name === area.series) {
           if (area.style && area.style.fill) {
@@ -656,7 +667,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
   SimpleGraph.prototype.drawGrid = function (style) {
     this.svgGraph.selectAll(".sg-grid").remove();
     // default styles
-    var opacity = style && style.opacity ? parseFloat(style.opacity) : 0.4,
+    let opacity = style && style.opacity ? parseFloat(style.opacity) : 0.4,
       stroke = style && style.stroke ? style.stroke : "#555",
       strokeWidth = style && style['stroke-width'] ? parseFloat(style['stroke-width']) : 0.3;
     this.svgGraph.append("g").attr("class", "sg-grid").attr("transform", "translate(0," + this.height + ")").style("opacity", opacity).style("stroke", stroke).style("stroke-width", strokeWidth).call(this.x.gridAxis.tickSize(-this.height).tickFormat(""));
@@ -687,7 +698,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       }
     }
     options = options || {};
-    var anchor = options.anchor || "left",
+    let anchor = options.anchor || "left",
       bgstyle = options.bgstyle || {},
       exclude = options.exclude || [];
 
@@ -698,17 +709,15 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     if (typeof exclude === "string") {
       exclude = exclude.trim().split(/\s+/);
     }
-    var excludeObj = {
+    let excludeObj = {
       "all": [],
       "points": [],
       "lines": [],
       "areas": []
     };
-    exclude.forEach(function (seriesname) {
-      var excludeSub = excludeObj.all,
-        nameparts = seriesname.split("::").map(function (s) {
-          return s.trim();
-        });
+    exclude.forEach(seriesname => {
+      let excludeSub = excludeObj.all,
+        nameparts = seriesname.split("::").map(s => s.trim());
       if (nameparts.length > 1) {
         switch (nameparts[1].toLowerCase()) {
           case "point":
@@ -733,13 +742,11 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       if (excludeSub === true) return;
       excludeSub.push(nameparts[0]);
     });
-    var checkExclude = function checkExclude(seriesname, seriesshape) {
-      return excludeObj[seriesshape] === true || ~excludeObj[seriesshape].indexOf(seriesname) || !excludeObj.all.indexOf(seriesname);
-    };
+    let checkExclude = (seriesname, seriesshape) => excludeObj[seriesshape] === true || ~excludeObj[seriesshape].indexOf(seriesname) || !excludeObj.all.indexOf(seriesname);
 
     // default styles for legend container (padding is set via explicit sides)
     if (bgstyle.padding) {
-      var pads = typeof bgstyle.padding === "string" ? bgstyle.padding.split(" ") : [bgstyle.padding];
+      let pads = typeof bgstyle.padding === "string" ? bgstyle.padding.split(" ") : [bgstyle.padding];
       if (pads.length === 1) {
         bgstyle['padding-left'] = pads[0];
         bgstyle['padding-right'] = pads[0];
@@ -786,14 +793,14 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     // create legend graphic and background (note, added to top SVG not svgGraph)
     var legend = this.svg.append("g").attr("class", "sg-legend").attr("transform", "translate(" + position.x + "," + position.y + ")"),
       legendBg = legend.append("rect").attr("class", "sg-legend-bg").attr("x", 0).attr("y", 0);
-    for (var skey in bgstyle) {
+    for (let skey in bgstyle) {
       if (!skey.startsWith('padding')) {
         legendBg.style(skey, bgstyle[skey]);
       }
     }
 
     // column parameters
-    var itemsPerColumn = options.itemsPerColumn || 0,
+    let itemsPerColumn = options.itemsPerColumn || 0,
       rowHeight = options.rowHeight || 24,
       columnNumber = 0,
       columnItemCount = 0,
@@ -819,22 +826,22 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
     var self = this;
     function addPointItem(data, shape, color, drawPointLine) {
       if (drawPointLine) {
-        var lineOffset = yOffset + 10,
+        let lineOffset = yOffset + 10,
           path = legend.append("path").attr("x", xOffset).attr("y", yOffset).attr("d", "M" + xOffset + " " + lineOffset + " " + "L" + (18 + xOffset) + " " + lineOffset);
         // remember styles are only stored in first since they're shared
-        for (var style in self.pointLines[0].style) {
+        for (let style in self.pointLines[0].style) {
           path.style(style, self.pointLines[0].style[style]);
         }
         path.style("stroke", self.getColorBySeriesName(data.series));
       }
-      var size = typeof data.size === "function" ? data.size() : data.size;
+      let size = typeof data.size === "function" ? data.size() : data.size;
       if (size > 14) {
         size = 14;
       }
-      var ioffx = xOffset + 2,
+      let ioffx = xOffset + 2,
         ioffy = yOffset + 3;
       if (shape && shape.startsWith("triangle")) {
-        var length = size * 1.519676,
+        let length = size * 1.519676,
           // side length of equilateral trangle of same area of square
           hl = length / 2.0,
           hlDiff = 7 - hl,
@@ -846,15 +853,15 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
         ioffy += hhDiff;
         switch (shape) {
           case "triangle-down":
-            legend.append("polygon").attr("points", "".concat(ioffx, ",").concat(ioffy + height, " ") + "".concat(ioffx + hl, ",").concat(ioffy, " ") + "".concat(ioffx + length, ",").concat(ioffy + height)).style("fill", color);
+            legend.append("polygon").attr("points", `${ioffx},${ioffy + height} ` + `${ioffx + hl},${ioffy} ` + `${ioffx + length},${ioffy + height}`).style("fill", color);
             break;
           case "triangle":
           case "triangle-up":
-            legend.append("polygon").attr("points", "".concat(ioffx, ",").concat(ioffy, " ") + "".concat(ioffx + hl, ",").concat(ioffy + height, " ") + "".concat(ioffx + length, ",").concat(ioffy)).style("fill", color);
+            legend.append("polygon").attr("points", `${ioffx},${ioffy} ` + `${ioffx + hl},${ioffy + height} ` + `${ioffx + length},${ioffy}`).style("fill", color);
             break;
         }
       } else {
-        var hs = size / 2.0,
+        let hs = size / 2.0,
           hsDiff = 7 - hs;
         ioffx += hsDiff;
         ioffy += hsDiff;
@@ -865,7 +872,7 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
           case "square":
           case "diamond":
           default:
-            legend.append("rect").attr("x", ioffx).attr("y", ioffy).attr("width", size).attr("height", size).attr("transform", shape == "square" ? "" : "rotate(45,".concat(ioffx + hs, ",").concat(ioffy + hs, ")")).style("fill", color);
+            legend.append("rect").attr("x", ioffx).attr("y", ioffy).attr("width", size).attr("height", size).attr("transform", shape == "square" ? "" : `rotate(45,${ioffx + hs},${ioffy + hs})`).style("fill", color);
             break;
         }
       }
@@ -873,9 +880,9 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       addAndCheckColumn();
     }
     function addLineItem(data, color) {
-      var lineOffset = yOffset + 10,
+      let lineOffset = yOffset + 10,
         path = legend.append("path").attr("x", xOffset).attr("y", yOffset).attr("d", "M" + xOffset + " " + lineOffset + " " + "L" + (18 + xOffset) + " " + lineOffset);
-      for (var style in data.style) {
+      for (let style in data.style) {
         path.style(style, data.style[style]);
       }
       if (!("stroke" in data.style)) {
@@ -885,8 +892,8 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
       addAndCheckColumn();
     }
     function addAreaItem(data, color) {
-      var symbol = legend.append("rect").attr("x", xOffset).attr("y", yOffset).attr("width", 18).attr("height", 18);
-      for (var style in data.style) {
+      let symbol = legend.append("rect").attr("x", xOffset).attr("y", yOffset).attr("width", 18).attr("height", 18);
+      for (let style in data.style) {
         symbol.style(style, data.style[style]);
       }
       if (!("fill" in data.style)) {
@@ -898,55 +905,55 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
 
     // start with areas data
     if (this.areas && excludeObj.areas !== true) {
-      var areaSeries = [];
-      for (var i = 0; i < this.areas.length; i++) {
-        var name = this.areas[i].series;
+      let areaSeries = [];
+      for (let i = 0; i < this.areas.length; i++) {
+        let name = this.areas[i].series;
         if (!checkExclude(name, 'areas') && !~areaSeries.indexOf(name)) {
           areaSeries.push(name);
-          var color = this.getColorBySeriesName(name);
+          let color = this.getColorBySeriesName(name);
           addAreaItem(this.areas[i], typeof color === "function" ? color(this.areas[i]) : color);
         }
       }
     }
     // then lines
     if (this.lines && excludeObj.lines !== true) {
-      var lineSeries = [];
-      for (var _i = 0; _i < this.lines.length; _i++) {
-        var _name = this.lines[_i].series;
-        if (!checkExclude(_name, 'lines') && !~lineSeries.indexOf(_name)) {
-          lineSeries.push(_name);
-          var _color = this.getColorBySeriesName(_name);
-          addLineItem(this.lines[_i], typeof _color === "function" ? _color(this.lines[_i]) : _color);
+      let lineSeries = [];
+      for (let i = 0; i < this.lines.length; i++) {
+        let name = this.lines[i].series;
+        if (!checkExclude(name, 'lines') && !~lineSeries.indexOf(name)) {
+          lineSeries.push(name);
+          let color = this.getColorBySeriesName(name);
+          addLineItem(this.lines[i], typeof color === "function" ? color(this.lines[i]) : color);
         }
       }
     }
     // finally points
     if (this.points && excludeObj.points !== true) {
-      var pointSeries = [];
-      for (var _i2 = 0; _i2 < this.points.length; _i2++) {
-        var _name2 = this.points[_i2].series;
-        if (!checkExclude(_name2, 'points') && !~pointSeries.indexOf(_name2)) {
-          pointSeries.push(_name2);
+      let pointSeries = [];
+      for (let i = 0; i < this.points.length; i++) {
+        let name = this.points[i].series;
+        if (!checkExclude(name, 'points') && !~pointSeries.indexOf(name)) {
+          pointSeries.push(name);
           // find connected point line series, if it exists
-          var drawPointLine = false;
+          let drawPointLine = false;
           if (this.pointLines) {
-            var j = this.pointLines.length;
+            let j = this.pointLines.length;
             while (j--) {
-              if (this.pointLines[j].series === _name2) {
+              if (this.pointLines[j].series === name) {
                 drawPointLine = true;
                 break;
               }
             }
           }
-          var _color2 = this.getColorBySeriesName(_name2);
-          _color2 = typeof _color2 === "function" ? _color2(this.points[_i2]) : _color2;
-          addPointItem(this.points[_i2], this.getPointSeriesShape(_name2), _color2, drawPointLine);
+          let color = this.getColorBySeriesName(name);
+          color = typeof color === "function" ? color(this.points[i]) : color;
+          addPointItem(this.points[i], this.getPointSeriesShape(name), color, drawPointLine);
         }
       }
     }
 
     // finish up legend bg after completing elements inside
-    var legendBox = legend.node().getBBox();
+    let legendBox = legend.node().getBBox();
     legendBg.attr("width", legendBox.width + bgstyle['padding-left'] + bgstyle['padding-right']).attr("height", legendBox.height + bgstyle['padding-top'] + bgstyle['padding-bottom']);
 
     // adjust legend position if necessary
@@ -963,7 +970,6 @@ var TEST_DOMAIN = [new Date("2000-01-01"), new Date("2000-01-02")],
 ;// ./src/sg.point.shapes.js
 /* harmony default export */ const sg_point_shapes = (["diamond", "circle", "square", "triangle", "triangle-up", "triangle-down"]);
 ;// ./src/sg.data.point.js
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 
 /* harmony default export */ function sg_data_point(SimpleGraph) {
   SimpleGraph.prototype.addPointData = function (series, xValue, yValue, options) {
@@ -974,7 +980,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     options.size = !options.size || typeof options.size !== "function" && options.size <= 0 ? options.size = 10 : options.size;
     options.y2Axis = !!(options.y2Axis || options.y2);
     if (options.shape) this.setPointSeriesShape(series, options.shape);
-    var p = {
+    let p = {
       series: series,
       x: xValue,
       y: parseFloat(yValue),
@@ -987,7 +993,6 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     return this;
   };
   SimpleGraph.prototype.addPointsData = function (data, seriesName, xValueName, yValueName, options) {
-    var _this = this;
     if (!data || data.length === 0) return this;
     this.points = this.points || [];
     this.ptSeriesShapes = this.ptSeriesShapes || {};
@@ -997,17 +1002,17 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     options.additionalDataKeys = options.additionalDataKeys || null;
 
     // first we gotta comb through the data and organize it nicely
-    data.forEach(function (d, i) {
+    data.forEach((d, i) => {
       // get data series name, if it exists, otherwise assume seriesName is series name
-      var snIsIn = !options.forceSeriesName && !options.forceSeries && seriesName in d && d[seriesName],
+      let snIsIn = !options.forceSeriesName && !options.forceSeries && seriesName in d && d[seriesName],
         series = snIsIn ? d[seriesName] : !seriesName && seriesName !== 0 ? i : seriesName,
         xValue = d[xValueName],
         yValue = d[yValueName];
       series = series === null ? "" : String(series);
       // add shape if provided as constant string
-      if (options.shape) _this.ptSeriesShapes[series] = options.shape;
+      if (options.shape) this.ptSeriesShapes[series] = options.shape;
       // nicely organize data
-      var point = {
+      let point = {
         series: series,
         x: xValue,
         y: parseFloat(yValue),
@@ -1023,9 +1028,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       if (snIsIn) point._keys.series = seriesName;
       // additonal keys
       if (options.additionalDataKeys && Array.isArray(options.additionalDataKeys)) {
-        var addKeys = [];
-        options.additionalDataKeys.forEach(function (key) {
-          var name = key,
+        let addKeys = [];
+        options.additionalDataKeys.forEach(key => {
+          let name = key,
             t = 1;
           // if key exists (name, x, y are reserved), adjust key name
           while (name in point) {
@@ -1039,7 +1044,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         });
         point._keys.additional = addKeys;
       }
-      _this.points.push(point);
+      this.points.push(point);
     });
     return this;
   };
@@ -1054,7 +1059,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     options.showNulls = !!options.showNulls;
     if (options.shape) this.setPointSeriesShape(series, options.shape);
     var self = this;
-    data.forEach(function (datum) {
+    data.forEach(datum => {
       var p = {
         series: series,
         x: datum[0],
@@ -1081,21 +1086,15 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     if (series === null || typeof series === "undefined") {
       this.points = null;
     } else if (Array.isArray(series)) {
-      this.points = this.points.filter(function (d) {
-        return ~series.indexOf(d.series);
-      });
+      this.points = this.points.filter(d => ~series.indexOf(d.series));
     } else {
-      this.points = this.points.filter(function (d) {
-        return d.series !== series;
-      });
+      this.points = this.points.filter(d => d.series !== series);
     }
     return this;
   };
   SimpleGraph.prototype._getPointData = function (series, index) {
     if (!this.points) return [];
-    var points = this.points.filter(function (d) {
-      return d.series === series;
-    });
+    var points = this.points.filter(d => d.series === series);
     if (!points || !points.length) return this;
     if (index || index === 0) {
       while (index < 0) {
@@ -1106,7 +1105,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     return points;
   };
   SimpleGraph.prototype._clonePointData = function (d) {
-    var data = {
+    let data = {
       series: d.series,
       x: d.x,
       y: d.y,
@@ -1116,22 +1115,17 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     if (d._keys) {
       if (d._keys.x) data[d._keys.x] = d.x;
       if (d._keys.y) data[d._keys.y] = d.y;
-      d._keys.additional && d._keys.additional.forEach(function (a) {
+      d._keys.additional && d._keys.additional.forEach(a => {
         data[a.name] = d[a.name];
       });
     }
     return data;
   };
   SimpleGraph.prototype.getPointsDataBySeries = function (series) {
-    var _this2 = this;
-    return this._getPointData(series).map(function (d) {
-      return _this2._clonePointData(d);
-    });
+    return this._getPointData(series).map(d => this._clonePointData(d));
   };
   SimpleGraph.prototype.getPointCoordinatesBySeries = function (series) {
-    return this._getPointData.map(function (c) {
-      return [c.x, c.y || c.y === 0 ? c.y : c.y2];
-    });
+    return this._getPointData.map(c => [c.x, c.y || c.y === 0 ? c.y : c.y2]);
   };
   SimpleGraph.prototype.getPointSeriesShape = function (series) {
     this.ptSeriesShapes = this.ptSeriesShapes || {};
@@ -1143,9 +1137,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     return this;
   };
   SimpleGraph.prototype.updatePointsData = function (series, index, update) {
-    this._getPointData(series, index).forEach(function (point) {
-      ['x', 'y', 'y2', 'size'].forEach(function (k) {
-        if (k in update && update[k] !== null && _typeof(update[k]) !== undefined) {
+    this._getPointData(series, index).forEach(point => {
+      ['x', 'y', 'y2', 'size'].forEach(k => {
+        if (k in update && update[k] !== null && typeof update[k] !== undefined) {
           point[k] = update[k];
           if (point._keys) delete point._keys[k];
         }
@@ -1156,34 +1150,26 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   };
   SimpleGraph.prototype.syncPointsData = function () {
     if (!this.points) return this;
-    this.points.forEach(function (d) {
+    this.points.forEach(d => {
       if (!d._bind || !d._keys) return;
       if ('series' in d._keys) d._bind[d._keys.series];
       if ('x' in d._keys) d.x = parseFloat(d._bind[d._keys.x]);
       if ('y' in d._keys) d.y = parseFloat(d._bind[d._keys.y]);
       if (!d._keys.additional) return;
-      d._keys.additional.forEach(function (a) {
-        return d[a.name] = d._bind[a.key];
-      });
+      d._keys.additional.forEach(a => d[a.name] = d._bind[a.key]);
     });
     this._syncPointLines();
     return this;
   };
 }
 ;// ./src/sg.data.area.js
-function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
-function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
-function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 /* harmony default export */ function sg_data_area(SimpleGraph, d3) {
   SimpleGraph.prototype.addAreaAsCoordinates = function (series, areaCoordinates, options) {
     if (!areaCoordinates || !Array.isArray(areaCoordinates) || areaCoordinates.length < 2) return this;
     options = options || {};
     var style = {};
     if (options.style) {
-      for (var k in options.style) {
+      for (let k in options.style) {
         style[k] = options.style[k];
       }
     }
@@ -1210,7 +1196,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     options = options || {};
     var style = {};
     if (options.style) {
-      for (var k in options.style) {
+      for (let k in options.style) {
         style[k] = options.style[k];
       }
     }
@@ -1219,7 +1205,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       series: series === null ? "" : String(series),
       functions: [lineFunctionBottom, lineFunctionTop],
       coords: null,
-      xRange: xRange ? _toConsumableArray(xRange) : null,
+      xRange: xRange ? [...xRange] : null,
       y2: !!(options.y2Axis || options.y2),
       style: options.style || {},
       interpolate: options.interpolation || d3.curveLinear,
@@ -1232,9 +1218,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
   };
   SimpleGraph.prototype._getAreaData = function (series, index) {
     if (!this.areas) return [];
-    var areas = this.areas.filter(function (d) {
-      return d.series === series;
-    });
+    var areas = this.areas.filter(d => d.series === series);
     if (!areas || !areas.length) return this;
     if (index || index === 0) {
       while (index < 0) {
@@ -1247,34 +1231,25 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
   SimpleGraph.prototype._cloneAreaData = function (d) {
     return {
       series: d.series,
-      functions: d.functions ? _toConsumableArray(d.functions) : null,
-      coords: d.coords ? d.coords.map(function (c) {
-        return _toConsumableArray(c);
-      }) : null,
-      xRange: d.xRange ? _toConsumableArray(d.xRange) : null,
+      functions: d.functions ? [...d.functions] : null,
+      coords: d.coords ? d.coords.map(c => [...c]) : null,
+      xRange: d.xRange ? [...d.xRange] : null,
       y2: d.y2,
       style: d.style,
       interpolate: d.interpolate
     };
   };
   SimpleGraph.prototype.getAreasDataBySeries = function (series, index) {
-    var _this = this;
-    return this._getAreaData(series, index).map(function (d) {
-      return _this._cloneAreaData(d);
-    });
+    return this._getAreaData(series, index).map(d => this._cloneAreaData(d));
   };
   SimpleGraph.prototype.updateAreaData = function (series, index, update) {
-    this._getAreaData(series, index).forEach(function (area) {
+    this._getAreaData(series, index).forEach(area => {
       if (update.lineFunctionTop || update.functionTop || update.lineFunctionBottom || update.functionBottom) {
         area.functions = [update.lineFunctionBottom || update.functionBottom || area.functions && area.functions[0], update.lineFunctionTop || update.functionTop || area.functions && area.functions[1]];
-        if (!area.functions[0]) area.functions[0] = function (x) {
-          return 0;
-        };
-        if (!area.functions[1]) area.functions[1] = function (x) {
-          return 0;
-        };
+        if (!area.functions[0]) area.functions[0] = x => 0;
+        if (!area.functions[1]) area.functions[1] = x => 0;
         if (update.xRange) {
-          area.xRange = _toConsumableArray(update.xRange);
+          area.xRange = [...update.xRange];
           if (area._bind) {
             area._bind.xRange = update.xRange;
           }
@@ -1282,8 +1257,8 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
         area.coords = null;
         if (area._bind) delete area._bind.coords;
       } else if (update.coordinates || update.coords) {
-        var repCoords = update.coordinates || update.coords;
-        area.coords = _toConsumableArray(repCoords);
+        let repCoords = update.coordinates || update.coords;
+        area.coords = [...repCoords];
         area.functions = null;
         if (area._bind) {
           area._bind.coords = repCoords;
@@ -1293,7 +1268,7 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
       area.interpolate = update.interpolate || area.interpolate;
       if (update.style) {
         area.style = {};
-        for (var key in update.style) {
+        for (let key in update.style) {
           area.style[key] = update.style[key];
         }
         if (area._bind) {
@@ -1307,30 +1282,24 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
     if (series === null || typeof series === "undefined") {
       this.areas = null;
     } else if (Array.isArray(series)) {
-      this.areas = this.areas.filter(function (d) {
-        return ~series.indexOf(d.series);
-      });
+      this.areas = this.areas.filter(d => ~series.indexOf(d.series));
     } else {
-      this.areas = this.areas.filter(function (d) {
-        return d.series !== series;
-      });
+      this.areas = this.areas.filter(d => d.series !== series);
     }
     return this;
   };
   SimpleGraph.prototype.syncAreasData = function () {
     if (!this.areas) return this;
-    this.areas.forEach(function (d) {
+    this.areas.forEach(d => {
       if (d._bind.xRange) {
-        d.xRange = _toConsumableArray(d._bind.xRange);
+        d.xRange = [...d._bind.xRange];
       }
       if (d._bind.coords) {
-        d.coords = d._bind.coords.map(function (c) {
-          return _toConsumableArray(c);
-        });
+        d.coords = d._bind.coords.map(c => [...c]);
       }
       if (d._bind.style) {
         d.style = {};
-        for (var key in update.style) {
+        for (let key in update.style) {
           d.style[key] = update.style[key];
         }
       }
@@ -1339,12 +1308,6 @@ function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length)
   };
 }
 ;// ./src/sg.data.line.js
-function sg_data_line_toConsumableArray(r) { return sg_data_line_arrayWithoutHoles(r) || sg_data_line_iterableToArray(r) || sg_data_line_unsupportedIterableToArray(r) || sg_data_line_nonIterableSpread(); }
-function sg_data_line_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function sg_data_line_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return sg_data_line_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? sg_data_line_arrayLikeToArray(r, a) : void 0; } }
-function sg_data_line_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function sg_data_line_arrayWithoutHoles(r) { if (Array.isArray(r)) return sg_data_line_arrayLikeToArray(r); }
-function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 /* harmony default export */ function sg_data_line(SimpleGraph, d3) {
   SimpleGraph.prototype.addLineDataAsCoordinates = function (series, coords, options) {
     if (!coords || coords.length === 0) {
@@ -1356,7 +1319,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     options = options || {};
     var style = {};
     if (options.style) {
-      for (var k in options.style) {
+      for (let k in options.style) {
         style[k] = options.style[k];
       }
     }
@@ -1366,9 +1329,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     this.lines.push({
       series: series === null ? "" : String(series),
       lineFunction: null,
-      coords: coords.map(function (c) {
-        return sg_data_line_toConsumableArray(c);
-      }),
+      coords: coords.map(c => [...c]),
       xRange: null,
       y2: !!(options.y2Axis || options.y2),
       style: style,
@@ -1389,7 +1350,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     options = options || {};
     var style = options.style || {};
     if (options.style) {
-      for (var k in options.style) {
+      for (let k in options.style) {
         style[k] = options.style[k];
       }
     }
@@ -1401,7 +1362,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
       series: series === null ? "" : String(series),
       lineFunction: lineFunction,
       coords: null,
-      xRange: xRange ? sg_data_line_toConsumableArray(xRange) : null,
+      xRange: xRange ? [...xRange] : null,
       y2: !!(options.y2Axis || options.y2),
       style: style,
       interpolate: options.interpolation || d3.curveLinear,
@@ -1419,7 +1380,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     // default styles
     var style = {};
     if (options.style) {
-      for (var k in options.style) {
+      for (let k in options.style) {
         style[k] = options.style[k];
       }
     }
@@ -1444,18 +1405,18 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     }
 
     // change forSeries to function
-    var checkSeries = function checkSeries(s) {
+    var checkSeries = function (s) {
       return true;
     };
     if (forSeries) {
       if (typeof forSeries === "function") {
         checkSeries = forSeries;
       } else if (typeof forSeries === "string") {
-        checkSeries = function checkSeries(s) {
+        checkSeries = function (s) {
           return s === forSeries;
         };
       } else if (Array.isArray(forSeries)) {
-        checkSeries = function checkSeries(s) {
+        checkSeries = function (s) {
           return ~forSeries.indexOf(s);
         };
       }
@@ -1463,17 +1424,17 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
 
     // will be our array of point-connecting-lines
     this.pointLines = [];
-    for (var _series in pointsBySeries) {
-      if (!checkSeries(_series) || pointsBySeries[_series].points.length < 2) continue;
-      var lineCoords = this._getPointLine(pointsBySeries[_series].points, handleOverlap);
+    for (let series in pointsBySeries) {
+      if (!checkSeries(series) || pointsBySeries[series].points.length < 2) continue;
+      var lineCoords = this._getPointLine(pointsBySeries[series].points, handleOverlap);
       if (lineCoords.length >= 2) {
         this.pointLines.push({
-          series: _series,
+          series: series,
           lineFunction: null,
           resolution: null,
           coords: lineCoords,
           xRange: null,
-          y2: pointsBySeries[_series].y2,
+          y2: pointsBySeries[series].y2,
           style: style,
           interpolate: options.interpolation || d3.curveLinear,
           bind: {
@@ -1485,22 +1446,20 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     return this;
   };
   SimpleGraph.prototype._getPointLine = function (points, handleOverlap) {
-    points.sort(function (a, b) {
-      return a.x - b.x;
-    });
+    points.sort((a, b) => a.x - b.x);
     var lineCoords = [];
-    for (var _i = 0; _i < points.length; ++_i) {
-      var p = points[_i],
+    for (let i = 0; i < points.length; ++i) {
+      var p = points[i],
         ys = [p.y],
         coords = [p.x, p.y],
         overlaps = false;
       // accumlate overlaps
-      while (_i + 1 < points.length) {
-        p = points[_i + 1];
+      while (i + 1 < points.length) {
+        p = points[i + 1];
         if (p.x === coords[0]) {
           overlaps = true;
           ys.push(p.y);
-          ++_i;
+          ++i;
         } else {
           // assuming sorted, so all equal values should be consequtive
           break;
@@ -1509,9 +1468,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
       // add next line coordinate, processing overlaps as necessary
       if (overlaps) {
         if (~["mean", "average"].indexOf(handleOverlap)) {
-          coords[1] = ys.reduce(function (a, v) {
-            return a + v;
-          });
+          coords[1] = ys.reduce((a, v) => a + v);
         } else {
           ys.sort();
           switch (handleOverlap) {
@@ -1527,7 +1484,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
               coords[1] = ys[Math.floor(0.5 * ys.length)];
               break;
             default:
-              throw "Unknown handle overlap operation: ".concat(handleOverlap);
+              throw `Unknown handle overlap operation: ${handleOverlap}`;
           }
         }
       }
@@ -1539,13 +1496,9 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     if (series === null || typeof series === "undefined") {
       this.lines = null;
     } else if (Array.isArray(series)) {
-      this.lines = this.lines.filter(function (d) {
-        return ~series.indexOf(d.series);
-      });
+      this.lines = this.lines.filter(d => ~series.indexOf(d.series));
     } else {
-      this.lines = this.lines.filter(function (d) {
-        return d.series !== series;
-      });
+      this.lines = this.lines.filter(d => d.series !== series);
     }
     return this;
   };
@@ -1553,21 +1506,15 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     if (series === null || typeof series === "undefined") {
       this.pointLines = null;
     } else if (Array.isArray(series)) {
-      this.pointLines = this.pointLines.filter(function (d) {
-        return ~series.indexOf(d.series);
-      });
+      this.pointLines = this.pointLines.filter(d => ~series.indexOf(d.series));
     } else {
-      this.pointLines = pointLines.lines.filter(function (d) {
-        return d.series !== series;
-      });
+      this.pointLines = pointLines.lines.filter(d => d.series !== series);
     }
     return this;
   };
   SimpleGraph.prototype._getLineData = function (series, index) {
     if (!this.lines) return [];
-    var lines = this.lines.filter(function (d) {
-      return d.series === series;
-    });
+    var lines = this.lines.filter(d => d.series === series);
     if (!lines || !lines.length) return [];
     if (index || index === 0) {
       while (index < 0) {
@@ -1581,27 +1528,22 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     return {
       series: d.series,
       lineFunction: d.lineFunction,
-      coords: d.coords ? d.coords.map(function (c) {
-        return sg_data_line_toConsumableArray(c);
-      }) : null,
-      xRange: d.xRange ? sg_data_line_toConsumableArray(d.xRange) : null,
+      coords: d.coords ? d.coords.map(c => [...c]) : null,
+      xRange: d.xRange ? [...d.xRange] : null,
       y2: d.y2,
       style: d.style,
       interpolate: d.interpolate
     };
   };
   SimpleGraph.prototype.getLinesDataBySeries = function (series, index) {
-    var _this = this;
-    return this._getLineData(series, index).map(function (d) {
-      return _this._cloneLineData(d);
-    });
+    return this._getLineData(series, index).map(d => this._cloneLineData(d));
   };
   SimpleGraph.prototype.updateLinesData = function (series, index, update) {
-    this._getLineData(series, index).forEach(function (line) {
-      if (update.lineFunction || update["function"]) {
-        line.lineFunction = update.lineFunction || update["function"] || line.lineFunction;
+    this._getLineData(series, index).forEach(line => {
+      if (update.lineFunction || update.function) {
+        line.lineFunction = update.lineFunction || update.function || line.lineFunction;
         if (update.xRange) {
-          line.xRange = sg_data_line_toConsumableArray(update.xRange);
+          line.xRange = [...update.xRange];
           if (line._bind) {
             line._bind.xRange = update.xRange;
           }
@@ -1609,8 +1551,8 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
         line.coords = null;
         if (line._bind) delete line._bind.coords;
       } else if (update.coordinates || update.coords) {
-        var repCoords = update.coordinates || update.coords;
-        line.coords = sg_data_line_toConsumableArray(repCoords);
+        let repCoords = update.coordinates || update.coords;
+        line.coords = [...repCoords];
         if (line._bind) {
           line._bind.coords = repCoords;
           delete line._bind.xRange;
@@ -1619,7 +1561,7 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
       line.interpolate = update.interpolate || line.interpolate;
       if (update.style) {
         line.style = {};
-        for (var key in update.style) {
+        for (let key in update.style) {
           line.style[key] = update.style[key];
         }
         if (!line.style['stroke-width'] || typeof line.style['stroke-width'] !== "number") {
@@ -1634,18 +1576,16 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
   };
   SimpleGraph.prototype.syncLinesData = function () {
     if (!this.lines) return this;
-    this.lines.forEach(function (d) {
+    this.lines.forEach(d => {
       if (d._bind.xRange) {
-        d.xRange = sg_data_line_toConsumableArray(d._bind.xRange);
+        d.xRange = [...d._bind.xRange];
       }
       if (d._bind.coords) {
-        d.coords = d._bind.coords.map(function (c) {
-          return sg_data_line_toConsumableArray(c);
-        });
+        d.coords = d._bind.coords.map(c => [...c]);
       }
       if (d._bind.style) {
         d.style = {};
-        for (var key in d._bind.style) {
+        for (let key in d._bind.style) {
           d.style[key] = d._bind.style[key];
         }
         if (!d.style['stroke-width'] || typeof d.style['stroke-width'] !== "number") {
@@ -1656,25 +1596,24 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
     return this;
   };
   SimpleGraph.prototype._syncPointLines = function () {
-    var _this2 = this;
     if (!this.pointLines) return;
     // first organize points by data series
     var pointsBySeries = {};
-    this.points.forEach(function (point) {
-      var series = point.series;
+    this.points.forEach(point => {
+      let series = point.series;
       if (series in pointsBySeries) {
-        pointsBySeries[series].push(_this2.points[i]);
+        pointsBySeries[series].push(this.points[i]);
       } else {
-        pointsBySeries[series] = [_this2.points[i]];
+        pointsBySeries[series] = [this.points[i]];
       }
     });
     // update existing point-line data
-    this.pointLines = this.pointLines.filter(function (d) {
+    this.pointLines = this.pointLines.filter(d => {
       if (!(d.series in pointsBySeries)) return false;
-      d.coords = _this2._getPointLine(pointsBySeries[d.series]);
+      d.coords = this._getPointLine(pointsBySeries[d.series]);
       if (d._bind.style) {
         d.style = {};
-        for (var key in d._bind.style) {
+        for (let key in d._bind.style) {
           d.style[key] = d._bind.style[key];
         }
         if (!d.style['stroke-width'] || typeof d.style['stroke-width'] !== "number") {
@@ -1872,13 +1811,13 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
       var increment = (xRange[1] - xRange[0]) / (resolution - 1),
         isDate = this.x.isDate;
       // standard increment function
-      incrementFunc = function incrementFunc(n) {
+      incrementFunc = function (n) {
         return isDate ? new DateUTC(n.getTime() + increment) : n + increment;
       };
     } else {
       // increment in exponential scale fit to range and resolution
       var base = Math.pow(xRange[1] / xRange[0], 1 - resolution);
-      incrementFunc = function incrementFunc(n) {
+      incrementFunc = function (n) {
         n *= base;
         return n > xRange[1] ? xRange[1] : n;
       };
@@ -2030,12 +1969,6 @@ function sg_data_line_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a
   };
 }
 ;// ./src/sg.draw.points.js
-function sg_draw_points_toConsumableArray(r) { return sg_draw_points_arrayWithoutHoles(r) || sg_draw_points_iterableToArray(r) || sg_draw_points_unsupportedIterableToArray(r) || sg_draw_points_nonIterableSpread(); }
-function sg_draw_points_nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function sg_draw_points_unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return sg_draw_points_arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? sg_draw_points_arrayLikeToArray(r, a) : void 0; } }
-function sg_draw_points_iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
-function sg_draw_points_arrayWithoutHoles(r) { if (Array.isArray(r)) return sg_draw_points_arrayLikeToArray(r); }
-function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 
 /* harmony default export */ function sg_draw_points(SimpleGraph, d3) {
   SimpleGraph.prototype.removePoints = function (series) {
@@ -2043,46 +1976,42 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       this.svgGraph.selectAll(".sg-point").remove();
     } else {
       series = Array.isArray(series) ? series : [series];
-      this.svgGraph.selectAll(".sg-point").filter(function (d) {
-        return ~series.indexOf(d.series);
-      }).remove();
+      this.svgGraph.selectAll(".sg-point").filter(d => ~series.indexOf(d.series)).remove();
     }
     return this;
   };
   SimpleGraph.prototype.drawPoints = function (showNulls, transition) {
-    var _this = this;
     this.removePoints();
     if (!this.points || this.points.length === 0) return this;
     var drawPointsData = this.points;
     // if necessary, remove points that extend beyond graph
     if (!this.allowDrawBeyondGraph) {
-      drawPointsData = drawPointsData.filter(function (d) {
+      drawPointsData = drawPointsData.filter(d => {
         if (!d.x && d.x !== 0 || Number.isNaN(d.x)) return false;
-        if (d.x < _this.x.min || d.x > _this.x.max) return false;
-        if (_this.x["break"] && d.x > _this.x["break"].domain[0] && d.x < _this.x["break"].domain[1]) return false;
+        if (d.x < this.x.min || d.x > this.x.max) return false;
+        if (this.x.break && d.x > this.x.break.domain[0] && d.x < this.x.break.domain[1]) return false;
         if (!showNulls && isNaN(d.y)) return false;
-        var yAxis = d.y2 ? _this.y2 : _this.y;
+        let yAxis = d.y2 ? this.y2 : this.y;
         if (d.y < yAxis.min || d.y > yAxis.max) return false;
-        if (yAxis["break"] && d.y > yAxis["break"].domain[0] && d.y < yAxis["break"].domain[1]) return false;
+        if (yAxis.break && d.y > yAxis.break.domain[0] && d.y < yAxis.break.domain[1]) return false;
         return true;
       });
     }
     if (!drawPointsData.length) return this;
     var pointsDataBySeries = {};
-    drawPointsData.forEach(function (d) {
+    drawPointsData.forEach(d => {
       if (!(d.series in pointsDataBySeries)) {
         pointsDataBySeries[d.series] = [d];
       } else {
         pointsDataBySeries[d.series].push(d);
       }
     });
-    for (var series in pointsDataBySeries) {
+    for (let series in pointsDataBySeries) {
       this._drawPoints(this.svgGraph.selectAll(".sg-temporary-point").data(pointsDataBySeries[series]).enter(), this.ptSeriesShapes[series], transition);
     }
     return this;
   };
   SimpleGraph.prototype.drawUpdatePoints = function (showNulls, transition) {
-    var _this2 = this;
     if (!this.points || this.points.length === 0) {
       this.removePoints();
       this.removePointLines();
@@ -2098,53 +2027,44 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     var drawPointsData = this.points;
     // if necessary, remove points that extend beyond graph
     if (!this.allowDrawBeyondGraph) {
-      drawPointsData = drawPointsData.filter(function (d) {
+      drawPointsData = drawPointsData.filter(d => {
         if (!d.x && d.x !== 0 || Number.isNaN(d.x)) return false;
-        if (d.x < _this2.x.min || d.x > _this2.x.max) return false;
-        if (_this2.x["break"] && d.x > _this2.x["break"].domain[0] && d.x < _this2.x["break"].domain[1]) return false;
+        if (d.x < this.x.min || d.x > this.x.max) return false;
+        if (this.x.break && d.x > this.x.break.domain[0] && d.x < this.x.break.domain[1]) return false;
         if (!showNulls && isNaN(d.y)) return false;
-        var yAxis = d.y2 ? _this2.y2 : _this2.y;
+        let yAxis = d.y2 ? this.y2 : this.y;
         if (d.y < yAxis.min || d.y > yAxis.max) return false;
-        if (yAxis["break"] && d.y > yAxis["break"].domain[0] && d.y < yAxis["break"].domain[1]) return false;
+        if (yAxis.break && d.y > yAxis.break.domain[0] && d.y < yAxis.break.domain[1]) return false;
         return true;
       });
     }
     var pointsDataBySeries = {};
-    drawPointsData.forEach(function (d) {
+    drawPointsData.forEach(d => {
       if (!(d.series in pointsDataBySeries)) {
         pointsDataBySeries[d.series] = [d];
       } else {
         pointsDataBySeries[d.series].push(d);
       }
     });
-    var _loop = function _loop(series) {
-        data = pointsDataBySeries[series], shape = _this2.ptSeriesShapes[series], selection = _this2.svgGraph.selectAll(".sg-point").filter(function (d) {
-          return d.series === series;
-        }); // remove points that no longer exist and reselect (for those that will need modifying)
-        selection.filter(function (d) {
-          return !~data.indexOf(d);
-        }).remove();
-        selection = selection.filter(function (d) {
-          return ~data.indexOf(d);
-        });
+    for (let series in pointsDataBySeries) {
+      var data = pointsDataBySeries[series],
+        shape = this.ptSeriesShapes[series],
+        selection = this.svgGraph.selectAll(".sg-point").filter(d => d.series === series);
 
-        // add new points
-        newData = sg_draw_points_toConsumableArray(data);
-        selection.each(function (d) {
-          var exists = newData.indexOf(d);
-          if (~exists) newData.splice(exists, 1);
-        });
-        _this2._drawPoints(_this2.svgGraph.selectAll(".sg-temporary-point").data(newData).enter(), shape, transition);
+      // remove points that no longer exist and reselect (for those that will need modifying)
+      selection.filter(d => !~data.indexOf(d)).remove();
+      selection = selection.filter(d => ~data.indexOf(d));
 
-        // update existing points
-        _this2._updatePoints(selection, shape, transition);
-      },
-      data,
-      shape,
-      selection,
-      newData;
-    for (var series in pointsDataBySeries) {
-      _loop(series);
+      // add new points
+      var newData = [...data];
+      selection.each(d => {
+        let exists = newData.indexOf(d);
+        if (~exists) newData.splice(exists, 1);
+      });
+      this._drawPoints(this.svgGraph.selectAll(".sg-temporary-point").data(newData).enter(), shape, transition);
+
+      // update existing points
+      this._updatePoints(selection, shape, transition);
     }
     return this;
   };
@@ -2173,7 +2093,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       }
       transition.duration = transition.duration || 200;
       transition.ease = transition.ease || d3.easePolyOut;
-      items.transition().duration(transition.duration).ease(transition.ease).style("opacity", function (d) {
+      items.transition().duration(transition.duration).ease(transition.ease).style("opacity", d => {
         return d.style && 'opacity' in d.style ? d.style.opacity : 1;
       });
     }
@@ -2191,83 +2111,66 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     this._formatPoint(selection, shape);
   };
   SimpleGraph.prototype._formatPoint = function (selc, shape, fadeIn) {
-    var _this3 = this;
     switch (shape) {
       case "triangle-down":
-        selc.attr("series", function (d) {
-          return d.series;
-        }).style("opacity", fadeIn ? 0 : 1).attr("class", "sg-point sg-point-td").attr("points", function (d) {
-          var size = size = typeof d.size === "function" ? d.size() : d.size,
+        selc.attr("series", d => d.series).style("opacity", fadeIn ? 0 : 1).attr("class", "sg-point sg-point-td").attr("points", d => {
+          let size = size = typeof d.size === "function" ? d.size() : d.size,
             length = size * 1.519676,
             // side length of equilateral trangle of same area of square
             height = length * 0.86602,
             // ratio of equilateral triangle
             hh = 0.5 * height,
             hl = 0.5 * length,
-            x = _this3.x.scale(d.x),
+            x = this.x.scale(d.x),
             y = isNaN(d.y) ? 0 : d.y;
-          y = (d.y2 ? _this3.y2.scale : _this3.y.scale)(y);
-          return "".concat(x - hl, ",").concat(y + hh, " ").concat(x, ",").concat(y - hh, " ").concat(x + hl, ",").concat(y + hh);
+          y = (d.y2 ? this.y2.scale : this.y.scale)(y);
+          return `${x - hl},${y + hh} ${x},${y - hh} ${x + hl},${y + hh}`;
         });
         break;
       case "triangle":
       case "triangle-up":
-        selc.attr("series", function (d) {
-          return d.series;
-        }).style("opacity", fadeIn ? 0 : 1).attr("class", "sg-point sg-point-tu").attr("points", function (d) {
-          var size = size = typeof d.size === "function" ? d.size(d, d._bind) : d.size,
+        selc.attr("series", d => d.series).style("opacity", fadeIn ? 0 : 1).attr("class", "sg-point sg-point-tu").attr("points", d => {
+          let size = size = typeof d.size === "function" ? d.size(d, d._bind) : d.size,
             length = size * 1.519676,
             // side length of equilateral trangle of same area of square
             height = length * 0.86602,
             // ratio of equilateral triangle
             hh = 0.5 * height,
             hl = 0.5 * length,
-            x = _this3.x.scale(d.x),
+            x = this.x.scale(d.x),
             y = isNaN(d.y) ? 0 : d.y;
-          y = (d.y2 ? _this3.y2.scale : _this3.y.scale)(y);
-          return "".concat(x - hl, ",").concat(y - hh, " ").concat(x, ",").concat(y + hh, " ").concat(x + hl, ",").concat(y - hh);
+          y = (d.y2 ? this.y2.scale : this.y.scale)(y);
+          return `${x - hl},${y - hh} ${x},${y + hh} ${x + hl},${y - hh}`;
         });
         break;
       case "square":
       case "diamond":
-        selc.attr("series", function (d) {
-          return d.series;
-        }).style("opacity", fadeIn ? 0 : 1).attr("class", "sg-point sg-point-sd").attr("width", function (d) {
-          return typeof d.size === "function" ? d.size() : d.size;
-        }).attr("height", function (d) {
-          return typeof d.size === "function" ? d.size() : d.size;
-        }).attr("x", function (d) {
-          var size = typeof d.size === "function" ? d.size() : d.size;
-          return _this3.x.scale(d.x) - size / 2.0;
-        }).attr("y", function (d) {
-          var y = isNaN(d.y) ? 0 : d.y,
+        selc.attr("series", d => d.series).style("opacity", fadeIn ? 0 : 1).attr("class", "sg-point sg-point-sd").attr("width", d => typeof d.size === "function" ? d.size() : d.size).attr("height", d => typeof d.size === "function" ? d.size() : d.size).attr("x", d => {
+          let size = typeof d.size === "function" ? d.size() : d.size;
+          return this.x.scale(d.x) - size / 2.0;
+        }).attr("y", d => {
+          let y = isNaN(d.y) ? 0 : d.y,
             size = typeof d.size === "function" ? d.size() : d.size;
-          return (d.y2 ? _this3.y2.scale : _this3.y.scale)(d.y) - size / 2.0;
-        }).attr("transform", function (d) {
+          return (d.y2 ? this.y2.scale : this.y.scale)(d.y) - size / 2.0;
+        }).attr("transform", d => {
           if (shape !== "diamond") return "";
-          var y = isNaN(d.y) ? 0 : d.y;
-          return "rotate(45,".concat(_this3.x.scale(d.x), ",").concat((d.y2 ? _this3.y2.scale : _this3.y.scale)(y), ")");
+          let y = isNaN(d.y) ? 0 : d.y;
+          return `rotate(45,${this.x.scale(d.x)},${(d.y2 ? this.y2.scale : this.y.scale)(y)})`;
         });
         break;
       default:
       case "circle":
-        selc.style("opacity", fadeIn ? 0 : 1).attr("series", function (d) {
-          return d.series;
-        }).attr("class", "sg-point sg-point-cr").attr("r", function (d) {
-          return 0.5 * (typeof d.size === "function" ? d.size(d) : d.size);
-        }).attr("cx", function (d) {
-          return _this3.x.scale(d.x);
-        }).attr("cy", function (d) {
-          var y = isNaN(d.y) ? 0 : d.y;
-          return (d.y2 ? _this3.y2.scale : _this3.y.scale)(y);
+        selc.style("opacity", fadeIn ? 0 : 1).attr("series", d => d.series).attr("class", "sg-point sg-point-cr").attr("r", d => 0.5 * (typeof d.size === "function" ? d.size(d) : d.size)).attr("cx", d => this.x.scale(d.x)).attr("cy", d => {
+          let y = isNaN(d.y) ? 0 : d.y;
+          return (d.y2 ? this.y2.scale : this.y.scale)(y);
         });
         break;
     }
-    selc.style("fill", function (d) {
-      var color = _this3.getColorBySeriesName(d.series, true);
+    selc.style("fill", d => {
+      let color = this.getColorBySeriesName(d.series, true);
       return typeof color === "function" ? color(d) : color;
-    }).style("stroke", function (d) {
-      var color = _this3.getColorBySeriesName(d.series, true);
+    }).style("stroke", d => {
+      let color = this.getColorBySeriesName(d.series, true);
       return typeof color === "function" ? color(d) : color;
     });
     return selc;
@@ -2280,32 +2183,28 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     return this.removeLines(series).removePointLines(series);
   };
   SimpleGraph.prototype.removeLines = function (series) {
-    var removed;
+    let removed;
     if (series === null || typeof series === "undefined") {
       removed = this.svgGraph.selectAll(".sg-line").remove();
     } else {
       removed = Array.isArray(series) ? series : [series];
-      this.svgGraph.selectAll(".sg-line").filter(function (d) {
-        return ~series.indexOf(d.series);
-      }).remove();
+      this.svgGraph.selectAll(".sg-line").filter(d => ~series.indexOf(d.series)).remove();
     }
-    removed.each(function (d) {
+    removed.each(d => {
       d._segments = null;
       d._d3s = null;
     });
     return this;
   };
   SimpleGraph.prototype.removePointLines = function (series) {
-    var removed;
+    let removed;
     if (series === null || typeof series === "undefined") {
       removed = this.svgGraph.selectAll(".sg-point-line").remove();
     } else {
       removed = Array.isArray(series) ? series : [series];
-      this.svgGraph.selectAll(".sg-point-line").filter(function (d) {
-        return ~series.indexOf(d.series);
-      }).remove();
+      this.svgGraph.selectAll(".sg-point-line").filter(d => ~series.indexOf(d.series)).remove();
     }
-    removed.each(function (d) {
+    removed.each(d => {
       d._segments = null;
       d._d3s = null;
     });
@@ -2324,7 +2223,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     }
     if (!this.lines) return this;
     var self = this;
-    this.lines.forEach(function (line) {
+    this.lines.forEach(line => {
       if (line.lineFunction) {
         line._segments = self._getLineSegmentsFromFunction(line.lineFunction, resolution, line.xRange, line.y2Axis, !self.allowDrawBeyondGraph);
       } else if (self.allowDrawBeyondGraph) {
@@ -2332,9 +2231,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       } else {
         line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
       }
-      if (line._segments) line._segments = line._segments.filter(function (s) {
-        return s && s.length >= 2;
-      });
+      if (line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
     });
     this._drawLines(this.lines, "sg-line");
     return this;
@@ -2343,15 +2240,13 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     this.removePointLines();
     if (!this.pointLines) return this;
     var self = this;
-    this.pointLines.forEach(function (line) {
+    this.pointLines.forEach(line => {
       if (self.allowDrawBeyondGraph) {
         line._segments = [line.coords];
       } else {
         line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
       }
-      if (line._segments) line._segments = line._segments.filter(function (s) {
-        return s && s.length >= 2;
-      });
+      if (line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
     });
     this._drawLines(this.pointLines, "sg-point-line", transition);
     return this;
@@ -2374,7 +2269,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       transition.ease = transition.ease || d3.easePolyOut;
     }
     var self = this;
-    this.lines.forEach(function (line) {
+    this.lines.forEach(line => {
       if (line.lineFunction) {
         line._segments = self._getLineSegmentsFromFunction(line.lineFunction, resolution, line.xRange, line.y2Axis, !self.allowDrawBeyondGraph);
       } else if (self.allowDrawBeyondGraph) {
@@ -2382,9 +2277,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       } else {
         line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
       }
-      if (line._segments) line._segments = line._segments.filter(function (s) {
-        return s && s.length >= 2;
-      });
+      if (line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
     });
     self._updateLines(this.lines, "sg-line", transition);
     return this;
@@ -2399,46 +2292,35 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       transition.ease = transition.ease || d3.easePolyOut;
     }
     var self = this;
-    this.pointLines.forEach(function (line) {
+    this.pointLines.forEach(line => {
       if (self.allowDrawBeyondGraph) {
         line._segments = [line.coords];
       } else {
         line._segments = self._getLineSegmentsFromCoordinates(line.coords, line.y2);
       }
-      if (line._segments) line._segments = line._segments.filter(function (s) {
-        return s && s.length >= 2;
-      });
+      if (line._segments) line._segments = line._segments.filter(s => s && s.length >= 2);
     });
     self._updateLines(this.pointLines, "sg-point-line", transition);
     return this;
   };
   SimpleGraph.prototype._drawLines = function (lines, className, transition) {
-    var _this = this;
     var self = this,
-      addedLines = this.svgGraph.selectAll(".sg-temporary-line").data(lines).enter().append("path").attr("series", function (d) {
-        return d.series;
-      }).attr("class", className).style("opacity", transition ? 0 : 1).style("fill", 'none').attr("d", function (d) {
-        var yAxis = d.y2 ? _this.y2 : _this.y,
-          d3line = d3.line().x(function (c) {
-            return _this.x.scale(c[0]);
-          }).y(function (c) {
-            return yAxis.scale(c[1]);
-          }).curve(d.interpolate);
-        return d._segments.reduce(function (path, segment) {
-          return (path || "") + (segment.length < 2 ? "" : " " + d3line(segment));
-        }, "");
+      addedLines = this.svgGraph.selectAll(".sg-temporary-line").data(lines).enter().append("path").attr("series", d => d.series).attr("class", className).style("opacity", transition ? 0 : 1).style("fill", 'none').attr("d", d => {
+        let yAxis = d.y2 ? this.y2 : this.y,
+          d3line = d3.line().x(c => this.x.scale(c[0])).y(c => yAxis.scale(c[1])).curve(d.interpolate);
+        return d._segments.reduce((path, segment) => (path || "") + (segment.length < 2 ? "" : " " + d3line(segment)), "");
       }).each(function (d) {
         // add styles
-        var nLine = d3.select(this),
+        let nLine = d3.select(this),
           styles = d.style || {};
-        for (var key in styles) {
+        for (let key in styles) {
           if (!transition || key && key.toLowerCase() != "opacity") {
             nLine.style(key, styles[key]);
           }
         }
         // add color if not specified
         if (!('stroke' in styles)) {
-          var color = self.getColorBySeriesName(d.series, true);
+          let color = self.getColorBySeriesName(d.series, true);
           nLine.style('stroke', typeof color === "function" ? color(d) : color);
         }
         // attach
@@ -2451,20 +2333,17 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       }
       transition.duration = transition.duration || 200;
       transition.ease = transition.ease || d3.easePolyOut;
-      addedLines.transition().duration(transition.duration).ease(transition.ease).style("opacity", function (d) {
+      addedLines.transition().duration(transition.duration).ease(transition.ease).style("opacity", d => {
         return d.style && 'opacity' in d.style ? d.style.opacity : 1;
       });
     }
   };
   SimpleGraph.prototype._updateLines = function (lines, className, transition) {
-    var _this2 = this;
     if (!lines) return this;
 
     // remove, while also filter for new lines
-    var newLines = lines.filter(function (line) {
-      if (!line._segments || !line._segments.length || line._segments.filter(function (c) {
-        return c.length < 2;
-      }).length) {
+    var newLines = lines.filter(line => {
+      if (!line._segments || !line._segments.length || line._segments.filter(c => c.length < 2).length) {
         if (segments._d3s) {
           line._d3s.remove();
           line._d3s = null;
@@ -2480,16 +2359,10 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       sel = sel.transition().duration(transition.duration).ease(transition.ease);
     }
     var self = this;
-    sel.attr("d", function (d) {
-      var yAxis = d.y2 ? _this2.y2 : _this2.y,
-        d3line = d3.line().x(function (c) {
-          return _this2.x.scale(c[0]);
-        }).y(function (c) {
-          return yAxis.scale(c[1]);
-        }).curve(d.interpolate);
-      return d._segments.reduce(function (path, segment) {
-        return (path || "") + (segment.length < 2 ? "" : " " + d3line(segment));
-      }, "");
+    sel.attr("d", d => {
+      var yAxis = d.y2 ? this.y2 : this.y,
+        d3line = d3.line().x(c => this.x.scale(c[0])).y(c => yAxis.scale(c[1])).curve(d.interpolate);
+      return d._segments.reduce((path, segment) => (path || "") + (segment.length < 2 ? "" : " " + d3line(segment)), "");
     }).each(function (d) {
       // update styles
       var nLine = d3.select(this),
@@ -2499,24 +2372,16 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       }
       // add color if not specified
       if (!('stroke' in styles)) {
-        var color = self.getColorBySeriesName(d.series, true);
+        let color = self.getColorBySeriesName(d.series, true);
         nLine.style('stroke', typeof color === "function" ? color(d) : color);
       }
     });
 
     // add new lines
-    var addedLines = this.svgGraph.selectAll(".sg-temporary-line").data(newLines).enter().append("path").attr("series", function (d) {
-      return d.series;
-    }).attr("class", className).style("opacity", transition ? 0 : 1).style("fill", 'none').attr("d", function (d) {
+    var addedLines = this.svgGraph.selectAll(".sg-temporary-line").data(newLines).enter().append("path").attr("series", d => d.series).attr("class", className).style("opacity", transition ? 0 : 1).style("fill", 'none').attr("d", d => {
       var yAxis = d.y2 ? self.y2 : self.y,
-        d3line = d3.line().x(function (c) {
-          return self.x.scale(c[0]);
-        }).y(function (c) {
-          return yAxis.scale(c[1]);
-        }).curve(d.interpolate);
-      return d._segments.reduce(function (path, segment) {
-        return (path || "") + (segment.length < 2 ? "" : " " + d3line(segment));
-      }, "");
+        d3line = d3.line().x(c => self.x.scale(c[0])).y(c => yAxis.scale(c[1])).curve(d.interpolate);
+      return d._segments.reduce((path, segment) => (path || "") + (segment.length < 2 ? "" : " " + d3line(segment)), "");
     }).each(function (d) {
       // add styles
       var nLine = d3.select(this),
@@ -2528,7 +2393,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       }
       // add color if not specified
       if (!('stroke' in styles)) {
-        var color = self.getColorBySeriesName(d.series, true);
+        let color = self.getColorBySeriesName(d.series, true);
         nLine.style('stroke', typeof color === "function" ? color(d) : color);
       }
       // attach
@@ -2538,7 +2403,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     if (transition) {
       transition.duration = transition.duration || 200;
       transition.ease = transition.ease || d3.easePolyOut;
-      addedLines.transition().duration(transition.duration).ease(transition.ease).style("opacity", function (d) {
+      addedLines.transition().duration(transition.duration).ease(transition.ease).style("opacity", d => {
         return d.style && 'opacity' in d.style ? d.style.opacity : 1;
       });
     }
@@ -2552,14 +2417,11 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       this.svgGraph.selectAll(".sg-area").remove();
     } else {
       removed = Array.isArray(series) ? series : [series];
-      this.svgGraph.selectAll(".sg-area").filter(function (d) {
-        return ~series.indexOf(d.series);
-      }).remove();
+      this.svgGraph.selectAll(".sg-area").filter(d => ~series.indexOf(d.series)).remove();
     }
     return this;
   };
   SimpleGraph.prototype.drawAreas = function (resolution, transition) {
-    var _this = this;
     this.removeAreas();
     // default and enforced minimum resolution for resolving from function
     if (!resolution && resolution !== 0) {
@@ -2568,73 +2430,57 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       resolution = 2;
     }
     if (!this.areas) return this;
-    this.areas.forEach(function (area) {
+    this.areas.forEach(area => {
       if (area.functions) {
-        area._parts = _this._getAreasPolysFromFunctions(area.functions[0], area.functions[1], area.resolution, area.xRange, area.y2, !_this.allowDrawBeyondGraph);
-      } else if (_this.allowDrawBeyondGraph) {
+        area._parts = this._getAreasPolysFromFunctions(area.functions[0], area.functions[1], area.resolution, area.xRange, area.y2, !this.allowDrawBeyondGraph);
+      } else if (this.allowDrawBeyondGraph) {
         area._parts = [area.coords];
       } else {
-        area._parts = _this._getAreaPolysFromCoordinates(area.coords, area.y2);
+        area._parts = this._getAreaPolysFromCoordinates(area.coords, area.y2);
       }
-      if (area._parts) area._parts = area._parts.filter(function (s) {
-        return s && s.length >= 2;
-      });
+      if (area._parts) area._parts = area._parts.filter(s => s && s.length >= 2);
     });
     this._drawAreas(resolution, transition);
     return this;
   };
   SimpleGraph.prototype.drawUpdateAreas = function (resolution, transition) {
-    var _this2 = this;
     if (!resolution && resolution !== 0) {
       resolution = 20;
     } else if (resolution <= 2) {
       resolution = 2;
     }
-    this.areas.forEach(function (area) {
+    this.areas.forEach(area => {
       if (area.functions) {
-        area._parts = _this2._getAreasPolysFromFunctions(area.functions[0], area.functions[1], area.resolution, area.xRange, area.y2, !_this2.allowDrawBeyondGraph);
-      } else if (_this2.allowDrawBeyondGraph) {
+        area._parts = this._getAreasPolysFromFunctions(area.functions[0], area.functions[1], area.resolution, area.xRange, area.y2, !this.allowDrawBeyondGraph);
+      } else if (this.allowDrawBeyondGraph) {
         area._parts = [area.coords];
       } else {
-        area._parts = _this2._getAreaPolysFromCoordinates(area.coords, area.y2);
+        area._parts = this._getAreaPolysFromCoordinates(area.coords, area.y2);
       }
-      if (area._parts) area._parts = area._parts.filter(function (s) {
-        return s && s.length >= 2;
-      });
+      if (area._parts) area._parts = area._parts.filter(s => s && s.length >= 2);
     });
     this._updateAreas(transition);
     return this;
   };
   SimpleGraph.prototype._drawAreas = function (resolution, transition) {
-    var _this3 = this;
     if (!this.areas) return;
     var self = this,
-      addedAreas = this.svgGraph.selectAll(".sg-temporary-area").data(this.areas).enter().append("path").attr("series", function (d) {
-        return d.series;
-      }).attr("class", "sg-area").style("opacity", transition ? 0 : 1).attr("d", function (d) {
-        var yAxis = d.y2 ? _this3.y2 : _this3.y,
-          d3Area = d3.area().x(function (c) {
-            return _this3.x.scale(c[0]);
-          }).y0(function (c) {
-            return yAxis.scale(c[1]);
-          }).y1(function (c) {
-            return yAxis.scale(c[2]);
-          }).curve(d.interpolate);
-        return d._parts.reduce(function (path, area) {
-          return area.length < 2 ? path : path + " " + d3Area(area);
-        }, "");
+      addedAreas = this.svgGraph.selectAll(".sg-temporary-area").data(this.areas).enter().append("path").attr("series", d => d.series).attr("class", "sg-area").style("opacity", transition ? 0 : 1).attr("d", d => {
+        let yAxis = d.y2 ? this.y2 : this.y,
+          d3Area = d3.area().x(c => this.x.scale(c[0])).y0(c => yAxis.scale(c[1])).y1(c => yAxis.scale(c[2])).curve(d.interpolate);
+        return d._parts.reduce((path, area) => area.length < 2 ? path : path + " " + d3Area(area), "");
       }).each(function (d) {
         // update styles
         var nArea = d3.select(this),
           styles = d.style || {};
-        for (var key in styles) {
+        for (let key in styles) {
           if (!transition || key && key.toLowerCase() != "opacity") {
             nArea.style(key, styles[key]);
           }
         }
         // add color if not specified
         if (!('fill' in styles)) {
-          var color = self.getColorBySeriesName(d.series, true);
+          let color = self.getColorBySeriesName(d.series, true);
           nArea.style('fill', typeof color === "function" ? color(d) : color);
         }
         // attach
@@ -2647,13 +2493,12 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       }
       transition.duration = transition.duration || 200;
       transition.ease = transition.ease || d3.easePolyOut;
-      addedAreas.transition().duration(transition.duration).ease(transition.ease).style("opacity", function (d) {
+      addedAreas.transition().duration(transition.duration).ease(transition.ease).style("opacity", d => {
         return d.style && 'opacity' in d.style ? d.style.opacity : 1;
       });
     }
   };
   SimpleGraph.prototype._updateAreas = function (transition) {
-    var _this4 = this;
     if (!this.areas) return;
     if (transition) {
       if (Object.getPrototypeOf(transition) !== Object.prototype) {
@@ -2664,10 +2509,8 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     }
 
     // remove, while also filter for new areas
-    var newAreas = this.areas.filter(function (area) {
-      if (!area._parts || !area._parts.length || area._parts.filter(function (c) {
-        return c.length < 2;
-      }).length) {
+    var newAreas = this.areas.filter(area => {
+      if (!area._parts || !area._parts.length || area._parts.filter(c => c.length < 2).length) {
         if (segments._d3s) {
           area._d3s.remove();
           area._d3s = null;
@@ -2683,59 +2526,41 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
       sel = sel.transition().duration(transition.duration).ease(transition.ease);
     }
     var self = this;
-    sel.attr("d", function (d) {
-      var yAxis = d.y2 ? _this4.y2 : _this4.y,
-        d3Area = d3.area().x(function (c) {
-          return _this4.x.scale(c[0]);
-        }).y0(function (c) {
-          return yAxis.scale(c[1]);
-        }).y1(function (c) {
-          return yAxis.scale(c[2]);
-        }).curve(d.interpolate);
-      return d._parts.reduce(function (path, area) {
-        return area.length < 2 ? path : path + " " + d3Area(area);
-      }, "");
+    sel.attr("d", d => {
+      let yAxis = d.y2 ? this.y2 : this.y,
+        d3Area = d3.area().x(c => this.x.scale(c[0])).y0(c => yAxis.scale(c[1])).y1(c => yAxis.scale(c[2])).curve(d.interpolate);
+      return d._parts.reduce((path, area) => area.length < 2 ? path : path + " " + d3Area(area), "");
     }).each(function (d) {
       // update styles
       var nArea = d3.select(this),
         styles = d.style || {};
-      for (var key in styles) {
+      for (let key in styles) {
         nArea.style(key, styles[key]);
       }
       // add color if not specified
       if (!('fill' in styles)) {
-        var color = self.getColorBySeriesName(d.series, true);
+        let color = self.getColorBySeriesName(d.series, true);
         nArea.style('fill', typeof color === "function" ? color(d) : color);
       }
     });
 
     // add new areas
-    var addedAreas = this.svgGraph.selectAll(".sg-temporary-area").data(newAreas).enter().append("path").attr("series", function (d) {
-      return d.series;
-    }).attr("class", "sg-area").style("opacity", transition ? 0 : 1).attr("d", function (d) {
-      var yAxis = d.y2 ? _this4.y2 : _this4.y,
-        d3Area = d3.area().x(function (c) {
-          return _this4.x.scale(c[0]);
-        }).y0(function (c) {
-          return yAxis.scale(c[1]);
-        }).y1(function (c) {
-          return yAxis.scale(c[2]);
-        }).curve(d.interpolate);
-      return d._parts.reduce(function (path, area) {
-        return area.length < 2 ? path : path + " " + d3Area(area);
-      }, "");
+    var addedAreas = this.svgGraph.selectAll(".sg-temporary-area").data(newAreas).enter().append("path").attr("series", d => d.series).attr("class", "sg-area").style("opacity", transition ? 0 : 1).attr("d", d => {
+      let yAxis = d.y2 ? this.y2 : this.y,
+        d3Area = d3.area().x(c => this.x.scale(c[0])).y0(c => yAxis.scale(c[1])).y1(c => yAxis.scale(c[2])).curve(d.interpolate);
+      return d._parts.reduce((path, area) => area.length < 2 ? path : path + " " + d3Area(area), "");
     }).each(function (d) {
       // update styles
       var nArea = d3.select(this),
         styles = d.style || {};
-      for (var key in styles) {
+      for (let key in styles) {
         if (!transition || key && key.toLowerCase() != "opacity") {
           nArea.style(key, styles[key]);
         }
       }
       // add color if not specified
       if (!('fill' in styles)) {
-        var color = self.getColorBySeriesName(d.series, true);
+        let color = self.getColorBySeriesName(d.series, true);
         nArea.style('fill', typeof color === "function" ? color(d) : color);
       }
       // attach
@@ -2745,7 +2570,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     if (transition) {
       transition.duration = transition.duration || 200;
       transition.ease = transition.ease || d3.easePolyOut;
-      addedAreas.transition().duration(transition.duration).ease(transition.ease).style("opacity", function (d) {
+      addedAreas.transition().duration(transition.duration).ease(transition.ease).style("opacity", d => {
         return d.style && 'opacity' in d.style ? d.style.opacity : 1;
       });
     }
@@ -2753,30 +2578,44 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
 }
 ;// ./src/sg.tooltip.js
 /* harmony default export */ function sg_tooltip(SimpleGraph, d3) {
-  SimpleGraph.prototype.addTooltipToPoints = function (textFunction, forSeries, options) {
-    forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
-    this.svgGraph.selectAll(".sg-point").filter(function (d) {
-      return !forSeries || ~forSeries.indexOf(d.series);
-    }).call(this._constructTooltipFunctionality(textFunction, options));
+  SimpleGraph.prototype.addTooltipToPoints = function (textFunction, options) {
+    let forSeries = options?.forSeries && !Array.isArray(options.forSeries) ? [options.forSeries] : options?.forSeries;
+    this.svgGraph.selectAll(".sg-point").filter(d => !forSeries || ~forSeries.indexOf(d.series)).call(this._constructTooltipFunctionality(textFunction, options));
     return this;
   };
-  SimpleGraph.prototype.addTooltipToLines = function (textFunction, forSeries, options) {
-    forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
-    this.svgGraph.selectAll(".sg-line").filter(function (d) {
-      return !forSeries || ~forSeries.indexOf(d.series);
-    }).call(this._constructTooltipFunctionality(textFunction, options));
+  SimpleGraph.prototype.addTooltipToLines = function (textFunction, options) {
+    let forSeries = options?.forSeries && !Array.isArray(options.forSeries) ? [options.forSeries] : options?.forSeries;
+    this.svgGraph.selectAll(".sg-line").filter(d => !forSeries || ~forSeries.indexOf(d.series)).call(this._constructTooltipFunctionality(textFunction, options));
     return this;
   };
-  SimpleGraph.prototype.addTooltipToAreas = function (textFunction, forSeries, options) {
-    forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
-    this.svgGraph.selectAll(".sg-area").filter(function (d) {
-      return !forSeries || ~forSeries.indexOf(d.series);
-    }).call(this._constructTooltipFunctionality(textFunction, options));
+  SimpleGraph.prototype.addTooltipToAreas = function (textFunction, options) {
+    let forSeries = options?.forSeries && !Array.isArray(options.forSeries) ? [options.forSeries] : options?.forSeries;
+    this.svgGraph.selectAll(".sg-area").filter(d => !forSeries || ~forSeries.indexOf(d.series)).call(this._constructTooltipFunctionality(textFunction, options));
     return this;
+  };
+  SimpleGraph.prototype._getMouseAnchor = function (anchor, absMousePos) {
+    let xpos;
+    // swap sides if near edges
+    if (anchor === "left") {
+      if (window.innerWidth - absMousePos[0] < 160) anchor = "right";
+    } else if (absMousePos[0] < 160) {
+      anchor = "left";
+    }
+    // determine x-position
+    if (anchor === "left") {
+      xpos = absMousePos[0];
+    } else {
+      xpos = window.innerWidth - absMousePos[0] - 10; // extra offset if right-anchored
+    }
+    return {
+      anchor: anchor,
+      clear: anchor === "left" ? "right" : "left",
+      x: xpos
+    };
   };
   SimpleGraph.prototype._constructTooltipFunctionality = function (textFunction, options) {
     var gNode = this.svgGraph.node();
-    return function (selection) {
+    return selection => {
       if (!selection) return null;
       if (!options) options = {};
       var d3Body = d3.select('body'),
@@ -2785,9 +2624,14 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
         // this seems less than ideal, update/change when able
         selGroup = selection._groups[0],
         tooltipDiv;
-      selection.on("mouseover.sg-tooltip", function (evt, d) {
+      options.anchor = options.anchor?.trim().toLowerCase();
+      if (options.anchor !== "left" && options.anchor !== "right") {
+        options.anchor = "left";
+      }
+      selection.on("mouseover.sg-tooltip", (evt, d) => {
         // set relative position of tool-tip
-        var absMousePos = d3.pointer(evt, d3Body.node()),
+        let absMousePos = d3.pointer(evt, d3Body.node()),
+          anchor = this._getMouseAnchor(options.anchor, absMousePos),
           styles;
         // Check if tooltip div already exists
         if (!tooltipDiv) {
@@ -2799,7 +2643,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
           // full styles
           styles = {
             'position': 'absolute',
-            'left': absMousePos[0] + tooltipOffset[0] + 'px',
+            [anchor.anchor]: anchor.x + tooltipOffset[0] + 'px',
             'top': absMousePos[1] + tooltipOffset[1] + 'px',
             'z-index': 1001,
             'background-color': '#fff',
@@ -2812,27 +2656,28 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
         } else {
           // just update position
           styles = {
-            'left': absMousePos[0] + tooltipOffset[0] + 'px',
+            [anchor]: absMousePos[0] + tooltipOffset[0] + 'px',
             'top': absMousePos[1] + tooltipOffset[1] + 'px'
           };
         }
-        for (var styleKey in styles) {
+        for (let styleKey in styles) {
           tooltipDiv.style(styleKey, styles[styleKey]);
         }
         // add custom styles if provided
         if (options.style) {
-          for (var _styleKey in options.style) {
-            tooltipDiv.style(_styleKey, options.style[_styleKey]);
+          for (let styleKey in options.style) {
+            tooltipDiv.style(styleKey, options.style[styleKey]);
           }
         }
         // additional trigger
         if (options.mouseover) options.mouseover(d, d3.pointer(evt, gNode), selGroup);
-      }).on('mousemove.sg-tooltip', function (evt, d) {
+      }).on('mousemove.sg-tooltip', (evt, d) => {
         if (tooltipDiv) {
+          let absMousePos = d3.pointer(evt, d3Body.node()),
+            anchor = this._getMouseAnchor(options.anchor, absMousePos);
           // Move tooltip
-          var absMousePos = d3.pointer(evt, d3Body.node());
-          tooltipDiv.style('left', absMousePos[0] + tooltipOffset[0] + 'px').style('top', absMousePos[1] + tooltipOffset[1] + 'px');
-          var tooltipText = null;
+          tooltipDiv.style(anchor.clear, "").style(anchor.anchor, anchor.x + tooltipOffset[0] + 'px').style('top', absMousePos[1] + tooltipOffset[1] + 'px');
+          let tooltipText = null;
           if (textFunction) {
             tooltipText = textFunction(d, d3.pointer(evt, gNode), selGroup);
           }
@@ -2844,7 +2689,7 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
             tooltipDiv.html(tooltipText);
           }
         }
-      }).on("mouseout.sg-tooltip", function (evt, d) {
+      }).on("mouseout.sg-tooltip", (evt, d) => {
         // additional trigger
         if (options.mouseout) options.mouseout(d, d3.pointer(evt, gNode), selGroup);
         // Remove tooltip
@@ -2920,43 +2765,42 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
     this.svgDefs.append("filter").attr("id", "sg-effect-blur").append("feGaussianBlur").attr("in", "SourceGraphic").attr("stdDeviation", 6);
   };
   SimpleGraph.prototype.highlightPoints = function (options) {
-    var _this = this;
     options = options || {};
     if (options.series) {
       options.series = Array.isArray(options.series) ? options.series : [options.series];
     }
-    this.svgGraph.selectAll(".sg-point").each(function (d, i, s) {
+    this.svgGraph.selectAll(".sg-point").each((d, i, s) => {
       if (options.series && !~options.series.indexOf(d.series)) return;
-      if (options.filter && !options.filter(_this._clonePointData(d), s[i])) return;
-      var highlight = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight"),
-        xScale = _this.x.scale,
-        yScale = d.y2 ? _this.y2.scale : _this.y.scale,
+      if (options.filter && !options.filter(this._clonePointData(d), s[i])) return;
+      let highlight = d3.select(s[i].cloneNode(true)).attr("class", "sg-point-highlight"),
+        xScale = this.x.scale,
+        yScale = d.y2 ? this.y2.scale : this.y.scale,
         x = xScale(d.x),
         y = yScale(isNaN(d.y) ? 0 : d.y),
         size = options.size || d.size;
       if (typeof size === "function") size = size.call(d);
-      switch (_this.ptSeriesShapes[d.series]) {
+      switch (this.ptSeriesShapes[d.series]) {
         case "triangle":
         case "triangle-up":
-          highlight.attr("points", function (d) {
-            var length = size * 1.519676,
+          highlight.attr("points", d => {
+            let length = size * 1.519676,
               // side length of equilateral trangle of same area of square
               height = length * 0.86602,
               // ratio of equilateral triangle
               hh = 0.5 * height,
               hl = 0.5 * length;
-            return "".concat(x - hl, ",").concat(y - hh, " ").concat(x, ",").concat(y + hh, " ").concat(x + hl, ",").concat(y - hh);
+            return `${x - hl},${y - hh} ${x},${y + hh} ${x + hl},${y - hh}`;
           });
           break;
         case "triangle-down":
-          highlight.attr("points", function (d) {
-            var length = size * 1.519676,
+          highlight.attr("points", d => {
+            let length = size * 1.519676,
               // side length of equilateral trangle of same area of square
               height = length * 0.86602,
               // ratio of equilateral triangle
               hh = 0.5 * height,
               hl = 0.5 * length;
-            return "".concat(x - hl, ",").concat(y + hh, " ").concat(x, ",").concat(y - hh, " ").concat(x + hl, ",").concat(y + hh);
+            return `${x - hl},${y + hh} ${x},${y - hh} ${x + hl},${y + hh}`;
           });
           break;
         case "square":
@@ -2973,70 +2817,68 @@ function sg_draw_points_arrayLikeToArray(r, a) { (null == a || a > r.length) && 
         highlight.style('stroke-width', '1');
       }
       if (options.style) {
-        for (var sk in options.style) {
+        for (let sk in options.style) {
           highlight.style(sk, options.style[sk]);
         }
       }
       highlight.style('pointer-events', 'none');
-      _this.svgGraph.node().append(highlight.node());
+      this.svgGraph.node().append(highlight.node());
       d3.select(s[i]).classed("sg-highlight-hide", true).style("opacity", "0");
     });
     return this;
   };
   SimpleGraph.prototype.highlightLines = function (options) {
-    var _this2 = this;
     options = options || {};
     if (options.series) {
       options.series = Array.isArray(options.series) ? options.series : [options.series];
     }
     this._addBlurDefn();
-    this.svgGraph.selectAll(".sg-line").each(function (d, i, s) {
+    this.svgGraph.selectAll(".sg-line").each((d, i, s) => {
       if (options.series && !~options.series.indexOf(d.series)) return;
-      if (options.filter && !options.filter(_this2._cloneLineData(d), s[i])) return;
-      var front = d3.select(s[i].cloneNode(true)).attr("class", "sg-line-highlight"),
+      if (options.filter && !options.filter(this._cloneLineData(d), s[i])) return;
+      let front = d3.select(s[i].cloneNode(true)).attr("class", "sg-line-highlight"),
         behind = null;
       if (!options.noblur) {
         behind = d3.select(s[i].cloneNode(true)).attr("class", "sg-line-highlight").attr("filter", "url('#sg-effect-blur')").style("fill", 'none').style("filter", 'brightness(135%)').style("opacity", "0.7");
         if (options.blurstyle) {
-          for (var sk in options.blurstyle) {
+          for (let sk in options.blurstyle) {
             behind.style(sk, options.blurstyle[sk]);
           }
         }
         behind.style('pointer-events', 'none');
-        _this2.svgGraph.node().append(behind.node());
+        this.svgGraph.node().append(behind.node());
       }
       if (options.style) {
-        for (var _sk in options.style) {
-          front.style(_sk, options.style[_sk]);
+        for (let sk in options.style) {
+          front.style(sk, options.style[sk]);
         }
       }
       front.style('pointer-events', 'none');
-      _this2.svgGraph.node().append(front.node());
+      this.svgGraph.node().append(front.node());
       d3.select(s[i]).classed("sg-highlight-hide", true).style("opacity", "0");
     });
     return this;
   };
   SimpleGraph.prototype.highlightAreas = function (options) {
-    var _this3 = this;
     options = options || {};
     if (options.series) {
       options.series = Array.isArray(options.series) ? options.series : [options.series];
     }
-    this.svgGraph.selectAll(".sg-area").each(function (d, i, s) {
+    this.svgGraph.selectAll(".sg-area").each((d, i, s) => {
       if (options.series && !~options.series.indexOf(d.series)) return;
-      if (options.filter && !options.filter(_this3._cloneAreaData(d), s[i])) return;
-      var highlight = d3.select(s[i].cloneNode(true)).attr("class", "sg-area-highlight").style("opacity", "1");
+      if (options.filter && !options.filter(this._cloneAreaData(d), s[i])) return;
+      let highlight = d3.select(s[i].cloneNode(true)).attr("class", "sg-area-highlight").style("opacity", "1");
       if (!options.nooutline) {
         highlight.style("stroke", "#000");
         highlight.style("stroke-width", "1.5");
       }
       if (options.style) {
-        for (var sk in options.style) {
+        for (let sk in options.style) {
           highlight.style(sk, options.style[sk]);
         }
       }
       highlight.style('pointer-events', 'none');
-      _this3.svgGraph.node().append(highlight.node());
+      this.svgGraph.node().append(highlight.node());
       d3.select(s[i]).classed("sg-highlight-hide", true).style("opacity", "0");
     });
     return this;
@@ -3092,7 +2934,7 @@ function SimpleGraph(params) {
   this.svgGraph = this.svg.append("g").attr("transform", "translate(" + this.margins.left + "," + this.margins.top + ")");
 
   // append styles, save to instance the default text-size
-  for (var style in params.styles) {
+  for (let style in params.styles) {
     this.svg.style(style, params.styles[style]);
   }
   this.resetAxisOptions(params.axis);
@@ -3190,7 +3032,7 @@ SimpleGraph.prototype.saveAsPng = function (pngName) {
   if (!pngName.toLowerCase().endsWith(".png")) {
     pngName += ".png";
   }
-  var svgNode = this.svg.attr("version", "1.1").attr("xmlns", "http://www.w3.org/2000/svg").attr("xmlns:xlink", "http://www.w3.org/1999/xlink").node();
+  let svgNode = this.svg.attr("version", "1.1").attr("xmlns", "http://www.w3.org/2000/svg").attr("xmlns:xlink", "http://www.w3.org/1999/xlink").node();
   serializer = new XMLSerializer(), svgHtml = serializer.serializeToString(svgNode), canvas = document.createElement("canvas");
   canvas.style.display = "none";
   canvas.width = this.containerWidth;
@@ -3210,11 +3052,11 @@ SimpleGraph.prototype.saveAsPng = function (pngName) {
   //     return this;
   // }
 
-  var a = document.createElement("a");
+  let a = document.createElement("a");
   a.style.display = "none";
   a.download = pngName;
   this.svg.node().parentNode.appendChild(a);
-  var img = new Image();
+  let img = new Image();
   img.onload = function () {
     canvas.getContext("2d").drawImage(img, 0, 0);
     // freaking internet explorer..

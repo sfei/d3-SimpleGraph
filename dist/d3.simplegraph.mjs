@@ -1,27 +1,4 @@
 import * as __WEBPACK_EXTERNAL_MODULE_d3__ from "d3";
-/******/ // The require scope
-/******/ var __webpack_require__ = {};
-/******/ 
-/************************************************************************/
-/******/ /* webpack/runtime/define property getters */
-/******/ (() => {
-/******/ 	// define getter functions for harmony exports
-/******/ 	__webpack_require__.d = (exports, definition) => {
-/******/ 		for(var key in definition) {
-/******/ 			if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
-/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 			}
-/******/ 		}
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/hasOwnProperty shorthand */
-/******/ (() => {
-/******/ 	__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ })();
-/******/ 
-/************************************************************************/
-var __webpack_exports__ = {};
 
 ;// external "d3"
 const external_d3_namespaceObject = __WEBPACK_EXTERNAL_MODULE_d3__;
@@ -2797,34 +2774,55 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
 ;// ./src/sg.tooltip.js
 /* harmony default export */ function sg_tooltip(SimpleGraph, d3) {
 
-    SimpleGraph.prototype.addTooltipToPoints = function(textFunction, forSeries, options) {
-        forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
+    SimpleGraph.prototype.addTooltipToPoints = function(textFunction, options) {
+        let forSeries = options?.forSeries && !Array.isArray(options.forSeries) ? [options.forSeries] : options?.forSeries;
         this.svgGraph.selectAll(".sg-point")
             .filter(d => !forSeries || ~forSeries.indexOf(d.series))
             .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
 
-    SimpleGraph.prototype.addTooltipToLines = function(textFunction, forSeries, options) {
-        forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
+    SimpleGraph.prototype.addTooltipToLines = function(textFunction, options) {
+        let forSeries = options?.forSeries && !Array.isArray(options.forSeries) ? [options.forSeries] : options?.forSeries;
         this.svgGraph.selectAll(".sg-line")
             .filter(d => !forSeries || ~forSeries.indexOf(d.series))
             .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
 
-    SimpleGraph.prototype.addTooltipToAreas = function(textFunction, forSeries, options) {
-        forSeries = forSeries && !Array.isArray(forSeries) ? [forSeries] : forSeries;
+    SimpleGraph.prototype.addTooltipToAreas = function(textFunction, options) {
+        let forSeries = options?.forSeries && !Array.isArray(options.forSeries) ? [options.forSeries] : options?.forSeries;
         this.svgGraph.selectAll(".sg-area")
             .filter(d => !forSeries || ~forSeries.indexOf(d.series))
             .call(this._constructTooltipFunctionality(textFunction, options));
         return this;
     };
 
+    SimpleGraph.prototype._getMouseAnchor = function(anchor, absMousePos) {
+        let xpos;
+        // swap sides if near edges
+        if(anchor === "left") {
+            if(window.innerWidth - absMousePos[0] < 160) anchor = "right";
+        } else if(absMousePos[0] < 160) {
+            anchor = "left";
+        }
+        // determine x-position
+        if(anchor === "left") {
+            xpos = absMousePos[0];
+        } else {
+            xpos = window.innerWidth - absMousePos[0] - 10;  // extra offset if right-anchored
+        }
+        return {
+            anchor: anchor, 
+            clear:  anchor === "left" ? "right" : "left", 
+            x:      xpos
+        };
+    }
+
     SimpleGraph.prototype._constructTooltipFunctionality = function(textFunction, options) {
         var gNode = this.svgGraph.node();
 
-        return function(selection) {
+        return (selection) => {
             if(!selection) return null;
             if(!options) options = {};
 
@@ -2835,9 +2833,15 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                 selGroup = selection._groups[0], 
                 tooltipDiv;
 
-            selection.on("mouseover.sg-tooltip", function(evt, d) {
+            options.anchor = options.anchor?.trim().toLowerCase() ;
+            if(options.anchor !== "left" && options.anchor !== "right") {
+                options.anchor = "left";
+            }
+
+            selection.on("mouseover.sg-tooltip", (evt, d) => {
                 // set relative position of tool-tip
                 let absMousePos = d3.pointer(evt, d3Body.node()), 
+                    anchor = this._getMouseAnchor(options.anchor, absMousePos), 
                     styles;
                 // Check if tooltip div already exists
                 if(!tooltipDiv) {
@@ -2849,7 +2853,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                     // full styles
                     styles = {
                         'position': 'absolute', 
-                        'left': (absMousePos[0] + tooltipOffset[0])+'px', 
+                        [anchor.anchor]: (anchor.x + tooltipOffset[0])+'px', 
                         'top': (absMousePos[1] + tooltipOffset[1])+'px', 
                         'z-index': 1001, 
                         'background-color': '#fff', 
@@ -2862,7 +2866,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                 } else {
                     // just update position
                     styles = {
-                        'left': (absMousePos[0] + tooltipOffset[0])+'px', 
+                        [anchor]: (absMousePos[0] + tooltipOffset[0])+'px', 
                         'top': (absMousePos[1] + tooltipOffset[1])+'px'
                     };
                 }
@@ -2879,12 +2883,14 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                 if(options.mouseover) options.mouseover(d, d3.pointer(evt, gNode), selGroup);
             })
 
-            .on('mousemove.sg-tooltip', function(evt, d) {
+            .on('mousemove.sg-tooltip', (evt, d) => {
                 if(tooltipDiv) {
+                    let absMousePos = d3.pointer(evt, d3Body.node()), 
+                        anchor = this._getMouseAnchor(options.anchor, absMousePos);
                     // Move tooltip
-                    let absMousePos = d3.pointer(evt, d3Body.node());
                     tooltipDiv
-                        .style('left', (absMousePos[0] + tooltipOffset[0])+'px')
+                        .style(anchor.clear, "")
+                        .style(anchor.anchor, (anchor.x + tooltipOffset[0])+'px')
                         .style('top', (absMousePos[1] + tooltipOffset[1])+'px');
                     let tooltipText = null;
                     if(textFunction) {
@@ -2900,7 +2906,7 @@ const TEST_DOMAIN        = [new Date("2000-01-01"), new Date("2000-01-02")],
                 }
             })
 
-            .on("mouseout.sg-tooltip", function(evt, d) {
+            .on("mouseout.sg-tooltip", (evt, d) => {
                 // additional trigger
                 if(options.mouseout) options.mouseout(d, d3.pointer(evt, gNode), selGroup);
                 // Remove tooltip
