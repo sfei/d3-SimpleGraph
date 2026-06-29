@@ -50,6 +50,9 @@ Add tooltip function to points on the graph. Does not add tooltips to the point-
       <td>options.series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
     <tr>
+      <td>options.anchor</td><td>string</td><td>Whether to anchor the tooltip to the left or right of the cursor. Values may be 'left' or 'right', defaults to 'right'.</td>
+    </tr>
+    <tr>
       <td>options.offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
     </tr>
     <tr>
@@ -87,6 +90,9 @@ Add tooltip function to lines (including point-lines) on the graph.
       <td>options.series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
     </tr>
     <tr>
+      <td>options.anchor</td><td>string</td><td>Whether to anchor the tooltip to the left or right of the cursor. Values may be 'left' or 'right', defaults to 'right'.</td>
+    </tr>
+    <tr>
       <td>options.offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>
     </tr>
     <tr>
@@ -122,6 +128,9 @@ Add tooltip function to areas on the graph.
     </tr>
     <tr>
       <td>options.series</td><td>string|string[]</td><td>If provided, only effects data series matching this name. May also be an array to remove multiple data series at once.</td>
+    </tr>
+    <tr>
+      <td>options.anchor</td><td>string</td><td>Whether to anchor the tooltip to the left or right of the cursor. Values may be 'left' or 'right', defaults to 'right'.</td>
     </tr>
     <tr>
       <td>options.offset</td><td>number[]</td><td>The x,y offset of the tooltip from the cursor (default of `[10,-15]` places the tooltip to the bottom right of the cursor).</td>

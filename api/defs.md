@@ -171,7 +171,7 @@ Handles the text appearing in the tooltip. Expected to return text/html. The fol
       <td>data</td><td>object</td><td>The data object bound to the hovered SVG element. See above definitions for point data, line data, or area data, as relevant.</td>
     </tr>
     <tr>
-      <td>position</td><td>number[]</td><td>The x,y relative mouse position on the g-node for the graph (e.g. [0,0] would be the top-right corner of the graph [x-min, y-max], in pixels).</td>
+      <td>position</td><td>number[]</td><td>The x,y relative mouse position on the g-node for the graph.</td>
     </tr>
     <tr>
       <td>svgs</td><td>SVGElement[]</td><td>Array of the SVG elements in the layer selected (or null).</td>
